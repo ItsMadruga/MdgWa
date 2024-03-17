@@ -28,8 +28,8 @@ WhatsApp'ınızı özelleştirmek için bir Xposed modülü.
 | ------------- | ------------- |
 | Mesajların geri alınmasını engelleme | ✅ |
 | Durumların geri alınmasını engelleme | ✅ |
-| İleriye yönelik sınırlamayı kaldırma | ⚠️ BETA |
-| Durumu indirme | ⚠️ BETA |
+| İleti gönderme sınırını kaldırma | ⚠️ BETA |
+| Durumları indirme | ⚠️ BETA |
 | Yüksek çözünürlüklü videolar | ⚠️ BETA |
 
 ### Gizlilik
@@ -46,7 +46,7 @@ WhatsApp'ınızı özelleştirmek için bir Xposed modülü.
 
 ## Uyumluluk
 
-- WhatsApp Sabit
+- WhatsApp Stabil
 
 ## Kullanım
 
