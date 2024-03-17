@@ -46,6 +46,7 @@ public class XAntiRevoke extends XHookBase {
     }
 
     private void isMRevoked(Object objMessage, TextView dateTextView, String antirevokeType) {
+        if (dateTextView == null) return;
         var fieldMessageDetails = XposedHelpers.getObjectField(objMessage, fieldMessageKey);
         var messageKey = (String) XposedHelpers.getObjectField(fieldMessageDetails, "A01");
         var stripJID = stripJID(getJidAuthor(objMessage));
@@ -80,7 +81,7 @@ public class XAntiRevoke extends XHookBase {
     @Override
     public void doHook() {
         mShared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
-        var antirevoke = prefs != null ? prefs.getInt("antirevoke", 0) : 0;
+        var antirevoke = prefs.getInt("antirevoke", 0);
         var antirevokestatus = prefs != null ? prefs.getInt("antirevokestatus", 0) : 0;
 
 //        Toast.makeText(mContext, "AR: " + antirevoke + " / ARS: " + antirevokestatus, Toast.LENGTH_SHORT).show();
@@ -120,7 +121,7 @@ public class XAntiRevoke extends XHookBase {
             }
             XposedHelpers.findAndHookMethod(bubbleViewClass, loader, bubbleViewMethod, ViewGroup.class, TextView.class, classMessage, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
                     var objMessage = param.args[2];
                     var dateTextView = (TextView) param.args[1];
                     isMRevoked(objMessage, dateTextView, "antirevoke");

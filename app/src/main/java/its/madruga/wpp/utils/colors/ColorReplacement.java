@@ -73,7 +73,7 @@ public class ColorReplacement {
                 callMethod(view, "setProgressBarColor", parseColor(newPColor));
             }
 
-            if (newPColor != null) {
+            if (newPBColor != null) {
                 callMethod(view, "setProgressBarBackgroundColor", parseColor(newPBColor));
             }
 
