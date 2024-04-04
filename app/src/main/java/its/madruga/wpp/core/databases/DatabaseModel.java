@@ -1,7 +1,6 @@
 package its.madruga.wpp.core.databases;
 
 import static de.robv.android.xposed.XposedHelpers.findClass;
-import static its.madruga.wpp.ClassesReference.Databases.msgstoreClass;
 
 import android.database.sqlite.SQLiteOpenHelper;
 

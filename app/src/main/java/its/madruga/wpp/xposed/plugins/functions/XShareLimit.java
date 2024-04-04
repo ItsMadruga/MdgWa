@@ -1,14 +1,12 @@
 package its.madruga.wpp.xposed.plugins.functions;
 
-import static its.madruga.wpp.ClassesReference.LimitShare.booleanField;
-import static its.madruga.wpp.ClassesReference.LimitShare.methodShareLimit;
-import static its.madruga.wpp.ClassesReference.LimitShare.param1;
-
-import android.view.View;
+import androidx.annotation.NonNull;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XShareLimit extends XHookBase {
@@ -16,22 +14,29 @@ public class XShareLimit extends XHookBase {
         super(loader, preferences);
     }
 
-    public void doHook() {
-        var mainClass = XposedHelpers.findClass("com.whatsapp.contact.picker.ContactPickerFragment", loader);
+    public void doHook() throws Exception {
         var removeForwardLimit = prefs.getBoolean("removeforwardlimit", false);
-        XposedHelpers.findAndHookMethod(
-                mainClass.getName(), loader,
-                methodShareLimit,
-                View.class,
-                XposedHelpers.findClass(param1, loader),
+        var shareLimitMethod = Unobfuscator.loadShareLimitMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(shareLimitMethod));
+        var shareLimitField = Unobfuscator.loadShareLimitField(loader);
+        logDebug(Unobfuscator.getFieldDescriptor(shareLimitField));
+
+        XposedBridge.hookMethod(
+                shareLimitMethod,
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         if (removeForwardLimit) {
-                            XposedHelpers.setBooleanField(param.thisObject, booleanField, true);
+                            XposedHelpers.setBooleanField(param.thisObject, shareLimitField.getName(), true);
                         }
                         super.beforeHookedMethod(param);
                     }
                 });
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Share Limit";
     }
 }

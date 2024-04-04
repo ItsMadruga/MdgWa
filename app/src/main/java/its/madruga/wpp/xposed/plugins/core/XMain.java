@@ -1,5 +1,7 @@
 package its.madruga.wpp.xposed.plugins.core;
 
+import static its.madruga.wpp.BuildConfig.DEBUG;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -10,7 +12,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -18,11 +19,14 @@ import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.BuildConfig;
-import its.madruga.wpp.ClassesReference;
 import its.madruga.wpp.listeners.RestartListener;
+import its.madruga.wpp.xposed.Unobfuscator;
+import its.madruga.wpp.xposed.models.XHookBase;
 import its.madruga.wpp.xposed.plugins.functions.XAntiRevoke;
+import its.madruga.wpp.xposed.plugins.functions.XBlueOnReply;
 import its.madruga.wpp.xposed.plugins.functions.XDndMode;
 import its.madruga.wpp.xposed.plugins.functions.XMediaQuality;
+import its.madruga.wpp.xposed.plugins.functions.XNewChat;
 import its.madruga.wpp.xposed.plugins.functions.XNewChat;
 import its.madruga.wpp.xposed.plugins.functions.XOthers;
 import its.madruga.wpp.xposed.plugins.functions.XShareLimit;
@@ -35,6 +39,7 @@ import its.madruga.wpp.xposed.plugins.personalization.XChatsFilter;
 import its.madruga.wpp.xposed.plugins.personalization.XSecondsToTime;
 import its.madruga.wpp.xposed.plugins.privacy.XFreezeLastSeen;
 import its.madruga.wpp.xposed.plugins.privacy.XGhostMode;
+import its.madruga.wpp.xposed.plugins.privacy.XHideArchive;
 import its.madruga.wpp.xposed.plugins.privacy.XHideReceipt;
 import its.madruga.wpp.xposed.plugins.privacy.XHideTag;
 import its.madruga.wpp.xposed.plugins.privacy.XHideView;
@@ -44,7 +49,12 @@ public class XMain {
     public static Application mApp;
     public static ArrayList<String> list = new ArrayList<>();
 
-    public static void Initialize(@NonNull ClassLoader loader, @NonNull XSharedPreferences pref) {
+    public static void Initialize(@NonNull ClassLoader loader, @NonNull XSharedPreferences pref, String sourceDir) throws Exception {
+
+        if (!Unobfuscator.initDexKit(sourceDir)) {
+            XposedBridge.log("Can't init dexkit");
+            return;
+        }
 
         XposedHelpers.findAndHookMethod(Instrumentation.class, "callApplicationOnCreate", Application.class, new XC_MethodHook() {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -52,10 +62,9 @@ public class XMain {
                 PackageManager packageManager = mApp.getPackageManager();
                 PackageInfo packageInfo = packageManager.getPackageInfo("com.whatsapp", 0);
                 XposedBridge.log(packageInfo.versionName);
-                if (packageInfo.versionName.equals(BuildConfig.VERSION_NAME)) {
-                    XposedBridge.log("Loading whatsapp - correct version");
-                    plugins(loader, pref);
-                }
+                XposedBridge.log(packageInfo.versionName.equals(BuildConfig.VERSION_NAME) ? "Loading whatsapp - correct version" : "Loading whatsapp - wrong version");
+                plugins(loader, pref);
+                XposedHelpers.setStaticIntField(XposedHelpers.findClass("com.whatsapp.util.Log", loader), "level", 5);
             }
         });
 
@@ -72,50 +81,48 @@ public class XMain {
                 }
             }
         });
-
-        RestartListener.start(XposedHelpers.findClass(ClassesReference.AutoReboot.autoreboot, loader));
+        var autoRebootClass = Unobfuscator.loadAutoRebootClass(loader);
+        RestartListener.start(autoRebootClass);
     }
 
     private static void plugins(@NonNull ClassLoader loader, @NonNull XSharedPreferences pref) {
         ArrayList<String> loadedClasses = new ArrayList<>();
+
         var classes = new Class<?>[]{
-                XOthers.class,
-                XDndMode.class,
-                XHideTag.class,
-                XHideView.class,
-                XViewOnce.class,
-                XGhostMode.class,
                 XAntiRevoke.class,
                 XBioAndName.class,
-                XShareLimit.class,
-                XChatsFilter.class,
-                XHideReceipt.class,
-                XChangeColors.class,
-                XMediaQuality.class,
+                XBlueOnReply.class,
                 XBubbleColors.class,
-                XSecondsToTime.class,
-                XStatusDownload.class,
-                XStatusDownload.class,
+                XChangeColors.class,
+                XChatsFilter.class,
+                XDndMode.class,
                 XFreezeLastSeen.class,
-                XNewChat.class
+                XGhostMode.class,
+                XHideArchive.class,
+                XHideReceipt.class,
+                XHideTag.class,
+                XHideView.class,
+                XMediaQuality.class,
+                XNewChat.class,
+                XOthers.class,
+                XSecondsToTime.class,
+                XShareLimit.class,
+                XStatusDownload.class,
+                XViewOnce.class,
         };
 
         for (var classe : classes) {
             try {
                 var constructor = classe.getConstructor(ClassLoader.class, XSharedPreferences.class);
-                var plugin = constructor.newInstance(loader, pref);
-                var method = classe.getMethod("doHook");
-                method.invoke(plugin);
-                loadedClasses.add("-> "  +classe.getName());
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                     InstantiationException e) {
+                var plugin = (XHookBase) constructor.newInstance(loader, pref);
+                plugin.doHook();
+                loadedClasses.add("-> " + classe.getName());
+            } catch (Throwable e) {
                 XposedBridge.log(e);
-                if (e instanceof InvocationTargetException) {
-                    list.add(classe.getSimpleName());
-                }
+                list.add(classe.getSimpleName());
             }
         }
-
-        XposedBridge.log("Loaded classes:\n\n" + String.join("\n", loadedClasses.toArray(new String[0])));
+//        if (DEBUG)
+//            XposedBridge.log("Loaded classes:\n\n" + String.join("\n", loadedClasses.toArray(new String[0])));
     }
 }

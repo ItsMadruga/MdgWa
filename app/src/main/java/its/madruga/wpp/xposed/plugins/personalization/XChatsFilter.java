@@ -1,40 +1,28 @@
 package its.madruga.wpp.xposed.plugins.personalization;
 
 import static de.robv.android.xposed.XposedHelpers.callMethod;
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
-import static de.robv.android.xposed.XposedHelpers.getIntField;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.classGetTab;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.classTabName;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.classTabsList;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.fieldTabsList;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.methodGetTab;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.methodTabIcon;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.methodTabInstance;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.methodTabName;
-import static its.madruga.wpp.ClassesReference.ChatsFilter.nameId;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
-import java.text.NumberFormat;
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import its.madruga.wpp.ClassesReference;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
+import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XChatsFilter extends XHookBase {
 
@@ -45,17 +33,18 @@ public class XChatsFilter extends XHookBase {
     public final int GROUPS = 800;
     public final ArrayList<Integer> tabs = new ArrayList<>();
     public int tabCount = 0;
+    private int idGroupId = 0;
 
     public XChatsFilter(ClassLoader loader, XSharedPreferences preferences) {
         super(loader, preferences);
-            tabs.add(CHATS);
-            tabs.add(GROUPS);
-            tabs.add(STATUS);
-            tabs.add(COMMUNITY);
-            tabs.add(CALLS);
+        tabs.add(CHATS);
+        tabs.add(GROUPS);
+        tabs.add(STATUS);
+        tabs.add(COMMUNITY);
+        tabs.add(CALLS);
     }
 
-    public void doHook() {
+    public void doHook() throws Exception {
 
         var separateGroups = prefs.getBoolean("separategroups", false);
         if (!separateGroups) return;
@@ -68,19 +57,33 @@ public class XChatsFilter extends XHookBase {
         // Setting up fragments
         hookTabInstance(cFrag);
         // Setting group tab name
-        hookTabName();
+        hookTabName(home);
         // Setting group icon
         hookTabIcon();
         // Setting tab count
         hookTabCount();
     }
 
-    private void hookTabCount() {
-        var home = findClass("com.whatsapp.HomeActivity", loader);
-        findAndHookMethod(home, "A0p", home, new XC_MethodHook() {
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Chats Filter";
+    }
+
+    private void hookTabCount() throws Exception {
+
+        var runMethod = Unobfuscator.loadTabCountMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(runMethod));
+        var idField = Unobfuscator.getFieldByType(runMethod.getDeclaringClass(), int.class);
+        var pagerField = Unobfuscator.loadTabCountField(loader);
+        XposedBridge.hookMethod(runMethod, new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                var a1 = XposedHelpers.getObjectField(param.args[0], "A0i");
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                var id = (int) getObjectField(param.thisObject, idField.getName());
+                if (id != 32) return;
+
+                var homeActivity = XposedHelpers.getObjectField(param.thisObject, "A00");
+                var a1 = XposedHelpers.getObjectField(homeActivity, pagerField.getName());
                 var chatCount = 0;
                 var groupCount = 0;
                 // Fiz ele pegar direto da database, esse metodo que dei hook, e chamado sempre q vc muda de tab, entra/sai de um chat ->
@@ -99,7 +102,7 @@ public class XChatsFilter extends XHookBase {
                     if (hidden == 1) return;
                     // aqui eu fiz pra verificar se e grupo ou n, ai ele pega as infos da jid de acordo com a row da jid ali de cima
                     var sql2 = "SELECT * FROM jid WHERE _id == ?";
-                    var cursor1 = db.rawQuery(sql2, new String[]{ String.valueOf(jid)});
+                    var cursor1 = db.rawQuery(sql2, new String[]{String.valueOf(jid)});
                     while (cursor1.moveToNext()) {
                         // esse server armazena oq ele e, s.whatsapp.net, lid, ou g.us
                         @SuppressLint("Range") var server = cursor1.getString(cursor1.getColumnIndex("server"));
@@ -112,7 +115,7 @@ public class XChatsFilter extends XHookBase {
                     }
                 }
                 // cada tab tem sua classe, ent eu percorro todas pra funcionar dboa
-                for(int i = 0; i < tabs.size(); i++) {
+                for (int i = 0; i < tabs.size(); i++) {
                     var q = XposedHelpers.callMethod(a1, "A00", a1, i);
 
                     // deixei a de call pq a de gp nao aparece
@@ -122,11 +125,13 @@ public class XChatsFilter extends XHookBase {
                         setObjectField(q, "A01", chatCount);
                     }
                 }
-                super.afterHookedMethod(param);
             }
         });
+
+        var enableCountMethod = Unobfuscator.loadEnableCountTabMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(enableCountMethod));
         //Issaq meio q ativa o contador da tab de grupo, mas fica totalmente igual ao chats
-        findAndHookMethod("X.1NI", loader, "A05", Context.class, findClass("X.920", loader), int.class, new XC_MethodHook() {
+        XposedBridge.hookMethod(enableCountMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 var indexTab = (int) param.args[2];
@@ -135,59 +140,84 @@ public class XChatsFilter extends XHookBase {
                 } else if (indexTab == tabs.indexOf(CHATS)) {
                     param.args[2] = tabs.indexOf(GROUPS);
                 }
-                super.beforeHookedMethod(param);
             }
         });
     }
 
-    private void hookTabIcon() {
-        findAndHookMethod(classTabsList, loader, methodTabIcon, new XC_MethodHook() {
+    private void hookTabIcon() throws Exception {
+        var iconTabMethod = Unobfuscator.loadIconTabMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(iconTabMethod));
+        var iconField = Unobfuscator.loadIconTabField(loader);
+        var iconFrameField = Unobfuscator.loadIconTabLayoutField(loader);
+        var iconMenuField = Unobfuscator.loadIconMenuField(loader);
+
+        XposedBridge.hookMethod(iconTabMethod, new XC_MethodHook() {
             @SuppressLint("ResourceType")
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
                 var superClass = param.thisObject.getClass().getSuperclass();
-                if (superClass != null && superClass.getName().equals(classTabsList)) {
-                    var fields = superClass.getDeclaredFields();
-                    for (var field : fields) {
-                        XposedBridge.log("Field: " + superClass.getName() + ";->" + field.getName() + ":" + field.getType().getName());
-                    }
-                    var field1 = superClass.getDeclaredField("A09").get(param.thisObject);
-//                    var field1 = getObjectField(superClass, "A09");
-                    var field2 = getObjectField(field1, "A01");
-                    var menu = getObjectField(field2, "A03");
+                if (superClass != null && superClass == iconTabMethod.getDeclaringClass()) {
+                    var field1 = superClass.getDeclaredField(iconField.getName()).get(param.thisObject);
+                    var field2 = getObjectField(field1, iconFrameField.getName());
+                    var menu = getObjectField(field2, iconMenuField.getName());
                     if (menu != null) {
                         var menuItem = (MenuItem) callMethod(menu, "findItem", GROUPS);
                         if (menuItem != null) {
-                            menuItem.setIcon(ClassesReference.ChatsFilter.tabIconId);
+                            var id = XMain.mApp.getResources().getIdentifier("home_tab_communities_selector", "drawable", XMain.mApp.getPackageName());
+                            menuItem.setIcon(id);
                         }
                     }
                 }
-
-                super.afterHookedMethod(param);
             }
         });
     }
 
     @SuppressLint("ResourceType")
-    private void hookTabName() {
-        findAndHookMethod(classTabName, loader, methodTabName, int.class, new XC_MethodHook() {
+    private void hookTabName(Class<?> home) throws Exception {
+        var tabNameMethod = Unobfuscator.loadTabNameMethod(loader);
+        var idGroupId = getGroupId();
+        logDebug(Unobfuscator.getMethodDescriptor(tabNameMethod));
+        var activityField = Unobfuscator.getFieldByType(tabNameMethod.getDeclaringClass(), home);
+        activityField.setAccessible(true);
+        XposedBridge.hookMethod(tabNameMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 var tab = (int) param.args[0];
-                var activity = (Activity) XposedHelpers.getObjectField(param.thisObject, "A02");
+                var activity = (Activity) activityField.get(param.thisObject);
                 if (tab == GROUPS) {
-                    var name = activity.getResources().getString(nameId);
-                    param.setResult(name);
+                    if (idGroupId != 0) {
+                        param.setResult(activity.getString(idGroupId));
+                    } else {
+                        param.setResult("Groups");
+                    }
                 }
             }
         });
     }
 
-    private void hookTabInstance(Class<?> cFrag) {
-        XposedHelpers.findAndHookMethod(classGetTab, loader, methodGetTab, int.class, new XC_MethodHook() {
+    private int getGroupId() {
+        Resources resources = XMain.mApp.getResources();
+        for (int i = 0x7f120500; i < 0x7f12ffff; i++) {
+            try {
+                if (resources.getString(i).equalsIgnoreCase("groups")) {
+                    idGroupId = i;
+                    XposedBridge.log("idGroupString: " + Integer.toHexString(idGroupId));
+                    break;
+                }
+            } catch (Resources.NotFoundException ignored) {
+            }
+        }
+        return idGroupId;
+    }
+
+    private void hookTabInstance(Class<?> cFrag) throws Exception {
+        var getTabMethod = Unobfuscator.loadGetTabMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(getTabMethod));
+        var methodTabInstance = Unobfuscator.loadTabFragmentMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(methodTabInstance));
+
+        XposedBridge.hookMethod(getTabMethod, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 var tabId = ((Number) tabs.get((int) param.args[0])).intValue();
@@ -196,7 +226,7 @@ public class XChatsFilter extends XHookBase {
                     var convFragment = XposedHelpers.findConstructorExact(cFrag.getName(), loader).newInstance();
                     var convFragmentClass = convFragment.getClass();
                     XposedHelpers.setAdditionalInstanceField(convFragment, "isGroup", tabId == GROUPS);
-                    XposedHelpers.findAndHookMethod(convFragmentClass.getName(), convFragmentClass.getClassLoader(), methodTabInstance, new XC_MethodHook() {
+                    XposedBridge.hookMethod(methodTabInstance, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             var isGroup = false;
@@ -204,18 +234,18 @@ public class XChatsFilter extends XHookBase {
 
                             // Temp fix for
                             if (isGroupField == null) {
-                                XposedBridge.log("-----------------------------------");
-                                XposedBridge.log("isGroupTabCount: " + tabCount);
-                                XposedBridge.log("isGroupTabField: " + (isGroupField != null));
-                                XposedBridge.log("isGroupTabCount >= 2: " + (tabCount >= 2));
-                                XposedBridge.log("-----------------------------------");
+                                logDebug("-----------------------------------");
+                                logDebug("isGroupTabCount: " + tabCount);
+                                logDebug("isGroupTabField: " + (isGroupField != null));
+                                logDebug("isGroupTabCount >= 2: " + (tabCount >= 2));
+                                logDebug("-----------------------------------");
                                 isGroup = tabCount >= 2;
                                 tabCount++;
                                 if (tabCount == 4) tabCount = 0;
                             } else {
                                 isGroup = (boolean) isGroupField;
                             }
-                            XposedBridge.log("[•] isGroup: " + isGroup);
+                            logDebug("[•] isGroup: " + isGroup);
 
                             var chatsList = (List) param.getResult();
                             var editableChatList = new ArrayList<>();
@@ -227,39 +257,39 @@ public class XChatsFilter extends XHookBase {
                                 }
                             }
                             param.setResult(editableChatList);
-                            super.afterHookedMethod(param);
                         }
                     });
-
-                    // corigindo a bct do fab
-                    XposedHelpers.findAndHookMethod(convFragmentClass.getName(), convFragmentClass.getClassLoader(), "BHP", new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            var isGroup = false;
-                            var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
-                            if (isGroupField != null) isGroup = (boolean) isGroupField;
-                            if (isGroup) {
-                                param.setResult(GROUPS);
-                            }
-                            super.afterHookedMethod(param);
-                        }
-                    });
-
                     param.setResult(convFragment);
-                } else {
-                    super.afterHookedMethod(param);
+                }
+            }
+        });
+
+        var fabintMethod = Unobfuscator.loadFabMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(fabintMethod));
+
+        XposedBridge.hookMethod(fabintMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                var isGroup = false;
+                var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
+                if (isGroupField != null) isGroup = (boolean) isGroupField;
+                if (isGroup) {
+                    param.setResult(GROUPS);
                 }
             }
         });
     }
 
-    private void hookTabList(Class<?> home) {
+    private void hookTabList(Class<?> home) throws Exception {
         if (!prefs.getBoolean("separategroups", false)) return;
-        XposedHelpers.findAndHookMethod(classTabsList, loader, "onCreate", Bundle.class, new XC_MethodHook() {
+        var onCreateTabList = Unobfuscator.loadTabListMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(onCreateTabList));
+        var fieldTabsList = Arrays.stream(home.getDeclaredFields()).filter(f -> f.getType().equals(List.class)).findFirst().orElse(null);
+        fieldTabsList.setAccessible(true);
+        XposedBridge.hookMethod(onCreateTabList, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                XposedHelpers.setStaticObjectField(home, fieldTabsList, tabs);
+                fieldTabsList.set(null, tabs);
             }
         });
     }

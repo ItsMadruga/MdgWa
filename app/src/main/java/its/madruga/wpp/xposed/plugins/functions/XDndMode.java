@@ -1,15 +1,15 @@
 package its.madruga.wpp.xposed.plugins.functions;
 
-import static its.madruga.wpp.ClassesReference.DndMode.mainClass;
-import static its.madruga.wpp.ClassesReference.DndMode.mainMethod;
 import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
-
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
-import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.XposedBridge;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XDndMode extends XHookBase {
@@ -18,15 +18,17 @@ public class XDndMode extends XHookBase {
     }
 
     @Override
-    public void doHook() {
-        super.doHook();
+    public void doHook() throws Exception {
         var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
         if (!shared.getBoolean("dndmode", false)) return;
-        XposedHelpers.findAndHookMethod(mainClass, loader, mainMethod, XposedHelpers.findClass(mainClass, loader), new XC_MethodReplacement() {
-            @Override
-            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
-                return null;
-            }
-        });
+        var dndMethod = Unobfuscator.loadDndModeMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(dndMethod));
+        XposedBridge.hookMethod(dndMethod, XC_MethodReplacement.DO_NOTHING);
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Dnd Mode";
     }
 }

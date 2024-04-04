@@ -1,9 +1,6 @@
 package its.madruga.wpp.xposed.plugins.personalization;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static its.madruga.wpp.ClassesReference.ChangeColors.customDrawable1;
-import static its.madruga.wpp.ClassesReference.ChangeColors.customDrawable2;
-import static its.madruga.wpp.ClassesReference.ChangeColors.customDrawable3;
 import static its.madruga.wpp.utils.colors.ColorReplacement.replaceColors;
 import static its.madruga.wpp.utils.colors.DrawableColors.replaceColor;
 import static its.madruga.wpp.utils.colors.IColors.colors;
@@ -20,12 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.utils.colors.IColors;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XChangeColors extends XHookBase {
@@ -38,8 +38,16 @@ public class XChangeColors extends XHookBase {
     }
 
     @Override
-    public void doHook() {
+    public void doHook() throws Exception {
         if (!prefs.getBoolean("changecolor", false)) return;
+
+        var customDrawable1 = Unobfuscator.loadExpandableWidgetClass(loader);
+        logDebug("customDrawable1: " + customDrawable1.getName());
+        var customDrawable2 = Unobfuscator.loadMaterialShapeDrawableClass(loader);
+        logDebug("customDrawable2: " + customDrawable2.getName());
+        var customDrawable3 = Unobfuscator.loadCustomDrawableClass(loader);
+        logDebug("customDrawable3: " + customDrawable3.getName());
+
 
         var primaryColor = prefs.getString("primary_color", "0");
         var secondaryColor = prefs.getString("secondary_color", "0");
@@ -94,14 +102,14 @@ public class XChangeColors extends XHookBase {
 
         var colorStateListHook = new ColorStateListHook();
         findAndHookMethod(Drawable.class.getName(), loader, "setTintList", ColorStateList.class, colorStateListHook);
-        findAndHookMethod(customDrawable1, loader, "setBackgroundTintList", ColorStateList.class, colorStateListHook);
-        findAndHookMethod(customDrawable1, loader, "setRippleColor", ColorStateList.class, colorStateListHook);
-        findAndHookMethod(customDrawable1, loader, "setSupportImageTintList", ColorStateList.class, colorStateListHook);
+        findAndHookMethod(customDrawable1, "setBackgroundTintList", ColorStateList.class, colorStateListHook);
+        findAndHookMethod(customDrawable1, "setRippleColor", ColorStateList.class, colorStateListHook);
+        findAndHookMethod(customDrawable1, "setSupportImageTintList", ColorStateList.class, colorStateListHook);
 
-        findAndHookMethod(customDrawable2, loader, "setTintList", ColorStateList.class, colorStateListHook);
-        findAndHookMethod(customDrawable2, loader, "setTint", int.class, intBgHook);
+        findAndHookMethod(customDrawable2, "setTintList", ColorStateList.class, colorStateListHook);
+        findAndHookMethod(customDrawable2, "setTint", int.class, intBgHook);
 
-        findAndHookMethod(customDrawable3, loader, "setTintList", ColorStateList.class, colorStateListHook);
+        findAndHookMethod(customDrawable3, "setTintList", ColorStateList.class, colorStateListHook);
 
         var inflaterHook = (XC_MethodHook) new LayoutInflaterHook();
         findAndHookMethod(LayoutInflater.class.getName(), loader, "inflate", int.class, ViewGroup.class, inflaterHook);
@@ -118,6 +126,12 @@ public class XChangeColors extends XHookBase {
             }
         });
 
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Change Colors";
     }
 
     public static class LayoutInflaterHook extends XC_MethodHook {

@@ -1,12 +1,13 @@
 package its.madruga.wpp.xposed.plugins.privacy;
 
-import static its.madruga.wpp.ClassesReference.GhostMode.methodName;
-import static its.madruga.wpp.ClassesReference.GhostMode.param1;
-import static its.madruga.wpp.ClassesReference.GhostMode.param2;
+import androidx.annotation.NonNull;
+
+import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
-import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.XposedBridge;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XGhostMode extends XHookBase {
@@ -16,28 +17,25 @@ public class XGhostMode extends XHookBase {
     }
 
     @Override
-    public void doHook() {
-        Class<?> class1 = XposedHelpers.findClass(param1, loader);
-        Class<?> class2 = XposedHelpers.findClass(param2, loader);
-
+    public void doHook() throws Throwable {
         var ghostmode_t = prefs.getBoolean("ghostmode_t", false);
         var ghostmode_r = prefs.getBoolean("ghostmode_r", false);
-
-
-        XposedHelpers.findAndHookMethod(class1, methodName, class1, class2, int.class, new XC_MethodHook() {
+        Method method = Unobfuscator.loadGhostModeMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(method));
+        XposedBridge.hookMethod(method, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 var p1 = (int) param.args[2];
-                if (p1 == 1 && ghostmode_r) {
+                if ((p1 == 1 && ghostmode_r) || (p1 == 0 && ghostmode_t)) {
                     param.setResult(null);
-                    return;
                 }
-                if (p1 == 0 && ghostmode_t) {
-                    param.setResult(null);
-                    return;
-                }
-                super.beforeHookedMethod(param);
             }
         });
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Ghost Mode";
     }
 }

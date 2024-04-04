@@ -1,10 +1,5 @@
 package its.madruga.wpp.xposed.plugins.functions;
 
-import static its.madruga.wpp.ClassesReference.StatusDownload.classMedia;
-import static its.madruga.wpp.ClassesReference.StatusDownload.classMenuStatus;
-import static its.madruga.wpp.ClassesReference.StatusDownload.fieldFile;
-import static its.madruga.wpp.ClassesReference.StatusDownload.fieldList;
-import static its.madruga.wpp.ClassesReference.StatusDownload.setPageActiveMethod;
 import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
 
 import android.media.MediaScannerConnection;
@@ -19,13 +14,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import its.madruga.wpp.ClassesReference;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XStatusDownload extends XHookBase {
@@ -33,48 +30,65 @@ public class XStatusDownload extends XHookBase {
         super(loader, preferences);
     }
 
-    public void doHook() {
+    public void doHook() throws Exception {
         if (!prefs.getBoolean("downloadstatus", false)) return;
-        var mediaClass = XposedHelpers.findClass(classMedia, loader);
-        var statusPlaybackFragment = "com.whatsapp.status.playback.fragment.StatusPlaybackContactFragment";
-        XposedHelpers.findAndHookMethod(statusPlaybackFragment, loader, setPageActiveMethod, statusPlaybackFragment, int.class, new XC_MethodHook() {
+        var setPageActiveMethod = Unobfuscator.loadStatusActivePage(loader);
+        var fieldList = Unobfuscator.getFieldByType(setPageActiveMethod.getDeclaringClass(), List.class);
+        logDebug("List field: " + fieldList.getName());
+        logDebug(Unobfuscator.getMethodDescriptor(setPageActiveMethod));
+        var mediaClass = Unobfuscator.loadStatusDownloadMediaClass(loader);
+        logDebug("Media class: " + mediaClass.getName());
+        var menuStatusClass = Unobfuscator.loadMenuStatusClass(loader);
+        logDebug("MenuStatus class: " + menuStatusClass.getName());
+        var fieldFile = Unobfuscator.loadStatusDownloadFileField(loader);
+        logDebug("File field: " + fieldFile.getName());
+        var clazzSubMenu = Unobfuscator.loadStatusDownloadSubMenuClass(loader);
+        logDebug("SubMenu class: " + clazzSubMenu.getName());
+        var clazzMenu = Unobfuscator.loadStatusDownloadMenuClass(loader);
+        logDebug("Menu class: " + clazzMenu.getName());
+        var menuField = Unobfuscator.getFieldByType(clazzSubMenu,clazzMenu);
+        logDebug("Menu field: " + menuField.getName());
+
+       XposedBridge.hookMethod(setPageActiveMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 var position = (int) param.args[1];
-                var list = (List<?>) XposedHelpers.getObjectField(param.args[0], fieldList);
+                var list = (List<?>) XposedHelpers.getObjectField(param.args[0], fieldList.getName());
                 var message = list.get(position);
                 if (message != null && mediaClass.isInstance(message)) {
 
-                    var menuStatusClass = XposedHelpers.findClass(classMenuStatus, loader);
                     XposedHelpers.findAndHookMethod(menuStatusClass, "onClick", View.class, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             var fileData = XposedHelpers.getObjectField(message, "A01");
-                            var file = (File) XposedHelpers.getObjectField(fileData, fieldFile);
-                            var thisObject = param.thisObject;
-                            var aClass = XposedHelpers.findClass(ClassesReference.StatusDownload.aClass, loader);
-                            var mClass = XposedHelpers.getObjectField(aClass.cast(XposedHelpers.getObjectField(thisObject, "A05")), "A03");
-                            var menu = (MenuItem) XposedHelpers.callMethod(mClass, "findItem", ClassesReference.StatusDownload.findItem);
+                            var file = (File) XposedHelpers.getObjectField(fileData, fieldFile.getName());
+                            Field subMenuField = Arrays.stream(param.thisObject.getClass().getDeclaredFields()).filter(f -> f.getType() == Object.class && clazzSubMenu.isInstance(XposedHelpers.getObjectField(param.thisObject, f.getName()))).findFirst().orElse(null);
+                            Object submenu = XposedHelpers.getObjectField(param.thisObject, subMenuField.getName());
+                            Object menuObj = XposedHelpers.getObjectField(submenu, menuField.getName());
+                            var menu = (MenuItem) XposedHelpers.callMethod(menuObj, "findItem", 0x7f0b1009);
                             if (menu != null) return;
-
-                            menu = (MenuItem) XposedHelpers.callMethod(mClass, "add", 0, ClassesReference.StatusDownload.addItem, 0, mApp.getString(ClassesReference.StatusDownload.downloadStringId));
+                            menu = (MenuItem) XposedHelpers.callMethod(menuObj, "add", 0, 0x7f0b1009, 0, "Download");
                             menu.setOnMenuItemClickListener(item -> {
                                 if (copyFile(file)) {
-                                    Toast.makeText(mApp, "Saved", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mApp, "Saved to " + getPathDestination(file), Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(mApp, "Error when saving, try again", Toast.LENGTH_SHORT).show();
                                 }
                                 return true;
                             });
-
-                            super.afterHookedMethod(param);
                         }
                     });
 
                 }
             }
         });
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Download Status";
     }
 
     private static boolean copyFile(@NonNull File p) {
