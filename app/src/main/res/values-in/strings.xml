@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MdgWa</string>
     <string name="app_desc">Modul Xposed untuk mengkustomisasi WhatsApp Anda.</string>
+    <string name="antirevoke">Pesan anti-hapus</string>
     <string name="antirevoke_sum">Ketika aktif, pesan yang dihapus tidak akan terhapus.</string>
     <string name="viewonce_sum">Ketika aktif, ini memungkinkan Anda untuk membuka pesan lihat-sekali sebanyak yang Anda inginkan.</string>
     <string name="novotema">Tema WhatsApp baru</string>
@@ -18,6 +18,7 @@
     <string name="reset">Setel ulang</string>
     <string name="bubble_left">Gelembung kiri</string>
     <string name="bubble_right">Gelembung kanan</string>
+    <string name="general_summary">Kustomisasi yang diimplementasikan secara asli oleh Whatsapp</string>
     <string name="home_summary">Sesuaikan layar beranda sesuai keinginan Anda</string>
     <string name="conversation_summary">Ubah beberapa hal di layar percakapan Anda, seperti balon, entri, dan lainnya</string>
     <string name="privacy_summary">Sembunyikan konfirmasi baca, sembunyikan tanda terima, terakhir dilihat, dan lainnya</string>
@@ -26,6 +27,7 @@
     <string name="module_not_working">Module tidak bekerja</string>
     <string name="lsposed_not_found">LSPosed tidak ditemukan</string>
     <string name="lspatch_not_found">LSPatch tidak ditemukan</string>
+    <string name="loading">Memuat</string>
     <string name="module_not_enabled_text">Module dinonaktifkan pada LSPosed</string>
     <string name="module_not_setted_text">Module diaktifkan tetapi cakupannya kosong</string>
     <string name="imagequality">Kirim gambar HD</string>
@@ -35,7 +37,7 @@
     <string name="ghostmode">Sembunyikan pengetikan</string>
     <string name="ghostmode_sum">Ketika aktif, orang tidak dapat melihat anda sedang mengetik.</string>
     <string name="ghostmode_r">Sembunyikan perekaman</string>
-    <string name="hidetag">Sembunyikan tag penerusan.</string>
+    <string name="hidetag">Sembunyikan tag penerusan</string>
     <string name="hidetag_sum">Ketika aktif, ini memungkinkan Anda untuk meneruskan pesan tanpa tag penerusan.</string>
     <string name="hidestatusview">Sembunyikan lihat status</string>
     <string name="hidestatusview_sum">Ketika aktif, ini memungkinkan Anda untuk melihat status tanpa orang tersebut mengetahui bahwa Anda telah melihatnya.</string>
@@ -69,11 +71,16 @@
     <string name="apply_button">Terapkan</string>
     <string name="invalid_color">warna tidak valid</string>
     <string name="social_media_title">media sosial</string>
+    <string name="telegram_group">Grup Telegram</string>
+    <string name="telegram_channel">Saluran Telegram</string>
+    <string name="itsmadruga">ItsMadruga (Owner)</string>
+    <string name="darker935">Darker935 (Contributor)</string>
     <string name="required_version_s">Versi yang dibutuhkan: %s</string>
     <string name="installed_version_s">Versi yang diinstall: %s</string>
     <string name="whatsapp_version_error">Versi WhatsApp ini tidak didukung oleh modul kami, silakan pergi ke versi WhatsApp yang dibutuhkan</string>
     <string name="whatsapp_not_installed">WhatsApp belum diinstall! install dan coba lagi</string>
     <string name="restart_whatsapp">Mulai ulang whatsapp</string>
+    <string name="media_title">Media</string>
     <string name="general">Umum</string>
     <string name="novahome">Gaya beranda baru</string>
     <string name="conversation">Percakapan</string>
@@ -95,6 +102,7 @@
     <string name="freezelastseen_sum">Ketika diaktifkan, Anda tidak akan melihat pembaruan dari pengguna lain, seperti mengetik, merekam, online…</string>
     <string name="removeforwardlimit_sum">Hapus batas penerusan untuk 5 obrolan (normal) dan 1 obrolan (berkali-kali).</string>
     <string name="removeforwardlimit">Hapus batas penerusan</string>
+    <string name="forward">Teruskan</string>
     <string name="home">Layar beranda</string>
     <string name="showname">Tampilkan nama</string>
     <string name="showname_sum">Tampilkan nama akun anda di bagian atas layar beranda, menggantikan \'WhatsApp\' dengan nama anda.</string>
@@ -105,4 +113,5 @@
     <string name="ghostmode_sum_r">Ketika aktif, orang tidak dapat melihat anda sedang merekam audio.</string>
     <string name="separate_groups_sum">Pisahkan obrolan Anda berdasarkan: grup, obrolan pribadi, status, panggilan, komunitas</string>
     <string name="separate_groups">Pisahkan grup</string>
+    <string name="root_needed_message">Opsi ini memerlukan akses root, berikan izin root pada SU Anda</string>
 </resources>
