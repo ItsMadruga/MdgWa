@@ -42,7 +42,7 @@
     <string name="no_root">Errore durante la concessione dell\'autorizzazione SU</string>
     <string name="ampm">Orario nel formato 12 ore</string>
     <string name="media_settings">Impostazioni Multimediali</string>
-    <string name="statusdowload">Stato Download</string>
+    <string name="statusdowload">Download Stato</string>
     <string name="statusdowload_sum">Crea un pulsante per scaricare gli stati delle persone</string>
     <string name="videoquality">Invia video in qualità HD</string>
     <string name="videoquality_sum">Invia video in qualità HD</string>
@@ -110,7 +110,7 @@
     <string name="module_not_setted_text">Il modulo è abilitato, ma l\'ambito è vuoto</string>
     <string name="imagequality">Invia immagini in qualità HD</string>
     <string name="imagequality_sum">Invia immagini in qualità HD</string>
-    <string name="downloadviewonce">Scarica Visualizza Una Volta Sola</string>
+    <string name="downloadviewonce">Download Visualizza Una Volta Sola</string>
     <string name="downloadviewonce_sum">Crea un pulsante di download per la visualizzazione una volta sola</string>
     <string name="separate_groups_sum">Separa le tue chat per: gruppi, chat private, stato, chiamate, comunità</string>
     <string name="separate_groups">Gruppi separati</string>
