@@ -1,10 +1,8 @@
 package its.madruga.wpp.xposed.plugins.functions;
 
 import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
-import static its.madruga.wpp.xposed.plugins.functions.XStatusDownload.getMimeTypeFromExtension;
 
 import android.annotation.SuppressLint;
-import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,9 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -73,7 +68,8 @@ public class XViewOnce extends XHookBase {
                             if (message != null) {
                                 var fileData = XposedHelpers.getObjectField(message, "A01");
                                 var file = (File) XposedHelpers.getObjectField(fileData, fileField.getName());
-                                if (copyFile(file)) {
+                                var dest = getDestination(file);
+                                if (XStatusDownload.copyFile(file,dest)) {
                                     Toast.makeText(mApp, "Saved to "+ getDestination(file), Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(mApp, "Error when saving, try again", Toast.LENGTH_SHORT).show();
@@ -95,42 +91,10 @@ public class XViewOnce extends XHookBase {
         return "View Once";
     }
 
-    public static String getDestination(File file) {
+    public static File getDestination(@NonNull File file) {
         var folderPath = Environment.getExternalStorageDirectory() + "/Pictures/WhatsApp/MdgWa ViewOnce/";
         var filePath = new File(folderPath);
         if (!filePath.exists()) filePath.mkdirs();
-        return filePath.getAbsolutePath() + "/" + file.getName();
-    }
-
-    private static boolean copyFile(File p) {
-        if (p == null) return false;
-
-        var destination = getDestination(p);
-
-        try (FileInputStream in = new FileInputStream(p);
-             FileOutputStream out = new FileOutputStream(destination)) {
-            byte[] bArr = new byte[1024];
-            while (true) {
-                int read = in.read(bArr);
-                if (read <= 0) {
-                    in.close();
-                    out.close();
-
-                    String[] parts = destination.split("\\.");
-                    String ext = parts[parts.length - 1].toLowerCase();
-
-                    MediaScannerConnection.scanFile(mApp,
-                            new String[]{destination},
-                            new String[]{getMimeTypeFromExtension(ext)},
-                            (path, uri) -> {});
-
-                    return true;
-                }
-                out.write(bArr, 0, read);
-            }
-        } catch (IOException e) {
-            XposedBridge.log(e.getMessage());
-            return false;
-        }
+        return new File(filePath, file.getName());
     }
 }
