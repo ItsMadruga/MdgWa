@@ -96,16 +96,33 @@ public class XChatsFilter extends XHookBase {
                 var cursor = db.rawQuery(sql, null);
                 while (cursor.moveToNext()) {
                     // row da jid do chat
-                    @SuppressLint("Range") int jid = cursor.getInt(cursor.getColumnIndex("jid_row_id"));
+                    int jidRowId = cursor.getColumnIndex("jid_row_id");
+                    if (jidRowId == -1) {
+                        XposedBridge.log("jid_row_id -1");
+                        return;
+                    }
+
+                    var hiddenId = cursor.getColumnIndex("hidden");
+                    if (hiddenId == -1) {
+                        XposedBridge.log("hidden == -1");
+                        return;
+                    }
+
+                    int jid = cursor.getInt(jidRowId);
                     // verifica se esta arquivado ou n
-                    @SuppressLint("Range") int hidden = cursor.getInt(cursor.getColumnIndex("hidden"));
+                    int hidden = cursor.getInt(hiddenId);
                     if (hidden == 1) return;
                     // aqui eu fiz pra verificar se e grupo ou n, ai ele pega as infos da jid de acordo com a row da jid ali de cima
                     var sql2 = "SELECT * FROM jid WHERE _id == ?";
                     var cursor1 = db.rawQuery(sql2, new String[]{String.valueOf(jid)});
                     while (cursor1.moveToNext()) {
                         // esse server armazena oq ele e, s.whatsapp.net, lid, ou g.us
-                        @SuppressLint("Range") var server = cursor1.getString(cursor1.getColumnIndex("server"));
+                        var serverId = cursor1.getColumnIndex("server");
+                        if (serverId == -1){
+                            XposedBridge.log("serverId == -1");
+                            return;
+                        }
+                        var server = cursor1.getString(serverId);
                         // separacao simples
                         if (server.equals("g.us")) {
                             groupCount++;
@@ -113,16 +130,23 @@ public class XChatsFilter extends XHookBase {
                             chatCount++;
                         }
                     }
+                    cursor1.close();
                 }
+                cursor.close();
                 // cada tab tem sua classe, ent eu percorro todas pra funcionar dboa
                 for (int i = 0; i < tabs.size(); i++) {
                     var q = XposedHelpers.callMethod(a1, "A00", a1, i);
 
                     // deixei a de call pq a de gp nao aparece
-                    if (tabs.get(i) == CHATS) {
-                        setObjectField(q, "A01", groupCount);
-                    } else if (tabs.get(i) == CALLS) {
-                        setObjectField(q, "A01", chatCount);
+                    switch (tabs.get(i)) {
+                        case CHATS: {
+                            setObjectField(q, "A01", groupCount);
+                            break;
+                        }
+                        case CALLS: {
+                            setObjectField(q, "A01", chatCount);
+                            break;
+                        }
                     }
                 }
             }
