@@ -133,7 +133,7 @@ public class XChatsFilter extends XHookBase {
         //Issaq meio q ativa o contador da tab de grupo, mas fica totalmente igual ao chats
         XposedBridge.hookMethod(enableCountMethod, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 var indexTab = (int) param.args[2];
                 if (indexTab == tabs.indexOf(CALLS)) {
                     param.args[2] = tabs.indexOf(CHATS);
@@ -184,10 +184,16 @@ public class XChatsFilter extends XHookBase {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 var tab = (int) param.args[0];
-                var activity = (Activity) activityField.get(param.thisObject);
+                var activity = activityField.get(param.thisObject);
+
+                if (!(activity instanceof Activity)) {
+                    XposedBridge.log("[XChatsFilter]: Unable to get tab activity");
+                    return;
+                }
+
                 if (tab == GROUPS) {
                     if (idGroupId != 0) {
-                        param.setResult(activity.getString(idGroupId));
+                        param.setResult(((Activity) activity).getString(idGroupId));
                     } else {
                         param.setResult("Groups");
                     }
