@@ -2,7 +2,6 @@ package its.madruga.wpp.xposed.plugins.personalization;
 
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
-import static de.robv.android.xposed.XposedHelpers.setObjectField;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -271,8 +270,11 @@ public class XChatsFilter extends XHookBase {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 var isGroup = false;
+
                 var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
-                if (isGroupField != null) isGroup = (boolean) isGroupField;
+                if (isGroupField != null)
+                    isGroup = (boolean) isGroupField;
+
                 if (isGroup) {
                     param.setResult(GROUPS);
                 }
@@ -280,16 +282,29 @@ public class XChatsFilter extends XHookBase {
         });
     }
 
-    private void hookTabList(Class<?> home) throws Exception {
-        if (!prefs.getBoolean("separategroups", false)) return;
+    private void hookTabList(@NonNull Class<?> home) throws Exception {
         var onCreateTabList = Unobfuscator.loadTabListMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(onCreateTabList));
+
         var fieldTabsList = Arrays.stream(home.getDeclaredFields()).filter(f -> f.getType().equals(List.class)).findFirst().orElse(null);
+        if (fieldTabsList == null) {
+            logDebug("fieldTabsList not found!");
+            return;
+        }
+
         fieldTabsList.setAccessible(true);
         XposedBridge.hookMethod(onCreateTabList, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                fieldTabsList.set(null, tabs);
+                ArrayList<Integer> tabList = ((ArrayList<Integer>) fieldTabsList.get(null));
+
+                if (tabList == null) {
+                    logDebug("FieldTabList is null!");
+                    return;
+                }
+
+                tabList.clear();
+                tabList.addAll(tabs);
             }
         });
     }
