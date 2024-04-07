@@ -1,0 +1,126 @@
+<resources>
+    <string name="get_pid" translatable="false">pids=""; for p in /proc/[0-9]*; do read -r -d \'\' model &lt;$p/cmdline || [[ $model ]]; if [[ $model = com.whatsapp ]]; then pids+="${p##*/},"; fi done; setprop mdgwa.pids ${pids%,}</string>
+    <string name="app_name" translatable="false">MdgWa</string>
+    <string name="app_desc">Modul Xpose untuk menyesuaikan WhatsApp Anda..</string>
+    <string-array name="scope">
+        <item>com.whatsapp</item>
+        <item>android</item>
+    </string-array>
+    <string name="antirevoke">Pesan Anti-Hapus</string>
+    <string name="antirevoke_sum">Saat aktif, pesan tidak akan dihapus untuk Anda.</string>
+    <string name="ghostmode">Sembunyikan pengetikan</string>
+    <string name="ghostmode_sum">Saat aktif, orang tersebut tidak dapat melihat bahwa Anda sedang mengetik</string>
+    <string name="ghostmode_r">Sembunyikan rekaman audio....</string>
+    <string name="ghostmode_sum_r">Saat aktif, orang tersebut tidak dapat melihat bahwa Anda sedang merekam audio</string>
+    <string name="hidetag">Sembunyikan tag penerusan</string>
+    <string name="hidetag_sum">Saat aktif, ini memungkinkan Anda meneruskan pesan tanpa tag penerusan.</string>
+    <string name="hidestatusview">Sembunyikan Tampilan Status</string>
+    <string name="hidestatusview_sum">Saat aktif, ini memungkinkan Anda melihat status tanpa diketahui orang tersebut bahwa Anda melihatnya.</string>
+    <string name="hideread">Sembunyikan Tampilan Pesan</string>
+    <string name="hideread_sum">Saat aktif, ini memungkinkan Anda membaca pesan tanpa diketahui oleh orang tersebut bahwa Anda telah membacanya.</string>
+    <string name="danger">Melihat</string>
+    <string name="reboot">Setiap kali Anda mengubah sesuatu di layar ini, mulai ulang WhatsApp!</string>
+    <string name="reboot_module">Mulai ulang Module</string>
+    <string name="funcoes">Fungsi</string>
+    <string name="perso">Kustomisasi</string>
+    <string name="segundosnahora">Detik dalam Waktu</string>
+    <string name="segundosnahora_sum">Letakkan detik di samping waktu</string>
+    <string name="textonahora">Tambahkan teks di sebelah waktu</string>
+    <string name="no_active">Jika Anda berada di layar ini, berarti Anda belum memiliki modul yang aktif, belum menginstal LSPosed, atau belum memiliki APK WhatsApp yang dipatch oleh LSPatch.\n\nHarap perbaiki , mulai ulang modul,</string>
+    <string name="viewonce">Nonaktifkan Lihat Sekali</string>
+    <string name="viewonce_sum">Saat aktif, ini memungkinkan Anda membuka pesan sekali pakai sebanyak yang Anda inginkan.</string>
+    <string name="novotema">Tema WhatsApp baru</string>
+    <string name="novotema_sum">Jika diaktifkan, warna dan tema ikon akan berubah menjadi tema WhatsApp baru</string>
+    <string name="antirevokestatus">Status Anti-Hapus</string>
+    <string name="antirevokestatus_sum">Saat aktif, status tidak akan dihapus untuk Anda.</string>
+    <string name="hidereceipt">Sembunyikan Tanda Terima</string>
+    <string name="lorem_ipsum_dolor" translatable="false">Lorem Ipsum Dolor</string>
+    <string name="lorem_ipsum_dolor_sum" translatable="false">Lorem ipsum dolor sit amet,consectetur adipiscing elit. Etiam eget ligula eu lectus lobortis condimentum.</string>
+    <string name="hidereceipt_sum">Jangan beri tahu dia bahwa Anda telah menerima pesan tersebut</string>
+    <string name="outros">Yang lain</string>
+    <string name="antirevoke_title">Anti Pencabutan</string>
+    <string name="privacy_title">Pribadi</string>
+    <string name="settings_title">"Pengaturan"</string>
+    <string name="autoreboot">Mulai ulang otomatis</string>
+    <string name="autoreboot_sum">Opsi ini memerlukan akses root! Saat diaktifkan, WhatsApp akan otomatis restart untuk menyimpan semua perubahan yang dilakukan di sini</string>
+    <string name="root_needed">Diperlukan root</string>
+    <string name="root_needed_message">Opsi ini memerlukan akses root, berikan izin root di Magisk, KSU atau APatch</string>
+    <string name="xposedinit_error">Kesalahan saat memulai Xpose</string>
+    <string name="no_root">Terjadi kesalahan saat memberikan izin root</string>
+    <string name="ampm">Waktu dalam Format 12 Jam</string>
+    <string name="media_settings">Pengaturan Media</string>
+    <string name="statusdowload">Status Unduhan</string>
+    <string name="statusdowload_sum">Buat tombol untuk mengunduh status orang lain</string>
+    <string name="videoquality">Kirim video dalam kualitas HD</string>
+    <string name="videoquality_sum">Kirim video dalam kualitas HD</string>
+    <string name="colors_title">Warna</string>
+    <string name="colors_customization">Sesuaikan warna Anda</string>
+    <string name="colors_customization_sum">Ubah semua warna di WhatsApp Anda, cobalah!</string>
+    <string name="current_color_s">Warna saat ini: %s</string>
+    <string name="apply_button">Terapkan</string>
+    <string name="invalid_color">Warna tidak valid</string>
+    <string name="social_media_title">Media sosial</string>
+    <string name="telegram_group">Grup Telegram</string>
+    <string name="telegram_channel">Saluran Telegram</string>
+    <string name="github" translatable="false">Github</string>
+    <string name="itsmadruga">ItsMadruga (Owner)</string>
+    <string name="darker935">Darker935 (Contributor)</string>
+    <string name="telegram" translatable="false">Telegram</string>
+    <string name="required_version_s">Versi yang diperlukan: %s</string>
+    <string name="installed_version_s">Versi terinstal: %s</string>
+    <string name="whatsapp_version_error">Versi WhatsApp ini tidak didukung oleh modul kami, silakan gunakan versi WhatsApp yang diperlukan</string>
+    <string name="whatsapp_not_installed">WhatsApp belum terpasang! Instal dan coba lagi</string>
+    <string name="restart_whatsapp">Mulai ulang WhatsApp</string>
+    <string name="media_title">Media</string>
+    <string name="general">Umum</string>
+    <string name="novahome">Gaya rumah baru</string>
+    <string name="conversation">Percakapan</string>
+    <string name="primary_color">Warna utama</string>
+    <string name="background_color">Warna latar belakang</string>
+    <string name="secondary_color">Warna sekunder</string>
+    <string name="novaconfig">Gaya pengaturan baru</string>
+    <string name="novaconfig_sum">Aktifkan gaya pengaturan baru, dengan foto profil di toolbar beranda</string>
+    <string name="novahome_sum">Aktifkan gaya rumah baru, dengan navigasi bawah</string>
+    <string name="novofiltro">Penyaring obrolan</string>
+    <string name="novofiltro_sum">Aktifkan filter obrolan asli, yang terletak di bagian atas layar beranda, memfilter kontak, bisnis, dan lainnya</string>
+    <string name="menuwicon">Ikon menu</string>
+    <string name="menuwicon_sum">Tambahkan ikon pada opsi menu di sepanjang aplikasi</string>
+    <string name="strokebuttons">Bentuk tombol</string>
+    <string name="strokebuttons_sum">Buat goresan di sekitar beberapa tombol di WhatsApp</string>
+    <string name="outlinedicons">Ikon yang diuraikan</string>
+    <string name="outlinedicons_sum">Gaya ikon baru, jika Anda suka, aktifkan itu</string>
+    <string name="freezelastseen">Bekukan terakhir terlihat</string>
+    <string name="freezelastseen_sum">Jika diaktifkan, Anda tidak melihat pembaruan kehadiran apa pun dari pengguna lain, seperti mengetik, merekam, online…</string>
+    <string name="removeforwardlimit_sum">Hapus batas penerusan untuk 5 obrolan (normal) dan 1 obrolan (beberapa kali)</string>
+    <string name="removeforwardlimit">Hapus batas penerusan</string>
+    <string name="forward">Penerusan</string>
+    <string name="home">Layar beranda</string>
+    <string name="showname">Tampilkan nama</string>
+    <string name="showname_sum">Tampilkan nama akun Anda di bagian atas layar beranda, ganti \"WhatsApp\" dengan nama Anda.</string>
+    <string name="showbio_sum">Tampilkan bio Anda di bawah judul toolbar</string>
+    <string name="showbio">Tunjukkan biografi</string>
+    <string name="reset_preferences">Setel ulang preferensi</string>
+    <string name="reset_preferences_sum">Ketuk di sini untuk mengatur ulang semua pengaturan modul</string>
+    <string name="reset_preferences_message">Tindakan ini akan mengatur ulang semua preferensi yang disimpan dalam modul, dan Anda harus mengaktifkan kembali semua konfigurasi</string>
+    <string name="reset">Mengatur ulang</string>
+    <string name="bubble_left">Gelembung kiri</string>
+    <string name="bubble_right">Gelembung kanan</string>
+    <string name="general_summary">Kustomisasi diterapkan secara asli oleh Whatsapp</string>
+    <string name="home_summary">Sesuaikan layar beranda sesuai keinginan Anda</string>
+    <string name="conversation_summary">Ubah beberapa hal di layar percakapan Anda, seperti balon, entri, dan lainnya</string>
+    <string name="privacy_summary">Sembunyikan konfirmasi baca, sembunyikan tanda terima, terakhir dilihat, dan banyak lagi</string>
+    <string name="media_summary">Status unduhan, pengaturan media, dan lainnya</string>
+    <string name="module_working_text">Modul bekerja dengan %s</string>
+    <string name="module_not_working">Modul tidak berfungsi</string>
+    <string name="lsposed_not_found">LSposed tidak ditemukan</string>
+    <string name="lspatch_not_found">LPatch tidak ditemukan</string>
+    <string name="loading">Memuat</string>
+    <string name="module_not_enabled_text">Modul ini dinonaktifkan di LSPosed</string>
+    <string name="module_not_setted_text">Modul diaktifkan, tetapi cakupannya kosong</string>
+    <string name="imagequality">Kirim gambar dalam kualitas HD</string>
+    <string name="imagequality_sum">Kirim gambar dalam kualitas HD</string>
+    <string name="downloadviewonce">Unduh Lihat Sekali</string>
+    <string name="downloadviewonce_sum">Buat tombol unduh pasa pesan sekali tampil</string>
+    <string name="separate_groups_sum">Pisahkan obrolan Anda berdasarkan: grup, obrolan pribadi, status, panggilan, komunitas</string>
+    <string name="separate_groups">Kelompok terpisah</string>
+</resources>
