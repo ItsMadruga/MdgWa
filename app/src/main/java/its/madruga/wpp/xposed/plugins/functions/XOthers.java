@@ -3,6 +3,7 @@ package its.madruga.wpp.xposed.plugins.functions;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -88,6 +89,7 @@ public class XOthers extends XHookBase {
 
         var homeActivity = findClass("com.whatsapp.HomeActivity", loader);
         XposedHelpers.findAndHookMethod(homeActivity, "onCreateOptionsMenu", Menu.class, new XC_MethodHook() {
+            @SuppressLint("ApplySharedPref")
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Menu menu = (Menu) param.args[0];
@@ -113,10 +115,10 @@ public class XOthers extends XHookBase {
                 var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
                 var dndmode = shared.getBoolean("dndmode", false);
                 var idIconOn = mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName());
-                var cu = mApp.getDrawable(idIconOn);
+                var iconDND = mApp.getDrawable(idIconOn);
                 if (dndmode) {
                     var idIconOff = mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName());
-                    cu = mApp.getDrawable(idIconOff);
+                    iconDND = mApp.getDrawable(idIconOff);
                 }
                 var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
                 item.setIcon(iconDND);
@@ -127,8 +129,7 @@ public class XOthers extends XHookBase {
                                 .setTitle("DND Mode")
                                 .setMessage("When Do Not Disturb mode is on, you won't be able to send or receive messages.")
                                 .setPositiveButton("Activate", (dialog, which) -> {
-                                    shared.edit().putBoolean("dndmode", !dndmode).apply();
-                                    XposedBridge.log(String.valueOf(shared.getBoolean("dndmode", false)));
+                                    shared.edit().putBoolean("dndmode", !dndmode).commit();
 
                                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                                     if (mApp != null) {
@@ -142,8 +143,7 @@ public class XOthers extends XHookBase {
                         return true;
                     }
 
-                    shared.edit().putBoolean("dndmode", !dndmode).apply();
-                    logDebug(String.valueOf(shared.getBoolean("dndmode", false)));
+                    shared.edit().putBoolean("dndmode", !dndmode).commit();
 
                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                     if (mApp != null) {
