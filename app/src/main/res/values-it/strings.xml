@@ -117,5 +117,5 @@
     <string name="blueonreply">Invia spunta blu dopo aver risposto</string>
     <string name="blueonreply_sum">Invia la spunta blu dopo aver risposto a un messaggio</string>
     <string name="hide_archived_chat">Nascondi chat archiviate</string>
-    <string name="hide_archived_chat_sum">Nascondi le chat archiviate e accedi tramite un tap prolungato sul nome nella barra in alto della schermata iniziale</string>
+    <string name="hide_archived_chat_sum">Nascondi le chat archiviate e accedi dalla schermata iniziale tramite un tap prolungato sul nome nella barra</string>
 </resources>
