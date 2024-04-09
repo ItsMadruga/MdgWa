@@ -113,10 +113,10 @@ public class XOthers extends XHookBase {
                 var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
                 var dndmode = shared.getBoolean("dndmode", false);
                 var idIconOn = mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName());
-                var cu = mApp.getDrawable(idIconOn);
+                var iconDND = mApp.getDrawable(idIconOn);
                 if (dndmode) {
                     var idIconOff = mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName());
-                    cu = mApp.getDrawable(idIconOff);
+                    iconDND = mApp.getDrawable(idIconOff);
                 }
                 var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
                 item.setIcon(iconDND);
