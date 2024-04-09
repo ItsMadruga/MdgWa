@@ -18,10 +18,8 @@ An Xposed module to customize your WhatsApp.
 | Outlined icons | ✅ |
 | Show name and bio | ✅ |
 | AM:PM Time Format | ✅ |
-| AM:PM Time Format | ✅ |
 | Seconds in time | ✅ |
 | Change color global | ✅ |
-| Separe chats and groups | ✅ |
 | Separe chats and groups | ✅ |
 
 
@@ -36,10 +34,6 @@ An Xposed module to customize your WhatsApp.
 | Videos in high resolution | ✅ |
 | Images in high resolution | ✅ |
 | Send blue tick on reply | ✅ |
-| Download status | ✅|
-| Download view once | ✅ |
-| Videos in high resolution | ✅ |
-| Images in high resolution | ✅ |
 
 ### Privacy
 
