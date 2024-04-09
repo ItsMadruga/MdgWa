@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MdgWa.Toolbar.TitleLarge" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MdgWa.Toolbar.TitleSmall" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="MdgWa" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#BDBDBD</item>
+        // fundo switch ativado
+        <item name="colorAccent">#979797</item>
+        // sombra quando altera switch
+        <item name="colorOnPrimary">#979797</item>
+        // bola do switch ativado
+        <item name="colorPrimaryDark">#fff</item>
+        // status bar fundo
+        <item name="colorSurfaceContainerLow">#E8E8E8</item>
+        // fundo dos cards
+        <item name="colorSurfaceContainerHighest">#fff</item>
+        // fundo switch desativado
+        <item name="colorPrimaryContainer">#979797</item>
+        // bola quando aperta switch ativado
+        <item name="colorOnSurfaceVariant">#BCBCBC</item>
+        // bola quando aperta switch desativado
+        <item name="colorOutline">#BCBCBC</item>
+        // lateral do switch
+        <item name="android:windowBackground">#fff</item>
+        // fundo da tela
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

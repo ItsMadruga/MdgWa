@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="antirevoke_buttons">
+        <item>Desativado</item>
+        <item>Mostrar texto</item>
+        <item>Mostrar ícone</item>
+    </string-array>
+</resources>

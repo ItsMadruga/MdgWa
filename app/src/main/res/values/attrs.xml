@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SwitchButtonTop">
+        <attr name="android:text" />
+        <attr name="android:title" />
+        <attr name="android:summary" />
+    </declare-styleable>
+    <declare-styleable name="SwitchButton">
+        <attr name="android:text" />
+        <attr name="android:summary" />
+    </declare-styleable>
+    <declare-styleable name="ColorPickerButton">
+        <attr name="android:text" />
+        <attr name="android:summary" />
+    </declare-styleable>
+    <declare-styleable name="RadioButton">
+        <attr name="android:text" />
+        <attr name="android:summary" />
+        <attr name="android:entries" />
+        <attr name="android:entryValues" />
+    </declare-styleable>
+    <declare-styleable name="TextViewButton">
+        <attr name="loadClass" format="string" />
+        <attr name="android:text" />
+        <attr name="android:summary" />
+    </declare-styleable>
+</resources>

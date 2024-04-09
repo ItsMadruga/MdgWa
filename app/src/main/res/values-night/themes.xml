@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MdgWa" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#50B9FF</item>
+        // fundo switch ativado 0099FF
+        <item name="colorAccent">#0099FF</item>
+        // sombra quando altera switch
+        <item name="colorOnPrimary">#0099FF</item>
+        // bola do switch ativado
+        <item name="colorPrimaryDark">#000</item>
+        // status bar fundo
+        <item name="colorSurfaceContainerLow">#101010</item>
+        // fundo do card
+        <item name="colorSurfaceContainerHighest">#40484D</item>
+        // fundo switch desativado
+        <item name="colorPrimaryContainer">#0099FF</item>
+        // bola quando aperta switch ativado
+        <item name="colorOnSurfaceVariant">#8A9297</item>
+        // bola quando aperta switch desativado
+        <item name="colorOutline">#8A9297</item>
+        // lateral do switch
+        <item name="android:windowBackground">#000</item>
+        // fundo da tela
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
