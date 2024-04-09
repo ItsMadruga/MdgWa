@@ -2,7 +2,6 @@ package its.madruga.wpp.xposed.plugins.personalization;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -10,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -103,7 +101,6 @@ public class XBioAndName extends XHookBase {
                 mSubtitle.setSingleLine();
                 mSubtitle.setSelected(true);
                 parent.addView(mSubtitle);
-
             } else {
                 mTitle.setGravity(Gravity.CENTER);
             }

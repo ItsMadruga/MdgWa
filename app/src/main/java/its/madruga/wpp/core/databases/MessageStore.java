@@ -5,6 +5,11 @@ public class MessageStore extends DatabaseModel {
         super(dbName, loader);
     }
 
+    public void createTableBlueMessage() {
+        String sql = "CREATE TABLE IF NOT EXISTS chatMessages (id INTEGER PRIMARY KEY AUTOINCREMENT, jid TEXT NOT NULL, message_key TEXT, participant_jid TEXT, markread INTEGER DEFAULT 0);";
+        writetableDb.execSQL(sql);
+    }
+
     public String getFirstMessage(String jid) {
 
         var readable = database.getReadableDatabase();

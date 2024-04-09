@@ -108,6 +108,15 @@
                     android:tag="antirevokestatus"
                     android:text="@string/antirevokestatus" />
 
+                <its.madruga.wpp.views.RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/call_blocker_buttons"
+                    android:entryValues="@array/call_blocker_values"
+                    android:summary="@string/call_blocker_sum"
+                    android:tag="call_privacy"
+                    android:text="@string/call_blocker" />
+
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

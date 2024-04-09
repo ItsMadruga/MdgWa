@@ -113,8 +113,12 @@
     <string name="downloadviewonce_sum">Bir Kez Görüntülenebilir medyalar için indirme düğmesi oluştur</string>
     <string name="separate_groups_sum">Sohbetlerinizi gruplar, özel sohbetler, durum, aramalar, topluluklar şeklinde ayırın</string>
     <string name="separate_groups">Grupları Ayır</string>
-    <string name="blueonreply">Cevapta mavi tik gönder</string>
+    <string name="blueonreply">Cevaplarken mavi tik gönder</string>
     <string name="blueonreply_sum">Mesaja cevap verirken mavi tik gönderir</string>
-    <string name="hide_archived_chat">Hide archived chat</string>
-    <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
+    <string name="call_blocker">Call Blocker</string>
+    <string name="call_blocker_sum">Block WhatsApp calls based on privacy type</string>
+    <string name="hide_archived_chat">Arşivlenmiş sohbeti gizle</string>
+    <string name="hide_archived_chat_sum">Arşivlenmiş sohbeti gizle ve sohbete erişmek için uzun dokunma menüsünü etkinleştir</string>
+    <string name="hide_once_view_seen">Bir kez görüntülendikten ve işitildikten sonra mavi işareti gizle</string>
+    <string name="hide_once_view_seen_sum">Bir kez görüntülendikten ve işitildikten sonra mavi işareti gizle</string>
 </resources>

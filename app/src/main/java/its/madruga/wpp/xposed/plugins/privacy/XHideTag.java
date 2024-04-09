@@ -28,7 +28,6 @@ public class XHideTag extends XHookBase {
         XposedBridge.hookMethod(method, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                logDebug("Forward Detected");
                 var arg = (int) param.args[0];
                 if (arg == 1) {
                     var stacktrace = Thread.currentThread().getStackTrace();

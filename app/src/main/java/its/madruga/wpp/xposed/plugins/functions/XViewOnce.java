@@ -32,21 +32,24 @@ public class XViewOnce extends XHookBase {
 
     @Override
     public void doHook() throws Exception {
-        if (prefs.getBoolean("viewonce", false)) {
+        var methods = Unobfuscator.loadViewOnceMethod(loader);
 
-            var methods = Unobfuscator.loadViewOnceMethod(loader);
-
-            for (var method : methods) {
-                logDebug(Unobfuscator.getMethodDescriptor(method));
-                XposedBridge.hookMethod(method, XC_MethodReplacement.DO_NOTHING);
-            }
+        for (var method : methods) {
+            logDebug(Unobfuscator.getMethodDescriptor(method));
+            XposedBridge.hookMethod(method, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    if (!prefs.getBoolean("viewonce", false)) return;
+                    param.setResult(null);
+                }
+            });
         }
 
         if (prefs.getBoolean("downloadviewonce", false)) {
 
             var menuMethod = Unobfuscator.loadViewOnceDownloadMenuMethod(loader);
             logDebug(Unobfuscator.getMethodDescriptor(menuMethod));
-            var menuIntField= Unobfuscator.loadViewOnceDownloadMenuField(loader);
+            var menuIntField = Unobfuscator.loadViewOnceDownloadMenuField(loader);
             logDebug(Unobfuscator.getFieldDescriptor(menuIntField));
             var initIntField = Unobfuscator.loadViewOnceDownloadMenuField2(loader);
             logDebug(Unobfuscator.getFieldDescriptor(initIntField));
@@ -57,24 +60,25 @@ public class XViewOnce extends XHookBase {
 
             XposedBridge.hookMethod(menuMethod, new XC_MethodHook() {
                 @Override
+                @SuppressLint("DiscouragedApi")
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
 
                     if (XposedHelpers.getIntField(param.thisObject, menuIntField.getName()) == 3) {
                         Menu menu = (Menu) param.args[0];
-                        @SuppressLint("DiscouragedApi") var idIconDownload = mApp.getResources().getIdentifier("btn_download", "drawable", mApp.getPackageName());
+                         var idIconDownload = mApp.getResources().getIdentifier("btn_download", "drawable", mApp.getPackageName());
                         MenuItem item = menu.add(0, 0, 0, "Download").setIcon(idIconDownload);
                         item.setShowAsAction(2);
                         item.setOnMenuItemClickListener(item1 -> {
                             var i = XposedHelpers.getIntField(param.thisObject, initIntField.getName());
                             logDebug("init: " + i);
-                            var message = callMethod.getParameterCount() == 2 ? XposedHelpers.callMethod(param.thisObject, callMethod.getName(), param.thisObject,i) : XposedHelpers.callMethod(param.thisObject, callMethod.getName(),i);
+                            var message = callMethod.getParameterCount() == 2 ? XposedHelpers.callMethod(param.thisObject, callMethod.getName(), param.thisObject, i) : XposedHelpers.callMethod(param.thisObject, callMethod.getName(), i);
                             log("message: " + message);
                             if (message != null) {
                                 var fileData = XposedHelpers.getObjectField(message, "A01");
                                 var file = (File) XposedHelpers.getObjectField(fileData, fileField.getName());
                                 if (copyFile(file)) {
-                                    Toast.makeText(mApp, "Saved to "+ getDestination(file), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mApp, "Saved to " + getDestination(file), Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(mApp, "Error when saving, try again", Toast.LENGTH_SHORT).show();
                                 }
@@ -122,7 +126,8 @@ public class XViewOnce extends XHookBase {
                     MediaScannerConnection.scanFile(mApp,
                             new String[]{destination},
                             new String[]{getMimeTypeFromExtension(ext)},
-                            (path, uri) -> {});
+                            (path, uri) -> {
+                            });
 
                     return true;
                 }

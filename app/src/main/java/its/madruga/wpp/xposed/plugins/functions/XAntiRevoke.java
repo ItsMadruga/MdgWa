@@ -90,8 +90,6 @@ public class XAntiRevoke extends XHookBase {
     @Override
     public void doHook() throws Exception {
         mShared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
-        var antirevoke = prefs.getInt("antirevoke", 0);
-        var antirevokestatus = prefs != null ? prefs.getInt("antirevokestatus", 0) : 0;
 
         var onStartMethod = Unobfuscator.loadAntiRevokeOnStartMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(onStartMethod));
@@ -143,21 +141,18 @@ public class XAntiRevoke extends XHookBase {
             }
         });
 
-        if (antirevoke != 0 || antirevokestatus != 0) {
-
-            XposedBridge.hookMethod(antiRevokeMessageMethod, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    var objMessage = classThreadMessage.cast(param.args[0]);
-                    var fieldMessageDetails = XposedHelpers.getObjectField(objMessage, fieldMessageKey.getName());
-                    var fieldIsFromMe = XposedHelpers.getBooleanField(fieldMessageDetails, "A02");
-                    if (!fieldIsFromMe) {
-                        if (antiRevoke(objMessage) != 0) param.setResult(true);
-                    }
+        XposedBridge.hookMethod(antiRevokeMessageMethod, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) {
+                var objMessage = classThreadMessage.cast(param.args[0]);
+                var fieldMessageDetails = XposedHelpers.getObjectField(objMessage, fieldMessageKey.getName());
+                var fieldIsFromMe = XposedHelpers.getBooleanField(fieldMessageDetails, "A02");
+                if (!fieldIsFromMe) {
+                    if (antiRevoke(objMessage) != 0) param.setResult(true);
                 }
-            });
+            }
+        });
 
-        }
 
         XposedBridge.hookMethod(bubbleMethod, new XC_MethodHook() {
             @Override
@@ -206,7 +201,7 @@ public class XAntiRevoke extends XHookBase {
         HashSet<String> messages = getRevokedMessages(objMessage);
         messages.add(messageKey);
         newRevokedMessages = Arrays.toString(messages.toArray());
-        mShared.edit().putString(authorJid + "_revoked",newRevokedMessages).apply();
+        mShared.edit().putString(authorJid + "_revoked", newRevokedMessages).apply();
 
     }
 

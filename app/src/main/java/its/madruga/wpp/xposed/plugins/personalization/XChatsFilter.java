@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -30,18 +32,14 @@ public class XChatsFilter extends XHookBase {
     public final int STATUS = 300;
     public final int CALLS = 400;
     public final int COMMUNITY = 600;
-    public final int GROUPS = 800;
-    public final ArrayList<Integer> tabs = new ArrayList<>();
+    public final int GROUPS = 500;
+    public ArrayList<Integer> tabs = new ArrayList<>();
     public int tabCount = 0;
     private int idGroupId = 0;
+    public static HashMap<Integer, Object> tabInstances = new HashMap<>();
 
     public XChatsFilter(ClassLoader loader, XSharedPreferences preferences) {
         super(loader, preferences);
-        tabs.add(CHATS);
-        tabs.add(GROUPS);
-        tabs.add(STATUS);
-        tabs.add(COMMUNITY);
-        tabs.add(CALLS);
     }
 
     public void doHook() throws Exception {
@@ -78,6 +76,7 @@ public class XChatsFilter extends XHookBase {
         var pagerField = Unobfuscator.loadTabCountField(loader);
         XposedBridge.hookMethod(runMethod, new XC_MethodHook() {
             @Override
+            @SuppressLint({"Recycle", "Range"})
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 var id = (int) getObjectField(param.thisObject, idField.getName());
                 if (id != 32) return;
@@ -88,41 +87,41 @@ public class XChatsFilter extends XHookBase {
                 var groupCount = 0;
                 // Fiz ele pegar direto da database, esse metodo que dei hook, e chamado sempre q vc muda de tab, entra/sai de um chat ->
                 // ou quando a lista e atualizada, ent ele sempre vai atualizar
-                var db = SQLiteDatabase.openDatabase("/data/data/com.whatsapp/databases/msgstore.db", null, SQLiteDatabase.OPEN_READONLY);
-                // essa coluna que eu peguei, mostra a quantidade de mensagens n lidas (obvio ne).
-                // nao coloquei apenas > 0 pq quando vc marca um chat como nao lido, esse valor fica -1
-                // entao pra contar direitinho deixei != 0
-                var sql = "SELECT * FROM chat WHERE unseen_message_count != 0";
-                var cursor = db.rawQuery(sql, null);
-                while (cursor.moveToNext()) {
-                    // row da jid do chat
-                    @SuppressLint("Range") int jid = cursor.getInt(cursor.getColumnIndex("jid_row_id"));
-                    // verifica se esta arquivado ou n
-                    @SuppressLint("Range") int hidden = cursor.getInt(cursor.getColumnIndex("hidden"));
-                    if (hidden == 1) return;
-                    // aqui eu fiz pra verificar se e grupo ou n, ai ele pega as infos da jid de acordo com a row da jid ali de cima
-                    var sql2 = "SELECT * FROM jid WHERE _id == ?";
-                    var cursor1 = db.rawQuery(sql2, new String[]{String.valueOf(jid)});
-                    while (cursor1.moveToNext()) {
-                        // esse server armazena oq ele e, s.whatsapp.net, lid, ou g.us
-                        @SuppressLint("Range") var server = cursor1.getString(cursor1.getColumnIndex("server"));
-                        // separacao simples
-                        if (server.equals("g.us")) {
-                            groupCount++;
-                        } else {
-                            chatCount++;
+                try (SQLiteDatabase db = SQLiteDatabase.openDatabase(XMain.mApp.getCacheDir().getParentFile().getAbsolutePath() + "/databases/msgstore.db", null, SQLiteDatabase.OPEN_READONLY)) {
+                    // essa coluna que eu peguei, mostra a quantidade de mensagens n lidas (obvio ne).
+                    // nao coloquei apenas > 0 pq quando vc marca um chat como nao lido, esse valor fica -1
+                    // entao pra contar direitinho deixei != 0
+                    var sql = "SELECT * FROM chat WHERE unseen_message_count != 0";
+                    var cursor = db.rawQuery(sql, null);
+                    XposedBridge.log("cursor.getCount(): " + cursor.getCount());
+                    while (cursor.moveToNext()) {
+                        // row da jid do chat
+                       int jid = cursor.getInt(cursor.getColumnIndex("jid_row_id"));
+                        // verifica se esta arquivado ou n
+                        int hidden = cursor.getInt(cursor.getColumnIndex("hidden"));
+                        if (hidden == 1) continue;
+                        // aqui eu fiz pra verificar se e grupo ou n, ai ele pega as infos da jid de acordo com a row da jid ali de cima
+                        var sql2 = "SELECT * FROM jid WHERE _id == ?";
+                        var cursor1 = db.rawQuery(sql2, new String[]{String.valueOf(jid)});
+                        while (cursor1.moveToNext()) {
+                            // esse server armazena oq ele e, s.whatsapp.net, lid, ou g.us
+                            var server = cursor1.getString(cursor1.getColumnIndex("server"));
+                            // separacao simples
+                            if (server.equals("g.us")) {
+                                groupCount++;
+                            } else {
+                                chatCount++;
+                            }
                         }
                     }
-                }
-                // cada tab tem sua classe, ent eu percorro todas pra funcionar dboa
-                for (int i = 0; i < tabs.size(); i++) {
-                    var q = XposedHelpers.callMethod(a1, "A00", a1, i);
-
-                    // deixei a de call pq a de gp nao aparece
-                    if (tabs.get(i) == CHATS) {
-                        setObjectField(q, "A01", groupCount);
-                    } else if (tabs.get(i) == CALLS) {
-                        setObjectField(q, "A01", chatCount);
+                    // cada tab tem sua classe, ent eu percorro todas pra funcionar dboa
+                    for (int i = 0; i < tabs.size(); i++) {
+                        var q = XposedHelpers.callMethod(a1, "A00", a1, i);
+                        if (tabs.get(i) == CALLS) {
+                            setObjectField(q, "A01", chatCount);
+                        } else if (tabs.get(i) == CHATS) {
+                            setObjectField(q, "A01", groupCount);
+                        }
                     }
                 }
             }
@@ -130,7 +129,6 @@ public class XChatsFilter extends XHookBase {
 
         var enableCountMethod = Unobfuscator.loadEnableCountTabMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(enableCountMethod));
-        //Issaq meio q ativa o contador da tab de grupo, mas fica totalmente igual ao chats
         XposedBridge.hookMethod(enableCountMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -219,48 +217,39 @@ public class XChatsFilter extends XHookBase {
 
         XposedBridge.hookMethod(getTabMethod, new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 var tabId = ((Number) tabs.get((int) param.args[0])).intValue();
-
                 if (tabId == GROUPS || tabId == CHATS) {
-                    var convFragment = XposedHelpers.findConstructorExact(cFrag.getName(), loader).newInstance();
-                    var convFragmentClass = convFragment.getClass();
-                    XposedHelpers.setAdditionalInstanceField(convFragment, "isGroup", tabId == GROUPS);
-                    XposedBridge.hookMethod(methodTabInstance, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            var isGroup = false;
-                            var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
-
-                            // Temp fix for
-                            if (isGroupField == null) {
-                                logDebug("-----------------------------------");
-                                logDebug("isGroupTabCount: " + tabCount);
-                                logDebug("isGroupTabField: " + (isGroupField != null));
-                                logDebug("isGroupTabCount >= 2: " + (tabCount >= 2));
-                                logDebug("-----------------------------------");
-                                isGroup = tabCount >= 2;
-                                tabCount++;
-                                if (tabCount == 4) tabCount = 0;
-                            } else {
-                                isGroup = (boolean) isGroupField;
-                            }
-                            logDebug("[•] isGroup: " + isGroup);
-
-                            var chatsList = (List) param.getResult();
-                            var editableChatList = new ArrayList<>();
-                            var requiredServer = isGroup ? "g.us" : "s.whatsapp.net";
-                            for (var chat : chatsList) {
-                                var server = (String) callMethod(getObjectField(chat, "A00"), "getServer");
-                                if (server.equals(requiredServer)) {
-                                    editableChatList.add(chat);
-                                }
-                            }
-                            param.setResult(editableChatList);
-                        }
-                    });
+                    var convFragment = cFrag.newInstance();
                     param.setResult(convFragment);
                 }
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                var tabId = ((Number) tabs.get((int) param.args[0])).intValue();
+                tabInstances.remove(tabId);
+                tabInstances.put(tabId, param.getResult());
+            }
+        });
+
+        XposedBridge.hookMethod(methodTabInstance, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                var tabChat = tabInstances.get(CHATS);
+                var tabGroup = tabInstances.get(GROUPS);
+                if (!Objects.equals(tabChat, param.thisObject) && !Objects.equals(tabGroup, param.thisObject))
+                    return;
+                var chatsList = (List) param.getResult();
+                var editableChatList = new ArrayList<>();
+                var requiredServer = Objects.equals(tabGroup, param.thisObject) ? "g.us" : "s.whatsapp.net";
+                for (var chat : chatsList) {
+                    var server = (String) callMethod(getObjectField(chat, "A00"), "getServer");
+                    if (server.equals(requiredServer)) {
+                        editableChatList.add(chat);
+                    }
+                }
+                param.setResult(editableChatList);
             }
         });
 
@@ -270,10 +259,7 @@ public class XChatsFilter extends XHookBase {
         XposedBridge.hookMethod(fabintMethod, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                var isGroup = false;
-                var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
-                if (isGroupField != null) isGroup = (boolean) isGroupField;
-                if (isGroup) {
+                if (Objects.equals(tabInstances.get(GROUPS), param.thisObject)) {
                     param.setResult(GROUPS);
                 }
             }
@@ -288,8 +274,11 @@ public class XChatsFilter extends XHookBase {
         fieldTabsList.setAccessible(true);
         XposedBridge.hookMethod(onCreateTabList, new XC_MethodHook() {
             @Override
+            @SuppressWarnings("unchecked")
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                fieldTabsList.set(null, tabs);
+                tabs = (ArrayList<Integer>) fieldTabsList.get(null);
+                if (!tabs.contains(GROUPS))
+                    tabs.add(1, GROUPS);
             }
         });
     }
