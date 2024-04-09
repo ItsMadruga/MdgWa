@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -13,9 +12,8 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import its.madruga.wpp.R;
 
-public class SwitchButtonTop extends LinearLayout {
+public class SwitchButtonTop extends AbstractSwitchButton {
 
-    public static String ANDROID_NS = "http://schemas.android.com/apk/res/android";
 
     public SwitchButtonTop(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -27,7 +25,8 @@ public class SwitchButtonTop extends LinearLayout {
         init(context, attrs);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    @Override
+    protected void init(Context context, AttributeSet attrs) {
         inflate(context, R.layout.switch_button_top_layout, (ViewGroup) getRootView());
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -38,7 +37,6 @@ public class SwitchButtonTop extends LinearLayout {
         try {
             var title = a.getText(R.styleable.SwitchButtonTop_android_text);
             var summary = a.getText(R.styleable.SwitchButtonTop_android_summary);
-            var tag = attrs.getAttributeValue(ANDROID_NS, "tag");
             var category = a.getText(R.styleable.SwitchButtonTop_android_title);
 
             var switchButton = (MaterialSwitch) findViewById(R.id.switch_button);
@@ -48,14 +46,14 @@ public class SwitchButtonTop extends LinearLayout {
             if (summary != null) {
                 switchButtonSummary.setText(summary);
             } else switchButtonSummary.setVisibility(GONE);
-            switchButton.setTag(tag);
 
             var switchButtonCategory = (TextView) findViewById(R.id.category_title);
             switchButtonCategory.setText(category);
-
+            super.init(context, attrs);
         } finally {
             a.recycle();
         }
     }
+
 
 }

@@ -118,4 +118,8 @@
     <string name="blueonreply_sum">Отправляет синюю галочку при ответе на сообщение</string>
     <string name="hide_archived_chat">Hide archived chat</string>
     <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
+    <string name="hide_once_view_seen">Hide Blue Tick from Once View and Audio</string>
+    <string name="hide_once_view_seen_sum">hide that once view and audio has been seen</string>
+    <string name="call_blocker">Call Blocker</string>
+    <string name="call_blocker_sum">Block WhatsApp calls based on privacy type</string>
 </resources>

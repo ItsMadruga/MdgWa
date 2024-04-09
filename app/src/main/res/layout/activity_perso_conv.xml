@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:other="http://schemas.its.madruga.wpp/other"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -47,6 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:tag="ampm"
+                    other:reboot="true"
                     android:text="@string/ampm"
                     android:title="@string/conversation" />
 
@@ -54,6 +56,7 @@
                     android:id="@+id/segundos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    other:reboot="true"
                     android:summary="@string/segundosnahora_sum"
                     android:tag="segundos"
                     android:text="@string/segundosnahora" />

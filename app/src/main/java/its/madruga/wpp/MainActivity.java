@@ -40,30 +40,12 @@ import its.madruga.wpp.xposed.XposedChecker;
 public class MainActivity extends BaseActivity {
 
     public final static String TAG = "Debug-Main";
-    public static Process shell;
-    public static boolean isRootGranted = false;
     public static boolean isLSPatched = false;
     public List<PackageInfo> lspatchPkgs = new ArrayList<>();
     public List<PackageInfo> wppPkgs = new ArrayList<>();
     public HashSet<String> wppPkgNames = new HashSet<>();
     private boolean requestingLSPosedScope = false;
 
-    private void requestRootAccess() {
-        Process su;
-        DataOutputStream outputStream;
-        BufferedReader inputStream;
-        try {
-            su = Runtime.getRuntime().exec("su");
-            outputStream = new DataOutputStream(su.getOutputStream());
-            outputStream.writeBytes("whoami\n");
-            outputStream.flush();
-            inputStream = new BufferedReader(new InputStreamReader(su.getInputStream()));
-            isRootGranted = inputStream.readLine() != null;
-            shell = su;
-        } catch (IOException e) {
-            Toast.makeText(this, "Error while executing 'su'", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -73,13 +55,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPause() {
         if (requestingLSPosedScope) {
-            try {
-                var stdin = new DataOutputStream(shell.getOutputStream());
-                stdin.writeBytes("kill " + myPid() + "\n");
-                stdin.flush();
-            } catch (IOException e) {
-                killProcess(myPid());
-            }
+            killProcess(myPid());
         }
         super.onPause();
     }
@@ -89,7 +65,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setWppPkgs();
-        requestRootAccess();
 
         if (!XposedChecker.isActive()) {
             requestLSPatchAccess();
@@ -97,9 +72,6 @@ public class MainActivity extends BaseActivity {
                 setContentViewMain();
             } else {
                 setContentViewError();
-                if (isRootGranted) {
-                    requestModuleScope();
-                }
             }
         } else {
             setContentViewMain();
@@ -146,29 +118,8 @@ public class MainActivity extends BaseActivity {
         }).setNegativeButton(android.R.string.cancel, ((dialog, which) -> dialog.dismiss())).create().show());
 
         findViewById(R.id.restart_whatsapp).setOnClickListener(v -> {
-            try {
-                if (isRootGranted) {
-                    var stdin = new DataOutputStream(shell.getOutputStream());
-                    stdin.writeBytes("pidof com.whatsapp;echo null\n");
-                    stdin.flush();
-                    var stdout = new BufferedReader(new InputStreamReader(shell.getInputStream()));
-                    var line = stdout.readLine();
-                    if (line.equals("null")) {
-                        Toast.makeText(this, "No proccesses", Toast.LENGTH_SHORT).show();
-                    } else {
-                        var pids = line.split(" ");
-                        for (var pid : pids) {
-                            stdin.writeBytes("kill " + pid + "\n");
-                            stdin.flush();
-                        }
-                        Toast.makeText(this, "Killed", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    showRootNeededDialog();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Intent intent = new Intent(BuildConfig.APPLICATION_ID + ".WHATSAPP.RESTART");
+            sendBroadcast(intent);
         });
 
         configureListeners(container);
@@ -190,12 +141,6 @@ public class MainActivity extends BaseActivity {
         var adapter = new AppListAdapter(dataModels, getApplicationContext());
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);
-//        listView.addItemDecoration(new RecyclerView.ItemDecoration() {
-//            @Override
-//            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-//                outRect.setEmpty();
-//            }
-//        });
 
         showApps.setOnClickListener(v -> {
             if (listView.getVisibility() == View.GONE) {
@@ -210,28 +155,17 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void showRootNeededDialog() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.root_needed)
-                .setMessage(R.string.root_needed_message)
-                .setCancelable(true)
-                .setNegativeButton("Ok", (dialogInterface, i) -> dialogInterface.dismiss())
-                .create()
-                .show();
-    }
-
-    private void requestModuleScope() {
-        try {
-            var command = String.join(" ", new String[]{"am", "start", "-p", "com.android.shell", "-n", "com.android.shell/.BugreportWarningActivity", "-a", "android.intent.action.MAIN", "-f", "0x10000000", "-c", "org.lsposed.manager.LAUNCH_MANAGER", "-d", "module://" + getPackageName() + ":0/...\n"});
-            var stdin = new DataOutputStream(shell.getOutputStream());
-            stdin.writeBytes(command);
-            stdin.flush();
-            requestingLSPosedScope = true;
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), R.string.xposedinit_error, Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
+//    private void requestModuleScope() {
+//        try {
+//            var command = String.join(" ", new String[]{"am", "start", "-p", "com.android.shell", "-n", "com.android.shell/.BugreportWarningActivity", "-a", "android.intent.action.MAIN", "-f", "0x10000000", "-c", "org.lsposed.manager.LAUNCH_MANAGER", "-d", "module://" + getPackageName() + ":0/...\n"});
+//            var stdin = new DataOutputStream(shell.getOutputStream());
+//            stdin.writeBytes(command);
+//            stdin.flush();
+//            requestingLSPosedScope = true;
+//        } catch (IOException e) {
+//            Toast.makeText(getApplicationContext(), R.string.xposedinit_error, Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void setWppPkgs() {
         var pm = getPackageManager();
@@ -266,18 +200,19 @@ public class MainActivity extends BaseActivity {
         var moduleInfo = BuildConfig.VERSION_NAME;
         required.setText(String.format(requiredText, moduleInfo));
         try {
-            var pm = getPackageManager();
-            var wppInfo = pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-
-
+            getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
         } catch (PackageManager.NameNotFoundException e) {
-            installed.setText(String.format(installedText, "--------"));
-            installed.setTextColor(resources.getColor(R.color.default_red, getTheme()));
-            if (msg.getVisibility() == View.GONE) {
-                msg.setVisibility(View.VISIBLE);
+
+            try {
+                getPackageManager().getPackageInfo("com.whatsapp.w4b", PackageManager.GET_META_DATA);
+            } catch (PackageManager.NameNotFoundException ex) {
+                installed.setText(String.format(installedText, "--------"));
+                installed.setTextColor(resources.getColor(R.color.default_red, getTheme()));
+                if (msg.getVisibility() == View.GONE) {
+                    msg.setVisibility(View.VISIBLE);
+                }
+                msg.setText(R.string.whatsapp_not_installed);
             }
-            msg.setText(R.string.whatsapp_not_installed);
-            e.printStackTrace();
         }
     }
 }

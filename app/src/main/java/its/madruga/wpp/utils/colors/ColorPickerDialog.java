@@ -1,11 +1,11 @@
 package its.madruga.wpp.utils.colors;
 
 import static androidx.core.content.ContextCompat.getSystemService;
-import static its.madruga.wpp.MainActivity.shell;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,10 +28,8 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import com.skydoves.colorpickerview.sliders.AlphaSlideBar;
 import com.skydoves.colorpickerview.sliders.BrightnessSlideBar;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import de.hdodenhof.circleimageview.CircleImageView;
+import its.madruga.wpp.BuildConfig;
 import its.madruga.wpp.R;
 
 public class ColorPickerDialog extends Dialog {
@@ -96,21 +94,13 @@ public class ColorPickerDialog extends Dialog {
             });
 
             applyButton.setOnClickListener(v -> {
-//                Log.i("BUCETA", String.valueOf(argbText.getText()));
                 var newColor = String.valueOf(argbText.getText());
                 editor.putString(tag, newColor).apply();
                 sumView.setText(String.format(String.valueOf(summary), newColor));
                 colorPickerV.setImageDrawable(new ColorDrawable(IColors.parseColor(newColor)));
-                if (sharedPreferences.getBoolean("autoreboot", false) && shell != null) {
-                    try {
-                        var context = getContext();
-                        var command = context.getString(R.string.get_pid);
-                        var stdin = new DataOutputStream(shell.getOutputStream());
-                        stdin.writeBytes(command + "\n");
-                        stdin.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (sharedPreferences.getBoolean("autoreboot", false)) {
+                    Intent intent = new Intent(BuildConfig.APPLICATION_ID + ".WHATSAPP.RESTART");
+                    applyButton.getContext().sendBroadcast(intent);
                 }
                 dismiss();
             });

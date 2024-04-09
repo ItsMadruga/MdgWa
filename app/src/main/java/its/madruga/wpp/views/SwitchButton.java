@@ -1,5 +1,6 @@
 package its.madruga.wpp.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -13,9 +14,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import its.madruga.wpp.R;
 
-public class SwitchButton extends LinearLayout {
-
-    public static String ANDROID_NS = "http://schemas.android.com/apk/res/android";
+public class SwitchButton extends AbstractSwitchButton {
 
     public SwitchButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -27,7 +26,8 @@ public class SwitchButton extends LinearLayout {
         init(context, attrs);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    @Override
+    protected void init(Context context, AttributeSet attrs) {
         inflate(context, R.layout.switch_button_layout, (ViewGroup) getRootView());
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -38,8 +38,6 @@ public class SwitchButton extends LinearLayout {
         try {
             var title = a.getText(R.styleable.SwitchButton_android_text);
             var summary = a.getText(R.styleable.SwitchButton_android_summary);
-            var tag = attrs.getAttributeValue(ANDROID_NS, "tag");
-
             var switchButton = (MaterialSwitch) findViewById(R.id.switch_button);
             switchButton.setText(title);
 
@@ -47,11 +45,10 @@ public class SwitchButton extends LinearLayout {
             if (summary != null) {
                 switchButtonSummary.setText(summary);
             } else switchButtonSummary.setVisibility(GONE);
-            switchButton.setTag(tag);
-
+            super.init(context, attrs);
         } finally {
             a.recycle();
         }
-    }
 
+    }
 }

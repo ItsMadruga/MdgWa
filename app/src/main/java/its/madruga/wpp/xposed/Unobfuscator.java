@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.luckypray.dexkit.DexKitBridge;
 import org.luckypray.dexkit.query.FindClass;
 import org.luckypray.dexkit.query.FindMethod;
+import org.luckypray.dexkit.query.enums.OpCodeMatchType;
 import org.luckypray.dexkit.query.enums.StringMatchType;
 import org.luckypray.dexkit.query.matchers.ClassMatcher;
 import org.luckypray.dexkit.query.matchers.FieldMatcher;
@@ -104,7 +105,7 @@ public class Unobfuscator {
     }
 
     public static Field getFieldByType(Class<?> cls, Class<?> type) {
-        return Arrays.stream(cls.getFields()).filter(f -> f.getType().equals(type)).findFirst().orElse(null);
+        return Arrays.stream(cls.getDeclaredFields()).filter(f -> f.getType().equals(type)).findFirst().orElse(null);
     }
 
     public static Field getFieldByExtendType(Class<?> cls, Class<?> type) {
@@ -166,11 +167,29 @@ public class Unobfuscator {
 
 
     // TODO: Classes and Methods for HideView
-    public static Method loadHideViewCollectionMethod(ClassLoader classLoader) throws Exception {
+    public static Method loadHideViewOpenChatMethod(ClassLoader classLoader) throws Exception {
         Class<?> receiptsClass = loadReadReceiptsClass(classLoader);
-        Method method = Arrays.stream(receiptsClass.getMethods()).filter(m -> m.getParameterTypes().length > 0 && m.getParameterTypes()[0].equals(Collection.class)).findFirst().orElse(null);
-        if (method == null) throw new Exception("HideViewCollection method not found");
+        Method method = Arrays.stream(receiptsClass.getMethods()).filter(m -> m.getParameterTypes().length > 0 && m.getParameterTypes()[0].equals(Collection.class) && m.getReturnType().equals(HashMap.class)).findFirst().orElse(null);
+        if (method == null) throw new Exception("HideViewOpenChat method not found");
         return method;
+    }
+
+    public static Method loadHideViewInChatMethod(ClassLoader classLoader) throws Exception {
+        Method method = findFirstMethodUsingStrings(classLoader, StringMatchType.Contains, "ReadReceipts/PrivacyTokenDecisionNotComputed");
+        if (method == null) throw new Exception("HideViewInChat method not found");
+        return method;
+    }
+
+    public static Method loadHideViewAudioMethod(ClassLoader loader) throws Exception {
+        var result = findFirstMethodUsingStrings(loader, StringMatchType.Contains, "MessageStatusStore/update/nosuchmessage");
+        if (result == null) throw new Exception("HideViewAudio method not found");
+        return result;
+    }
+
+    public static Method loadHideOnceViewMethod(ClassLoader loader) throws Exception {
+        var result = findFirstMethodUsingStrings(loader, StringMatchType.Contains, "presencestatemanager/setAvailable/new-state:");
+        if (result == null) throw new Exception("HideViewAudio method not found");
+        return result;
     }
 
     public static Class<?> loadReadReceiptsClass(ClassLoader classLoader) throws Exception {
@@ -248,7 +267,7 @@ public class Unobfuscator {
     public static Method loadTabNameMethod(ClassLoader classLoader) throws Exception {
         Method tabListMethod = loadGetTabMethod(classLoader);
         Class<?> cls = tabListMethod.getDeclaringClass();
-        if (Modifier.isAbstract(cls.getModifiers())){
+        if (Modifier.isAbstract(cls.getModifiers())) {
             var findClass = dexkit.findClass(new FindClass().matcher(new ClassMatcher().superClass(cls.getName()).addUsingString("The item position should be less")));
             cls = findClass.get(0).getInstance(classLoader);
         }
@@ -307,7 +326,7 @@ public class Unobfuscator {
 
     public static Field loadTabCountField(ClassLoader classLoader) throws Exception {
         Class<?> homeActivity = XposedHelpers.findClass("com.whatsapp.HomeActivity", classLoader);
-        Class<?> pager = XposedHelpers.findClass("com.whatsapp.HomeActivity$TabsPager", classLoader);
+        Class<?> pager = loadGetTabMethod(classLoader).getDeclaringClass();
         return getFieldByType(homeActivity, pager);
     }
 
@@ -418,7 +437,8 @@ public class Unobfuscator {
     }
 
     public static Class<?> loadStatusDownloadMediaClass(ClassLoader classLoader) throws Exception {
-        if (cache.containsKey("StatusDownloadMedia")) return (Class<?>) cache.get("StatusDownloadMedia");
+        if (cache.containsKey("StatusDownloadMedia"))
+            return (Class<?>) cache.get("StatusDownloadMedia");
         var clazz = findFirstClassUsingStrings(classLoader, StringMatchType.Contains, "FMessageVideo/Cloned");
         if (clazz == null) throw new Exception("StatusDownloadMedia class not found");
         cache.put("StatusDownloadMedia", clazz);
@@ -486,7 +506,8 @@ public class Unobfuscator {
     }
 
     public static Method loadViewOnceDownloadMenuMethod(ClassLoader classLoader) throws Exception {
-        if (cache.containsKey("ViewOnceDownloadMenu")) return (Method) cache.get("ViewOnceDownloadMenu");
+        if (cache.containsKey("ViewOnceDownloadMenu"))
+            return (Method) cache.get("ViewOnceDownloadMenu");
         var clazz = XposedHelpers.findClass("com.whatsapp.mediaview.MediaViewFragment", classLoader);
         var method = Arrays.stream(clazz.getDeclaredMethods()).filter(m -> m.getParameterCount() == 2 &&
                 Objects.equals(m.getParameterTypes()[0], Menu.class) &&
@@ -531,7 +552,7 @@ public class Unobfuscator {
         var method = Arrays.stream(clazz.getDeclaredMethods()).filter(m ->
                 ((m.getParameterCount() == 2 && Objects.equals(m.getParameterTypes()[1], int.class) && Objects.equals(m.getParameterTypes()[0], clazz))
                         || (m.getParameterCount() == 1 && Objects.equals(m.getParameterTypes()[0], int.class))) &&
-                Modifier.isPublic(m.getModifiers()) && Object.class.isAssignableFrom(m.getReturnType())
+                        Modifier.isPublic(m.getModifiers()) && Object.class.isAssignableFrom(m.getReturnType())
         ).findFirst();
         if (!method.isPresent()) throw new Exception("ViewOnceDownloadMenuCall method not found");
         return method.get();
@@ -607,7 +628,8 @@ public class Unobfuscator {
     }
 
     public static Field loadAntiRevokeChatJidField(ClassLoader loader) throws Exception {
-        if (cache.containsKey("loadAntiRevokeChatJidField")) return (Field) cache.get("loadAntiRevokeChatJidField");
+        if (cache.containsKey("loadAntiRevokeChatJidField"))
+            return (Field) cache.get("loadAntiRevokeChatJidField");
         Class<?> chatClass = findFirstClassUsingStrings(loader, StringMatchType.Contains, "payment_chat_composer_entry_nux_shown");
         Class<?> jidClass = XposedHelpers.findClass("com.whatsapp.jid.Jid", loader);
         Field field = getFieldByExtendType(chatClass, jidClass);
@@ -660,7 +682,7 @@ public class Unobfuscator {
     }
 
     public static Field loadStatusPlaybackViewField(ClassLoader loader) throws Exception {
-        Class<?> class1 = XposedHelpers.findClass("com.whatsapp.status.playback.widget.StatusPlaybackProgressView",loader);
+        Class<?> class1 = XposedHelpers.findClass("com.whatsapp.status.playback.widget.StatusPlaybackProgressView", loader);
         ClassDataList classView = dexkit.findClass(FindClass.create().matcher(
                 ClassMatcher.create().methodCount(1).addFieldForType(class1)
         ));
@@ -668,12 +690,6 @@ public class Unobfuscator {
         Class<?> clsViewStatus = classView.get(0).getInstance(loader);
         Class<?> class2 = XposedHelpers.findClass("com.whatsapp.status.playback.fragment.StatusPlaybackBaseFragment", loader);
         return Arrays.stream(class2.getDeclaredFields()).filter(f -> f.getType() == clsViewStatus).findFirst().orElse(null);
-    }
-
-    public static Class<?> loadAutoRebootClass(ClassLoader loader) throws Exception {
-        Class<?> classAutoReboot = findFirstClassUsingStrings(loader, StringMatchType.Contains, "app-init/application");
-        if (classAutoReboot == null) throw new Exception("AutoReboot class not found");
-        return classAutoReboot;
     }
 
     public static Class<?> loadMessageStoreClass(ClassLoader loader) throws Exception {
@@ -704,14 +720,51 @@ public class Unobfuscator {
     }
 
     public static Method loadArchiveHideViewMethod(ClassLoader loader) throws Exception {
-        var clazz = findFirstClassUsingStrings(loader, StringMatchType.Contains, "archive/set-content-indicator-to-empty");
-        if (clazz == null) throw new Exception("ArchiveHideView method not found");
-        return clazz.getMethod("setVisibility", boolean.class);
+        if (cache.containsKey("ArchiveHideView")) return (Method) cache.get("ArchiveHideView");
+        var methods = findAllMethodUsingStrings(loader, StringMatchType.Contains, "archive/set-content-indicator-to-empty");
+        if (methods.length == 0) throw new Exception("ArchiveHideView method not found");
+        var clazz = methods[methods.length - 1].getDeclaringClass();
+        var method = clazz.getMethod("setVisibility", boolean.class);
+        cache.put("ArchiveHideView", method);
+        return method;
     }
 
     public static Method loadArchiveOnclickCaptureMethod(ClassLoader loader) throws Exception {
-        var clazz = findFirstClassUsingStrings(loader, StringMatchType.Contains, "archive/set-content-indicator-to-empty");
-        if (clazz == null) throw new Exception("ArchiveHideView method not found");
+        var clazz = loadArchiveHideViewMethod(loader).getDeclaringClass();
         return clazz.getMethod("setOnClickListener", View.OnClickListener.class);
     }
+
+    public static Method loadAntiRevokeOnCallReceivedMethod(ClassLoader loader) throws Exception {
+        var method = findFirstMethodUsingStrings(loader, StringMatchType.Contains, "VoiceService:callStateChangedOnUiThread");
+        if (method == null) throw new Exception("OnCallReceiver method not found");
+        return method;
+    }
+
+    public static Method loadAntiRevokeCallEndMethod(ClassLoader loader) throws Exception {
+        var method = findFirstMethodUsingStrings(loader, StringMatchType.Contains, "voicefgservice/stop-service");
+        if (method == null) throw new Exception("CallEndReceiver method not found");
+        return method;
+    }
+
+    public static Field loadContactManagerField(ClassLoader loader) throws Exception {
+        Class<?> class1 = findFirstClassUsingStrings(loader, StringMatchType.Contains, "contactmanager/permission problem:");
+        if (class1 == null) throw new Exception("ContactManager field not found");
+        Class HomeActivity = XposedHelpers.findClass("com.whatsapp.HomeActivity", loader);
+        return getFieldByType(HomeActivity, class1);
+    }
+
+    public static Method loadGetContactInfoMethod(ClassLoader loader) throws Exception {
+        Class<?> class1 = findFirstClassUsingStrings(loader, StringMatchType.Contains, "contactmanager/permission problem:");
+        if (class1 == null) throw new Exception("GetContactInfo method not found");
+        var methods = class1.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+            var method = methods[i];
+            if (method.getParameterCount() == 2 && method.getParameterTypes()[1] == boolean.class) {
+                if (methods[i-1].getParameterCount() == 1)
+                    return methods[i-1];
+            }
+        }
+        throw new Exception("GetContactInfo 2 method not found");
+    }
+
 }

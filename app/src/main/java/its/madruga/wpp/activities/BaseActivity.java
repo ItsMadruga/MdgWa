@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import its.madruga.wpp.R;
-import its.madruga.wpp.activities.personalization.PersonalizationGeneralActivity;
 import its.madruga.wpp.listeners.SwitchListener;
 import its.madruga.wpp.views.SwitchButton;
 import its.madruga.wpp.views.SwitchButtonTop;
@@ -21,29 +20,32 @@ import its.madruga.wpp.views.TextViewButton;
 public class BaseActivity extends AppCompatActivity {
     public SharedPreferences mShared;
     public SharedPreferences.Editor mEditor;
+    private SwitchListener listener;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         findViewById(android.R.id.content);
+        mShared = getSharedPreferences(getPackageName() + "_preferences", MODE_WORLD_READABLE);
+        mEditor = mShared.edit();
+        listener = new SwitchListener(mShared, mEditor);
     }
 
     public void configureListeners(View view) {
-
-        mShared = getSharedPreferences(getPackageName() + "_preferences", MODE_WORLD_READABLE);
-        mEditor = mShared.edit();
-
+        listener.checkReboot = false;
         if (view instanceof SwitchButton || view instanceof SwitchButtonTop) {
             var switchButton = (MaterialSwitch) view.findViewById(R.id.switch_button);
-            var key = (String) switchButton.getTag();
-            switchButton.setChecked(mShared.getBoolean(key, false));
-            var listener = new SwitchListener(mShared, mEditor);
+            var key = (String) ((View) switchButton.getTag()).getTag();
             switchButton.setOnCheckedChangeListener(listener);
+            switchButton.setChecked(mShared.getBoolean(key, false));
         } else if (view instanceof TextViewButton) {
             view.setOnClickListener(v -> {
                 try {
                     startActivity(new Intent(getApplicationContext(), Class.forName((String) view.getTag())));
-                } catch (ClassNotFoundException ignored) { }
+                } catch (ClassNotFoundException ignored) {
+                }
             });
         } else if (view instanceof ViewGroup) {
             var childCount = ((ViewGroup) view).getChildCount();
@@ -52,6 +54,7 @@ public class BaseActivity extends AppCompatActivity {
                 configureListeners(thisView);
             }
         }
+        listener.checkReboot = true;
     }
 
 
