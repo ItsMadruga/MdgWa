@@ -112,6 +112,7 @@ public class XOthers extends XHookBase {
                 }
                 var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
                 var dndmode = shared.getBoolean("dndmode", false);
+                var hidedndicon = prefs.getBoolean("hidedndicon", false);
                 var idIconOn = mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName());
                 var iconDND = mApp.getDrawable(idIconOn);
                 if (dndmode) {
@@ -119,8 +120,10 @@ public class XOthers extends XHookBase {
                     iconDND = mApp.getDrawable(idIconOff);
                 }
                 var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
-                item.setIcon(iconDND);
-                item.setShowAsAction(2);
+                if(hidedndicon) {
+                    item.setIcon(iconDND);
+                    item.setShowAsAction(0);
+                }
                 item.setOnMenuItemClickListener(menuItem -> {
                     if (!dndmode) {
                         new AlertDialog.Builder(home)

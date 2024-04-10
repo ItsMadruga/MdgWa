@@ -98,21 +98,23 @@ public class XChatsFilter extends XHookBase {
                     // row da jid do chat
                     @SuppressLint("Range") int jid = cursor.getInt(cursor.getColumnIndex("jid_row_id"));
                     // verifica se esta arquivado ou n
-                    @SuppressLint("Range") int hidden = cursor.getInt(cursor.getColumnIndex("hidden"));
-                    if (hidden == 1) return;
+                    @SuppressLint("Range") int archived = cursor.getInt(cursor.getColumnIndex("archived"));
+
                     // aqui eu fiz pra verificar se e grupo ou n, ai ele pega as infos da jid de acordo com a row da jid ali de cima
                     var sql2 = "SELECT * FROM jid WHERE _id == ?";
                     var cursor1 = db.rawQuery(sql2, new String[]{String.valueOf(jid)});
                     while (cursor1.moveToNext()) {
                         // esse server armazena oq ele e, s.whatsapp.net, lid, ou g.us
                         @SuppressLint("Range") var server = cursor1.getString(cursor1.getColumnIndex("server"));
-                        // separacao simples
-                        if (server.equals("g.us")) {
-                            groupCount++;
-                        } else {
-                            chatCount++;
+                        if(archived == 0) {
+                            // separacao simples
+                            if (server.equals("g.us")) {
+                                groupCount++;
+                            } else {
+                                chatCount++;
+                            }
                         }
-                    }
+                        }
                 }
                 // cada tab tem sua classe, ent eu percorro todas pra funcionar dboa
                 for (int i = 0; i < tabs.size(); i++) {
@@ -135,10 +137,10 @@ public class XChatsFilter extends XHookBase {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 var indexTab = (int) param.args[2];
-                if (indexTab == tabs.indexOf(CALLS)) {
-                    param.args[2] = tabs.indexOf(CHATS);
-                } else if (indexTab == tabs.indexOf(CHATS)) {
-                    param.args[2] = tabs.indexOf(GROUPS);
+                if (indexTab == 4) {
+                    param.args[2] = 0;
+                } else if (indexTab == 0) {
+                    param.args[2] = 1;
                 }
             }
         });

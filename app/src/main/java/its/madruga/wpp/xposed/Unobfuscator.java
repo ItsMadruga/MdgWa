@@ -307,7 +307,8 @@ public class Unobfuscator {
 
     public static Field loadTabCountField(ClassLoader classLoader) throws Exception {
         Class<?> homeActivity = XposedHelpers.findClass("com.whatsapp.HomeActivity", classLoader);
-        Class<?> pager = XposedHelpers.findClass("com.whatsapp.HomeActivity$TabsPager", classLoader);
+//        Class<?> pager = XposedHelpers.findClass("com.whatsapp.HomeActivity$TabsPager", classLoader);
+        Class<?> pager = findFirstClassUsingStrings(classLoader, StringMatchType.Contains, "mapping for tab id");
         return getFieldByType(homeActivity, pager);
     }
 
