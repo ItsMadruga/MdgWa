@@ -32,7 +32,7 @@ public class XChatsFilter extends XHookBase {
     public final int COMMUNITY = 600;
     public final int GROUPS = 800;
     public final ArrayList<Integer> tabs = new ArrayList<>();
-    public int tabCount = 0;
+//    public int tabCount = 0;
     private int idGroupId = 0;
 
     public XChatsFilter(ClassLoader loader, XSharedPreferences preferences) {
@@ -137,10 +137,10 @@ public class XChatsFilter extends XHookBase {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 var indexTab = (int) param.args[2];
-                if (indexTab == 4) {
-                    param.args[2] = 0;
-                } else if (indexTab == 0) {
-                    param.args[2] = 1;
+                if (indexTab == tabs.indexOf(CALLS)) {
+                    param.args[2] = tabs.indexOf(CHATS);
+                } else if (indexTab == tabs.indexOf(CHATS)) {
+                    param.args[2] = tabs.indexOf(GROUPS);
                 }
             }
         });
@@ -226,7 +226,6 @@ public class XChatsFilter extends XHookBase {
 
                 if (tabId == GROUPS || tabId == CHATS) {
                     var convFragment = XposedHelpers.findConstructorExact(cFrag.getName(), loader).newInstance();
-                    var convFragmentClass = convFragment.getClass();
                     XposedHelpers.setAdditionalInstanceField(convFragment, "isGroup", tabId == GROUPS);
                     XposedBridge.hookMethod(methodTabInstance, new XC_MethodHook() {
                         @Override
@@ -235,18 +234,18 @@ public class XChatsFilter extends XHookBase {
                             var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
 
                             // Temp fix for
-                            if (isGroupField == null) {
-                                logDebug("-----------------------------------");
-                                logDebug("isGroupTabCount: " + tabCount);
-                                logDebug("isGroupTabField: " + (isGroupField != null));
-                                logDebug("isGroupTabCount >= 2: " + (tabCount >= 2));
-                                logDebug("-----------------------------------");
-                                isGroup = tabCount >= 2;
-                                tabCount++;
-                                if (tabCount == 4) tabCount = 0;
-                            } else {
+//                            if (isGroupField == null) {
+//                                logDebug("-----------------------------------");
+//                                logDebug("isGroupTabCount: " + tabCount);
+//                                logDebug("isGroupTabField: " + (isGroupField != null));
+//                                logDebug("isGroupTabCount >= 2: " + (tabCount >= 2));
+//                                logDebug("-----------------------------------");
+//                                isGroup = tabCount >= 2;
+//                                tabCount++;
+//                                if (tabCount == 4) tabCount = 0;
+//                            } else {
                                 isGroup = (boolean) isGroupField;
-                            }
+//                            }
                             logDebug("[•] isGroup: " + isGroup);
 
                             var chatsList = (List) param.getResult();

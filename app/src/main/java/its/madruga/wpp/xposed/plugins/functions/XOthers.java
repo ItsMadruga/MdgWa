@@ -119,10 +119,10 @@ public class XOthers extends XHookBase {
                     var idIconOff = mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName());
                     iconDND = mApp.getDrawable(idIconOff);
                 }
-                var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
-                if(hidedndicon) {
+                var item = menu.add(0, 0, 1, dndmode ? "Disable DND Mode" : "Enable DND Mode");
+                if(!hidedndicon) {
                     item.setIcon(iconDND);
-                    item.setShowAsAction(0);
+                    item.setShowAsAction(2);
                 }
                 item.setOnMenuItemClickListener(menuItem -> {
                     if (!dndmode) {
@@ -130,8 +130,8 @@ public class XOthers extends XHookBase {
                                 .setTitle("DND Mode")
                                 .setMessage("When Do Not Disturb mode is on, you won't be able to send or receive messages.")
                                 .setPositiveButton("Activate", (dialog, which) -> {
-                                    shared.edit().putBoolean("dndmode", !dndmode).apply();
-                                    XposedBridge.log(String.valueOf(shared.getBoolean("dndmode", false)));
+                                    shared.edit().putBoolean("dndmode", !dndmode).commit();
+                                    logDebug("DND MODE: " + dndmode);
 
                                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                                     if (mApp != null) {
@@ -145,8 +145,8 @@ public class XOthers extends XHookBase {
                         return true;
                     }
 
-                    shared.edit().putBoolean("dndmode", !dndmode).apply();
-                    logDebug(String.valueOf(shared.getBoolean("dndmode", false)));
+                    shared.edit().putBoolean("dndmode", !dndmode).commit();
+                    logDebug("DND MODE: " + dndmode);
 
                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                     if (mApp != null) {
