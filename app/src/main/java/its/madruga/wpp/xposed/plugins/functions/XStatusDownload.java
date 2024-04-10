@@ -6,6 +6,7 @@ import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -49,7 +50,7 @@ public class XStatusDownload extends XHookBase {
         var menuField = Unobfuscator.getFieldByType(clazzSubMenu,clazzMenu);
         logDebug("Menu field: " + menuField.getName());
 
-       XposedBridge.hookMethod(setPageActiveMethod, new XC_MethodHook() {
+        XposedBridge.hookMethod(setPageActiveMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
@@ -70,8 +71,9 @@ public class XStatusDownload extends XHookBase {
                             if (menu != null) return;
                             menu = (MenuItem) XposedHelpers.callMethod(menuObj, "add", 0, 0x7f0b1009, 0, "Download");
                             menu.setOnMenuItemClickListener(item -> {
-                                if (copyFile(file)) {
-                                    Toast.makeText(mApp, "Saved to " + getPathDestination(file), Toast.LENGTH_SHORT).show();
+                                var dest = getPathDestination(file);
+                                if (copyFile(file, dest)) {
+                                    Toast.makeText(mApp, "Saved to " + dest, Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(mApp, "Error when saving, try again", Toast.LENGTH_SHORT).show();
                                 }
@@ -91,11 +93,9 @@ public class XStatusDownload extends XHookBase {
         return "Download Status";
     }
 
-    private static boolean copyFile(@NonNull File p) {
-        var destination = getPathDestination(p);
-
-        try (FileInputStream in = new FileInputStream(p);
-             FileOutputStream out = new FileOutputStream(destination)) {
+    public static boolean copyFile(@NonNull File from, @NonNull File to) {
+        try (FileInputStream in = new FileInputStream(from);
+             FileOutputStream out = new FileOutputStream(to)) {
             byte[] bArr = new byte[1024];
             while (true) {
                 int read = in.read(bArr);
@@ -103,12 +103,9 @@ public class XStatusDownload extends XHookBase {
                     in.close();
                     out.close();
 
-                    String[] parts = destination.split("\\.");
-                    String ext = parts[parts.length - 1].toLowerCase();
-
                     MediaScannerConnection.scanFile(mApp,
-                            new String[]{destination},
-                            new String[]{getMimeTypeFromExtension(ext)},
+                            new String[]{to.getAbsolutePath()},
+                            new String[]{getMimeTypeFromExtension(to.getAbsolutePath())},
                             (path, uri) -> {
                             });
 
@@ -123,127 +120,37 @@ public class XStatusDownload extends XHookBase {
     }
 
     @NonNull
-    private static String getPathDestination(@NonNull File f) {
-        var filePath = f.getAbsolutePath();
-        var isVideo = false;
-        var isImage = false;
-        var isAudio = false;
+    private static File getPathDestination(@NonNull File f) {
+        var fileName = f.getName().toLowerCase();
 
-        String[] videoFormats = {
-                "3gp", "mp4", "mkv", "avi", "wmv", "flv", "mov", "webm", "ts", "m4v", "divx", "xvid", "mpg", "mpeg", "mpg2", "ogv", "vob", "f4v", "asf"
-        };
-
-        String[] imageFormats = {
-                "jpeg", "jpg", "png", "gif", "bmp", "webp", "heif", "tiff", "raw", "svg", "eps", "ai"
-        };
-
-        String[] audioFormats = {
-                "mp3", "wav", "ogg", "m4a", "aac", "flac", "amr", "wma", "opus", "mid", "xmf", "rtttl", "rtx", "ota", "imy", "mpga", "ac3", "ec3", "eac3"
-        };
-
-        for (String format : videoFormats) {
-            if (filePath.toLowerCase().endsWith("." + format)) {
-                isVideo = true;
-                break;
-            }
-        }
-
-        for (String format : imageFormats) {
-            if (filePath.toLowerCase().endsWith("." + format)) {
-                isImage = true;
-                break;
-            }
-        }
-
-        for (String format : audioFormats) {
-            if (filePath.toLowerCase().endsWith("." + format)) {
-                isAudio = true;
-                break;
-            }
-        }
-
-        String folderPath = getStatusFolderPath(isVideo, isImage, isAudio);
-
-        var mediaPath = new File(folderPath);
-
+        var mediaPath = getStatusFolderPath(getMimeTypeFromExtension(fileName));
         if (!mediaPath.exists())
             mediaPath.mkdirs();
 
-        return mediaPath.getAbsolutePath() + "/" + f.getName();
+        return new File(mediaPath, f.getName());
     }
 
     @NonNull
-    private static String getStatusFolderPath(boolean isVideo, boolean isImage, boolean isAudio) {
+    private static File getStatusFolderPath(@NonNull String mimeType) {
         String folderPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        if (isVideo) {
+        if (mimeType.contains("video")) {
             folderPath += "/Movies/WhatsApp/MdgWa Status/Status Videos/";
-        } else if (isImage) {
+        } else if (mimeType.contains("image")) {
             folderPath += "/Pictures/WhatsApp/MdgWa Status/Status Images/";
-        } else if (isAudio) {
+        } else if (mimeType.contains("audio")) {
             folderPath += "/Music/WhatsApp/MdgWa Status/Status Sounds/";
         } else {
-            folderPath += "/Downloads/WhatsApp/MdgWa Status/Status Media/";
+            folderPath += "/Download/WhatsApp/MdgWa Status/Status Media/";
         }
-        return folderPath;
+        return new File(folderPath);
     }
 
-    public static String getMimeTypeFromExtension(String extension) {
-        switch (extension) {
-            case "3gp":
-            case "mp4":
-            case "mkv":
-            case "avi":
-            case "wmv":
-            case "flv":
-            case "mov":
-            case "webm":
-            case "ts":
-            case "m4v":
-            case "divx":
-            case "xvid":
-            case "mpg":
-            case "mpeg":
-            case "mpg2":
-            case "ogv":
-            case "vob":
-            case "f4v":
-            case "asf":
-                return "video/*";
-            case "jpeg":
-            case "jpg":
-            case "png":
-            case "gif":
-            case "bmp":
-            case "webp":
-            case "heif":
-            case "tiff":
-            case "raw":
-            case "svg":
-            case "eps":
-            case "ai":
-                return "image/*";
-            case "mp3":
-            case "wav":
-            case "ogg":
-            case "m4a":
-            case "aac":
-            case "flac":
-            case "amr":
-            case "wma":
-            case "opus":
-            case "mid":
-            case "xmf":
-            case "rtttl":
-            case "rtx":
-            case "ota":
-            case "imy":
-            case "mpga":
-            case "ac3":
-            case "ec3":
-            case "eac3":
-                return "audio/*";
-            default:
-                return "*/*";
+    public static String getMimeTypeFromExtension(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
+        return type;
     }
 }
