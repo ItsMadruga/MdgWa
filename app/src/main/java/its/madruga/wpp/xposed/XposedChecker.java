@@ -9,11 +9,6 @@ public class XposedChecker {
     }
 
     public static void setActiveModule(ClassLoader loader) {
-        XposedHelpers.findAndHookMethod("its.madruga.wpp.xposed.XposedChecker", loader, "isActive", new XC_MethodReplacement() {
-            @Override
-            protected Object replaceHookedMethod(MethodHookParam param) {
-                return true;
-            }
-        });
+        XposedHelpers.findAndHookMethod("its.madruga.wpp.xposed.XposedChecker", loader, "isActive",XC_MethodReplacement.returnConstant(true));
     }
 }

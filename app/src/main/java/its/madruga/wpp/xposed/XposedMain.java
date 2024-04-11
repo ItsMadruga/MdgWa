@@ -30,6 +30,7 @@ public class XposedMain implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         var packageName = lpparam.packageName;
         var classLoader = lpparam.classLoader;
+        var sourceDir = lpparam.appInfo.sourceDir;
         if (packageName.equals(BuildConfig.APPLICATION_ID)) {
             XposedChecker.setActiveModule(lpparam.classLoader);
         }
@@ -37,7 +38,7 @@ public class XposedMain implements IXposedHookLoadPackage {
         XposedBridge.log("[•] This package: " + lpparam.packageName);
         XposedBridge.log("[•] Loaded packages: " + getPref().getStringSet("whatsapp_packages", new HashSet<>()));
         if (getPref().getStringSet("whatsapp_packages", new HashSet<>()).contains(lpparam.packageName)) {
-            XMain.Initialize(classLoader, getPref());
+            XMain.Initialize(classLoader, getPref(),sourceDir);
             XDatabases.Initialize(classLoader, getPref());
         }
 

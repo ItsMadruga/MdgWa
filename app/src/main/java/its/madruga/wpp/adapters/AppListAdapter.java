@@ -47,7 +47,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppViewH
         if (!dataModel.getVersion().equals(BuildConfig.VERSION_NAME)) {
             holder.txtRequiredVersion.setVisibility(View.VISIBLE);
             holder.txtRequiredVersion.setText(String.format(required_s, BuildConfig.VERSION_NAME));
-            holder.txtInstalledVersion.setTextColor((mContext.getResources().getColor(R.color.default_red, mContext.getTheme())));
+            holder.txtInstalledVersion.setTextColor((mContext.getResources().getColor(android.R.color.holo_orange_light, mContext.getTheme())));
         }
         holder.txtInstalledVersion.setText(String.format(installed_s, dataModel.getVersion()));
         holder.imgIcon.setImageDrawable(dataModel.getIcon());

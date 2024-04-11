@@ -6,8 +6,10 @@ circleimageview = "3.1.0"
 colorpickerview = "2.3.0"
 constraintlayout = "2.1.4"
 material = "1.11.0"
+dexkit = "2.0.0"
 
 [libraries]
+dexkit = { module = "org.luckypray:dexkit", version.ref = "dexkit" }
 api = { module = "de.robv.android.xposed:api", version.ref = "api" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bcpkix-jdk18on" }

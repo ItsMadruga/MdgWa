@@ -113,6 +113,22 @@
                     android:tag="viewonce"
                     android:text="@string/viewonce" />
 
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/blueonreply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/blueonreply_sum"
+                    android:tag="blueonreply"
+                    android:text="@string/blueonreply" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hidearchive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hide_archived_chat_sum"
+                    android:tag="hidearchive"
+                    android:text="@string/hide_archived_chat" />
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>

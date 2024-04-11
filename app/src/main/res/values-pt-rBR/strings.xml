@@ -114,4 +114,10 @@
     <string name="separate_groups">Grupos separados</string>
     <string name="ghostmode_r">Ocultar gravando audio...</string>
     <string name="ghostmode_sum_r">Quando ativo, a pessoa não pode ver que você está gravando áudio</string>
+    <string name="blueonreply">Enviar marca azul na resposta</string>
+    <string name="blueonreply_sum">Envia a marca azul ao responder à mensagem</string>
+    <string name="hide_archived_chat">Hide archived chat</string>
+    <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
+    <string name="hidedndicon">Ocultar ícone Dnd</string>
+    <string name="hidedndicon_sum">Quando ativo, o ícone do modo dnd ficará oculto</string>
 </resources>

@@ -113,4 +113,10 @@
     <string name="downloadviewonce_sum">Bir Kez Görüntülenebilir medyalar için indirme düğmesi oluştur</string>
     <string name="separate_groups_sum">Sohbetlerinizi gruplar, özel sohbetler, durum, aramalar, topluluklar şeklinde ayırın</string>
     <string name="separate_groups">Grupları Ayır</string>
+    <string name="blueonreply">Cevapta mavi tik gönder</string>
+    <string name="blueonreply_sum">Mesaja cevap verirken mavi tik gönderir</string>
+    <string name="hide_archived_chat">Arşivlenmiş sohbetleri gizle</string>
+    <string name="hide_archived_chat_sum">Arşivlenmiş sohbetleri gizle ve sohbete erişmek için uzun dokunma menüsünü etkinleştir</string>
+    <string name="hidedndicon">Dnd Simgesini Gizle</string>
+    <string name="hidedndicon_sum">Etkin olduğunda, Dnd modu simgesi gizlenecek</string>
 </resources>

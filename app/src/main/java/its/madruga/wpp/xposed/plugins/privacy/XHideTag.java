@@ -1,12 +1,13 @@
 package its.madruga.wpp.xposed.plugins.privacy;
 
-import static its.madruga.wpp.ClassesReference.HideForward.classMessageInfo;
-import static its.madruga.wpp.ClassesReference.HideForward.methodSetForward;
+import androidx.annotation.NonNull;
+
+import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
-import de.robv.android.xposed.XposedHelpers;
-import its.madruga.wpp.ClassesReference;
+import de.robv.android.xposed.XposedBridge;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XHideTag extends XHookBase {
@@ -15,27 +16,38 @@ public class XHideTag extends XHookBase {
     }
 
     @Override
-    public void doHook() {
+    public void doHook() throws Exception {
         var hidetag = prefs.getBoolean("hidetag", false);
         if (!hidetag)
             return;
+        Method method = Unobfuscator.loadForwardTagMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(method));
+        Class<?> forwardClass = Unobfuscator.loadForwardClassMethod(loader);
+        logDebug("ForwardClass: " + forwardClass.getName());
 
-        XposedHelpers.findAndHookMethod(classMessageInfo, loader, methodSetForward, int.class, new XC_MethodHook() {
+        XposedBridge.hookMethod(method, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                logDebug("Forward Detected");
                 var arg = (int) param.args[0];
                 if (arg == 1) {
                     var stacktrace = Thread.currentThread().getStackTrace();
                     var stackTraceElement = stacktrace[6];
+                    log(stackTraceElement);
                     if (stackTraceElement != null) {
                         var callerName = stackTraceElement.getClassName();
-                        if (callerName.equals(ClassesReference.HideForward.rightCallerClass)) {
+                        if (callerName.equals(forwardClass.getName())) {
                             param.args[0] = 0;
                         }
                     }
                 }
-                super.beforeHookedMethod(param);
             }
         });
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Hide Tag";
     }
 }

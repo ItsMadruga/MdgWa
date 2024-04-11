@@ -1,34 +1,24 @@
 package its.madruga.wpp.xposed.plugins.functions;
 
 import static de.robv.android.xposed.XposedHelpers.findClass;
-import static its.madruga.wpp.ClassesReference.DndMode.iconOff;
-import static its.madruga.wpp.ClassesReference.DndMode.iconOn;
-import static its.madruga.wpp.ClassesReference.Others.classObsoleto;
-import static its.madruga.wpp.ClassesReference.Others.classProps;
-import static its.madruga.wpp.ClassesReference.Others.methodObsoleto;
-import static its.madruga.wpp.ClassesReference.Others.methodProps;
-import static its.madruga.wpp.ClassesReference.Others.paramProps;
-import static its.madruga.wpp.ClassesReference.Others.paramProps2;
 import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.Menu;
+
+import androidx.annotation.NonNull;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import its.madruga.wpp.R;
+import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 
 public class XOthers extends XHookBase {
@@ -40,16 +30,18 @@ public class XOthers extends XHookBase {
     }
 
     @Override
-    public void doHook() {
-        XposedHelpers.findAndHookMethod(classObsoleto, loader, methodObsoleto, new XC_MethodHook() {
+    public void doHook() throws Exception {
+
+        var deprecatedMethod = Unobfuscator.loadDeprecatedMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(deprecatedMethod));
+
+        XposedBridge.hookMethod(deprecatedMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 Date date = new Date(10554803081056L);
                 param.setResult(date);
             }
         });
-        Class<?> propsClass1 = findClass(paramProps, loader);
-        Class<?> propsClass2 = findClass(paramProps2, loader);
         var novoTema = prefs != null && prefs.getBoolean("novotema", false);
         var menuWIcons = prefs != null && prefs.getBoolean("menuwicon", false);
         var newSettings = prefs != null && prefs.getBoolean("novaconfig", false);
@@ -66,10 +58,13 @@ public class XOthers extends XHookBase {
         props.put(5509, outlinedIcons);
         props.put(2358, separateGroups);
 
-        XposedHelpers.findAndHookMethod(classProps, loader, methodProps, propsClass1, propsClass2, int.class, new XC_MethodHook() {
+        var methodProps = Unobfuscator.loadPropsMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(methodProps));
+
+        XposedBridge.hookMethod(methodProps, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                int i = (int) param.args[2];
+                int i = (int) (param.args.length > 2 ? param.args[2] : param.args[1]);
 
                 var propValue = props.get(i);
 
@@ -88,9 +83,9 @@ public class XOthers extends XHookBase {
                         param.setResult(propValue);
                     }
                 }
-                super.beforeHookedMethod(param);
             }
         });
+
         var homeActivity = findClass("com.whatsapp.HomeActivity", loader);
         XposedHelpers.findAndHookMethod(homeActivity, "onCreateOptionsMenu", Menu.class, new XC_MethodHook() {
             @Override
@@ -111,27 +106,32 @@ public class XOthers extends XHookBase {
 
                     if (menuItem.getActionView() != null) {
                         var root = menuItem.getActionView().getRootView();
-                        XposedBridge.log("Instance of MenuItem view: " + root.getClass().getName());
-                        XposedBridge.log("Instance of MenuItem backg: " + root.getBackground().getClass().getName());
+                        logDebug("Instance of MenuItem view: " + root.getClass().getName());
+                        logDebug("Instance of MenuItem backg: " + root.getBackground().getClass().getName());
                     }
                 }
                 var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
                 var dndmode = shared.getBoolean("dndmode", false);
-                var iconDND = mApp.getDrawable(iconOn);
+                var hidedndicon = prefs.getBoolean("hidedndicon", false);
+                var idIconOn = mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName());
+                var iconDND = mApp.getDrawable(idIconOn);
                 if (dndmode) {
-                    iconDND = mApp.getDrawable(iconOff);
+                    var idIconOff = mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName());
+                    iconDND = mApp.getDrawable(idIconOff);
                 }
-                var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
-                item.setIcon(iconDND);
-                item.setShowAsAction(2);
+                var item = menu.add(0, 0, 1, dndmode ? "Disable DND Mode" : "Enable DND Mode");
+                if(!hidedndicon) {
+                    item.setIcon(iconDND);
+                    item.setShowAsAction(2);
+                }
                 item.setOnMenuItemClickListener(menuItem -> {
                     if (!dndmode) {
                         new AlertDialog.Builder(home)
                                 .setTitle("DND Mode")
                                 .setMessage("When Do Not Disturb mode is on, you won't be able to send or receive messages.")
                                 .setPositiveButton("Activate", (dialog, which) -> {
-                                    shared.edit().putBoolean("dndmode", dndmode ? false : true).commit();
-                                    XposedBridge.log(String.valueOf(shared.getBoolean("dndmode", false)));
+                                    shared.edit().putBoolean("dndmode", !dndmode).commit();
+                                    logDebug("DND MODE: " + dndmode);
 
                                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                                     if (mApp != null) {
@@ -145,7 +145,8 @@ public class XOthers extends XHookBase {
                         return true;
                     }
 
-                    shared.edit().putBoolean("dndmode", dndmode ? false : true).commit();
+                    shared.edit().putBoolean("dndmode", !dndmode).commit();
+                    logDebug("DND MODE: " + dndmode);
 
                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                     if (mApp != null) {
@@ -156,8 +157,13 @@ public class XOthers extends XHookBase {
 
                     return true;
                 });
-                super.afterHookedMethod(param);
             }
         });
+    }
+
+    @NonNull
+    @Override
+    public String getPluginName() {
+        return "Others";
     }
 }

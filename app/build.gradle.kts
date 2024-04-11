@@ -49,4 +49,5 @@ dependencies {
     implementation(libs.colorpickerview)
     implementation(libs.material)
     implementation(libs.constraintlayout)
+    implementation(libs.dexkit)
 }

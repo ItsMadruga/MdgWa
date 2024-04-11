@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="antirevoke_buttons">
+        <item>Nonaktif</item>
+        <item>Tampilkan teks</item>
+        <item>Tampilkan ikon</item>
+    </string-array>
+</resources>
