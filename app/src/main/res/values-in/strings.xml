@@ -115,9 +115,9 @@
     <string name="separate_groups">Pisahkan grup</string>
     <string name="root_needed_message">Opsi ini memerlukan akses root, berikan izin root pada SU anda</string>
     <string name="blueonreply">Kirim tanda centang biru saat membalas</string>
-    <string name="blueonreply_sum">Mengirim tanda centang biru saat membalas pesan</string>
-    <string name="hide_archived_chat">Sembunyikan percakapan yang diarsipkan</string>
-    <string name="hide_archived_chat_sum">Sembunyikan percakapan yang diarsipkan dan aktifkan Toolbar saat mengklik lama untuk mengakses percakapan</string>
+    <string name="blueonreply_sum">Mengirim tanda centang biru saat anda membalas pesan</string>
+    <string name="hide_archived_chat">Sembunyikan pesan yang diarsipkan</string>
+    <string name="hide_archived_chat_sum">Sembunyikan pesan yang diarsipkan dan aktifkan tahan lama Toolbar untuk mengakses pesan</string>
     <string name="hidedndicon">Sembunyikan ikon DND</string>
     <string name="hidedndicon_sum">Ketika aktif, ikon mode DND akan disembunyikan</string>
 </resources>
