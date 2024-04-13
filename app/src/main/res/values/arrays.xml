@@ -10,4 +10,14 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="call_blocker_buttons">
+        <item>No block</item>
+        <item>Block all calls</item>
+        <item>Block only unknow numbers</item>
+    </string-array>
+    <string-array name="call_blocker_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

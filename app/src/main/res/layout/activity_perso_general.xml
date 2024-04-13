@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:other="http://schemas.its.madruga.wpp/other"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,6 +47,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/novotema_sum"
                     android:tag="novotema"
+                    other:reboot="true"
                     android:text="@string/novotema"
                     android:title="@string/general" />
 
@@ -55,6 +57,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/novofiltro_sum"
                     android:tag="novofiltro"
+                    other:reboot="true"
                     android:text="@string/novofiltro" />
 
                 <its.madruga.wpp.views.SwitchButton
@@ -63,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/strokebuttons_sum"
                     android:tag="strokebuttons"
+                    other:reboot="true"
                     android:text="@string/strokebuttons" />
 
                 <its.madruga.wpp.views.SwitchButton
@@ -71,6 +75,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/menuwicon_sum"
                     android:tag="menuwicon"
+                    other:reboot="true"
                     android:text="@string/menuwicon" />
 
                 <its.madruga.wpp.views.SwitchButton
@@ -79,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/outlinedicons_sum"
                     android:tag="outlinedicons"
+                    other:reboot="true"
                     android:text="@string/outlinedicons" />
 
                 <its.madruga.wpp.views.SwitchButton
@@ -87,7 +93,17 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/novaconfig_sum"
                     android:tag="novaconfig"
+                    other:reboot="true"
                     android:text="@string/novaconfig" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/dotonline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/show_online_dot_in_conversation_list_sum"
+                    android:tag="dotonline"
+                    other:reboot="true"
+                    android:text="@string/show_online_dot_in_conversation_list" />
 
             </LinearLayout>
 

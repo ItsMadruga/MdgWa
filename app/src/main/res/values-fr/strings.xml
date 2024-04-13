@@ -118,6 +118,10 @@
     <string name="blueonreply_sum">Envoie la coche bleue lors de la réponse au message</string>
     <string name="hide_archived_chat">Hide archived chat</string>
     <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
-    <string name="hidedndicon">Hide Dnd Icon</string>
-    <string name="hidedndicon_sum">When active, the dnd mode icon will be hidden</string>
+    <string name="hide_once_view_seen">Hide Once View and Audio Seen</string>
+    <string name="hide_once_view_seen_sum">hide that once view and audio has been seen</string>
+    <string name="call_blocker">Call Blocker</string>
+    <string name="call_blocker_sum">Block WhatsApp calls based on privacy type</string>
+    <string name="show_online_dot_in_conversation_list">Show online dot in Conversation List</string>
+    <string name="show_online_dot_in_conversation_list_sum">Show a green online dot on the home screen (NOTE: you need to activate show online for everyone in the Whatsapp configuration menu)</string>
 </resources>
