@@ -16,12 +16,12 @@ public class XFreezeLastSeen extends XHookBase {
     @Override
     public void doHook() {
             var method = Unobfuscator.loadFreezeSeenMethod(loader);
-            var freeze = prefs.getBoolean("freezelastseen", false);
             logDebug(Unobfuscator.getMethodDescriptor(method));
             XposedBridge.hookMethod(method, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
-                    if (freeze) param.setResult(null);
+                    if (prefs.getBoolean("freezelastseen", false))
+                        param.setResult(null);
                 }
             });
     }

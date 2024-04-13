@@ -78,20 +78,13 @@ public class DrawableColors {
             var color = getColor(drawable);
             var sColor = IColors.toString(color);
             var newColor = colors.get(sColor);
-//            XposedBridge.log("[-] Unsupported Drawable: " + drawable.getClass().getName());
-//            XposedBridge.log("[-] New Color: " + newColor);
-//            XposedBridge.log("_________________________");
             if (newColor != null) {
                 drawable.setColorFilter(new PorterDuffColorFilter(parseColor(newColor), PorterDuff.Mode.SRC_IN));
             } else {
-//                XposedBridge.log("--> New Color (s): " + sColor);
                 if (!sColor.startsWith("#ff") && !sColor.startsWith("#0")) {
-//                    XposedBridge.log("-> Checking alpha variants... (" + sColor + ")");
                     var sColorSub = sColor.substring(0, 3);
-//                    XposedBridge.log("-> sColor: " + sColor.substring(3));
                     newColor = colors.get(sColor.substring(3));
                     if (newColor != null) {
-//                        XposedBridge.log("-> Alpha: (" + sColorSub + ") " + newColor);
                         drawable.setColorFilter(new PorterDuffColorFilter(parseColor(sColorSub + newColor), PorterDuff.Mode.SRC_IN));
                     }
                 }

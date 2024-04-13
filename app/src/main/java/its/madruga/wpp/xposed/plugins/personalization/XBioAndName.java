@@ -2,7 +2,6 @@ package its.madruga.wpp.xposed.plugins.personalization;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -10,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -61,18 +59,19 @@ public class XBioAndName extends XHookBase {
             var name = startup_prefs.getString("push_name", "WhatsApp");
             var bio = mainPrefs.getString("my_current_status", "");
             toolbar.setOnLongClickListener((v) -> {
-                if (XHideArchive.mOnClickListener != null) {
-                    XHideArchive.mOnClickListener.onClick(v);
+                for (var onClick : XHideArchive.mClickListenerList) {
+                    onClick.onClick(v);
+                    break;
                 }
                 return true;
             });
 
-            if (!(logo.getParent() instanceof LinearLayout)){
+            if (!(logo.getParent() instanceof LinearLayout)) {
                 var methods = Arrays.stream(actionbar.getClass().getDeclaredMethods()).filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0] == CharSequence.class).toArray(Method[]::new);
-                if (showName){
-                    methods[1].invoke(actionbar,  name);
+                if (showName) {
+                    methods[1].invoke(actionbar, name);
                 }
-                if (showBio){
+                if (showBio) {
                     methods[0].invoke(actionbar, bio);
                 }
                 XposedBridge.hookMethod(methods[1], new XC_MethodHook() {
@@ -103,7 +102,6 @@ public class XBioAndName extends XHookBase {
                 mSubtitle.setSingleLine();
                 mSubtitle.setSelected(true);
                 parent.addView(mSubtitle);
-
             } else {
                 mTitle.setGravity(Gravity.CENTER);
             }

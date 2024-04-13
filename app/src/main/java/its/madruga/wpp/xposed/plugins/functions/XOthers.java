@@ -69,6 +69,10 @@ public class XOthers extends XHookBase {
                 var propValue = props.get(i);
 
                 if (propValue != null) {
+                    if (i == 2358){
+                        param.setResult(false);
+                        return;
+                    }
                     var stacktrace = Thread.currentThread().getStackTrace();
                     var stackTraceElement = stacktrace[6];
                     if (stackTraceElement != null) {
@@ -112,26 +116,23 @@ public class XOthers extends XHookBase {
                 }
                 var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
                 var dndmode = shared.getBoolean("dndmode", false);
-                var hidedndicon = prefs.getBoolean("hidedndicon", false);
                 var idIconOn = mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName());
-                var iconDND = mApp.getDrawable(idIconOn);
+                var iconDraw = mApp.getDrawable(idIconOn);
                 if (dndmode) {
                     var idIconOff = mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName());
-                    iconDND = mApp.getDrawable(idIconOff);
+                    iconDraw = mApp.getDrawable(idIconOff);
                 }
-                var item = menu.add(0, 0, 1, dndmode ? "Disable DND Mode" : "Enable DND Mode");
-                if(!hidedndicon) {
-                    item.setIcon(iconDND);
-                    item.setShowAsAction(2);
-                }
+                var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
+                item.setIcon(iconDraw);
+                item.setShowAsAction(2);
                 item.setOnMenuItemClickListener(menuItem -> {
                     if (!dndmode) {
                         new AlertDialog.Builder(home)
                                 .setTitle("DND Mode")
                                 .setMessage("When Do Not Disturb mode is on, you won't be able to send or receive messages.")
                                 .setPositiveButton("Activate", (dialog, which) -> {
-                                    shared.edit().putBoolean("dndmode", !dndmode).commit();
-                                    logDebug("DND MODE: " + dndmode);
+                                    shared.edit().putBoolean("dndmode", true).commit();
+                                    XposedBridge.log(String.valueOf(shared.getBoolean("dndmode", false)));
 
                                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                                     if (mApp != null) {
@@ -144,17 +145,13 @@ public class XOthers extends XHookBase {
                                 .create().show();
                         return true;
                     }
-
-                    shared.edit().putBoolean("dndmode", !dndmode).commit();
-                    logDebug("DND MODE: " + dndmode);
-
+                    shared.edit().putBoolean("dndmode", false).commit();
                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                     if (mApp != null) {
                         home.finishAffinity();
                         mApp.startActivity(intent);
                     }
                     Runtime.getRuntime().exit(0);
-
                     return true;
                 });
             }

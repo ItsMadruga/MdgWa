@@ -4,6 +4,7 @@ import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
 import static its.madruga.wpp.xposed.plugins.functions.XStatusDownload.getMimeTypeFromExtension;
 
 import android.annotation.SuppressLint;
+import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -28,21 +32,24 @@ public class XViewOnce extends XHookBase {
 
     @Override
     public void doHook() throws Exception {
-        if (prefs.getBoolean("viewonce", false)) {
+        var methods = Unobfuscator.loadViewOnceMethod(loader);
 
-            var methods = Unobfuscator.loadViewOnceMethod(loader);
-
-            for (var method : methods) {
-                logDebug(Unobfuscator.getMethodDescriptor(method));
-                XposedBridge.hookMethod(method, XC_MethodReplacement.DO_NOTHING);
-            }
+        for (var method : methods) {
+            logDebug(Unobfuscator.getMethodDescriptor(method));
+            XposedBridge.hookMethod(method, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    if (!prefs.getBoolean("viewonce", false)) return;
+                    param.setResult(null);
+                }
+            });
         }
 
         if (prefs.getBoolean("downloadviewonce", false)) {
 
             var menuMethod = Unobfuscator.loadViewOnceDownloadMenuMethod(loader);
             logDebug(Unobfuscator.getMethodDescriptor(menuMethod));
-            var menuIntField= Unobfuscator.loadViewOnceDownloadMenuField(loader);
+            var menuIntField = Unobfuscator.loadViewOnceDownloadMenuField(loader);
             logDebug(Unobfuscator.getFieldDescriptor(menuIntField));
             var initIntField = Unobfuscator.loadViewOnceDownloadMenuField2(loader);
             logDebug(Unobfuscator.getFieldDescriptor(initIntField));
@@ -53,25 +60,25 @@ public class XViewOnce extends XHookBase {
 
             XposedBridge.hookMethod(menuMethod, new XC_MethodHook() {
                 @Override
+                @SuppressLint("DiscouragedApi")
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
 
                     if (XposedHelpers.getIntField(param.thisObject, menuIntField.getName()) == 3) {
                         Menu menu = (Menu) param.args[0];
-                        @SuppressLint("DiscouragedApi") var idIconDownload = mApp.getResources().getIdentifier("btn_download", "drawable", mApp.getPackageName());
+                         var idIconDownload = mApp.getResources().getIdentifier("btn_download", "drawable", mApp.getPackageName());
                         MenuItem item = menu.add(0, 0, 0, "Download").setIcon(idIconDownload);
                         item.setShowAsAction(2);
                         item.setOnMenuItemClickListener(item1 -> {
                             var i = XposedHelpers.getIntField(param.thisObject, initIntField.getName());
                             logDebug("init: " + i);
-                            var message = callMethod.getParameterCount() == 2 ? XposedHelpers.callMethod(param.thisObject, callMethod.getName(), param.thisObject,i) : XposedHelpers.callMethod(param.thisObject, callMethod.getName(),i);
+                            var message = callMethod.getParameterCount() == 2 ? XposedHelpers.callMethod(param.thisObject, callMethod.getName(), param.thisObject, i) : XposedHelpers.callMethod(param.thisObject, callMethod.getName(), i);
                             log("message: " + message);
                             if (message != null) {
                                 var fileData = XposedHelpers.getObjectField(message, "A01");
                                 var file = (File) XposedHelpers.getObjectField(fileData, fileField.getName());
-                                var dest = getPathDestination(file);
-                                if (XStatusDownload.copyFile(file,dest)) {
-                                    Toast.makeText(mApp, "Saved to "+ getPathDestination(file), Toast.LENGTH_SHORT).show();
+                                if (copyFile(file)) {
+                                    Toast.makeText(mApp, "Saved to " + getDestination(file), Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(mApp, "Error when saving, try again", Toast.LENGTH_SHORT).show();
                                 }
@@ -92,29 +99,43 @@ public class XViewOnce extends XHookBase {
         return "View Once";
     }
 
-    @NonNull
-    private static File getPathDestination(@NonNull File f) {
-        var fileName = f.getName().toLowerCase();
-
-        var mediaPath = getViewOnceFolderPath(getMimeTypeFromExtension(fileName));
-        if (!mediaPath.exists())
-            mediaPath.mkdirs();
-
-        return new File(mediaPath, f.getName());
+    public static String getDestination(File file) {
+        var folderPath = Environment.getExternalStorageDirectory() + "/Pictures/WhatsApp/MdgWa ViewOnce/";
+        var filePath = new File(folderPath);
+        if (!filePath.exists()) filePath.mkdirs();
+        return filePath.getAbsolutePath() + "/" + file.getName();
     }
 
-    private static File getViewOnceFolderPath(@NonNull String mimeType) {
-        String folderPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        XposedBridge.log(mimeType);
-        if (mimeType.contains("video")) {
-            folderPath += "/Movies/WhatsApp/MdgWa ViewOnce/ViewOnce Videos/";
-        } else if (mimeType.contains("image")) {
-            folderPath += "/Pictures/WhatsApp/MdgWa ViewOnce/ViewOnce Images/";
-        } else if (mimeType.contains("audio")) {
-            folderPath += "/Music/WhatsApp/MdgWa ViewOnce/ViewOnce Sounds/";
-        } else {
-            folderPath += "/Download/WhatsApp/MdgWa ViewOnce/ViewOnce Media/";
+    private static boolean copyFile(File p) {
+        if (p == null) return false;
+
+        var destination = getDestination(p);
+
+        try (FileInputStream in = new FileInputStream(p);
+             FileOutputStream out = new FileOutputStream(destination)) {
+            byte[] bArr = new byte[1024];
+            while (true) {
+                int read = in.read(bArr);
+                if (read <= 0) {
+                    in.close();
+                    out.close();
+
+                    String[] parts = destination.split("\\.");
+                    String ext = parts[parts.length - 1].toLowerCase();
+
+                    MediaScannerConnection.scanFile(mApp,
+                            new String[]{destination},
+                            new String[]{getMimeTypeFromExtension(ext)},
+                            (path, uri) -> {
+                            });
+
+                    return true;
+                }
+                out.write(bArr, 0, read);
+            }
+        } catch (IOException e) {
+            XposedBridge.log(e.getMessage());
+            return false;
         }
-        return new File(folderPath);
     }
 }

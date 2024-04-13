@@ -48,8 +48,6 @@ public class XBlueOnReply extends XHookBase {
     @Override
     public void doHook() throws Throwable {
 
-        if (!prefs.getBoolean("blueonreply", false)) return;
-
         mPrefs = XMain.mApp.getSharedPreferences("blueonreply", Context.MODE_PRIVATE);
 
         var onStartMethod = Unobfuscator.loadAntiRevokeOnStartMethod(loader);
@@ -123,6 +121,7 @@ public class XBlueOnReply extends XHookBase {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (!messageSendClass.isInstance(param.thisObject)) return;
+                if (!prefs.getBoolean("blueonreply", false)) return;
                 new Handler(Looper.getMainLooper()).post(() -> sendBlue((String) XposedHelpers.getObjectField(messageSendClass.cast(param.thisObject), "jid")));
             }
         });
@@ -145,6 +144,7 @@ public class XBlueOnReply extends XHookBase {
             var gen = XposedHelpers.callMethod(genInstance, mGenJidMethod.getName(), currentJid);
             var sendJob = XposedHelpers.newInstance(mSendReadClass, gen, null, null, null, arr_s, -1, 0L, false);
             WaJobManagerMethod.invoke(mWaJobManager, sendJob);
+            messages.clear();
         }catch (Exception e) {
             XposedBridge.log("Error: " + e.getMessage());
         }
