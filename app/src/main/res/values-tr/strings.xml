@@ -113,10 +113,14 @@
     <string name="downloadviewonce_sum">Bir Kez Görüntülenebilir medyalar için indirme düğmesi oluştur</string>
     <string name="separate_groups_sum">Sohbetlerinizi gruplar, özel sohbetler, durum, aramalar, topluluklar şeklinde ayırın</string>
     <string name="separate_groups">Grupları Ayır</string>
-    <string name="blueonreply">Cevapta mavi tik gönder</string>
+    <string name="blueonreply">Cevaplarken mavi tik gönder</string>
     <string name="blueonreply_sum">Mesaja cevap verirken mavi tik gönderir</string>
-    <string name="hide_archived_chat">Arşivlenmiş sohbetleri gizle</string>
-    <string name="hide_archived_chat_sum">Arşivlenmiş sohbetleri gizle ve sohbete erişmek için uzun dokunma menüsünü etkinleştir</string>
-    <string name="hidedndicon">Dnd Simgesini Gizle</string>
-    <string name="hidedndicon_sum">Etkin olduğunda, Dnd modu simgesi gizlenecek</string>
+    <string name="call_blocker">Call Blocker</string>
+    <string name="call_blocker_sum">Block WhatsApp calls based on privacy type</string>
+    <string name="hide_archived_chat">Arşivlenmiş sohbeti gizle</string>
+    <string name="hide_archived_chat_sum">Arşivlenmiş sohbeti gizle ve sohbete erişmek için uzun dokunma menüsünü etkinleştir</string>
+    <string name="hide_once_view_seen">Bir kez görüntülendikten ve işitildikten sonra mavi işareti gizle</string>
+    <string name="hide_once_view_seen_sum">Bir kez görüntülendikten ve işitildikten sonra mavi işareti gizle</string>
+    <string name="show_online_dot_in_conversation_list">Show online dot in Conversation List</string>
+    <string name="show_online_dot_in_conversation_list_sum">Show a green online dot on the home screen (NOTE: you need to activate show online for everyone in the Whatsapp configuration menu)</string>
 </resources>

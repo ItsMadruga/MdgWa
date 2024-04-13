@@ -28,8 +28,6 @@ public class ColorReplacement {
             replaceColor(viewStub.getBackground());
         } else if (view.getClass().equals(findClass("com.whatsapp.CircularProgressBar", classLoader))) {
             CircularProgressBar.replace(view);
-        } else {
-//            XposedBridge.log("[-] Unsupported view: " + view.getClass().getName());
         }
     }
 

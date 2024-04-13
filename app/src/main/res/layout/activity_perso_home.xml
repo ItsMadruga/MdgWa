@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:other="http://schemas.its.madruga.wpp/other"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,6 +47,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/showname_sum"
                     android:tag="shownamehome"
+                    other:reboot="true"
                     android:text="@string/showname"
                     android:title="@string/home" />
 
@@ -55,6 +57,7 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/showbio_sum"
                     android:tag="showbiohome"
+                    other:reboot="true"
                     android:text="@string/showbio" />
 
                 <its.madruga.wpp.views.SwitchButton
@@ -63,14 +66,8 @@
                     android:layout_height="wrap_content"
                     android:summary="@string/separate_groups_sum"
                     android:tag="separategroups"
+                    other:reboot="true"
                     android:text="@string/separate_groups" />
-                <its.madruga.wpp.views.SwitchButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/hidedndicon"
-                    android:tag="hidedndicon"
-                    android:text="@string/hidedndicon"
-                    android:summary="@string/hidedndicon_sum"/>
 
             </LinearLayout>
 

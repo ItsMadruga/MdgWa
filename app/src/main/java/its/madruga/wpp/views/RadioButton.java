@@ -1,8 +1,7 @@
 package its.madruga.wpp.views;
 
-import static its.madruga.wpp.MainActivity.shell;
-
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -13,9 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.radiobutton.MaterialRadioButton;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
+import its.madruga.wpp.BuildConfig;
 import its.madruga.wpp.R;
 
 public class RadioButton extends LinearLayout {
@@ -89,15 +86,9 @@ public class RadioButton extends LinearLayout {
             radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 //                Toast.makeText(getContext(), "Checked: " + checkedId, Toast.LENGTH_SHORT).show();
                 editor.putInt(tag, checkedId).apply();
-                if (sharedPreferences.getBoolean("autoreboot", false) && shell != null) {
-                    try {
-                        var command = context.getString(R.string.get_pid);
-                        var stdin = new DataOutputStream(shell.getOutputStream());
-                        stdin.writeBytes(command + "\n");
-                        stdin.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (sharedPreferences.getBoolean("autoreboot", false)) {
+                    Intent intent = new Intent(BuildConfig.APPLICATION_ID + ".WHATSAPP.RESTART");
+                    radioGroup.getContext().sendBroadcast(intent);
                 }
             });
         } finally {

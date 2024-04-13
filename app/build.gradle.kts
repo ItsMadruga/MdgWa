@@ -12,10 +12,15 @@ android {
         minSdk = 29
         targetSdk = 34
         versionCode = 2
-        versionName = "2.24.5.76"
+        versionName = "2.24.7.79"
         proguardFiles()
 
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+
     }
+
 
     buildTypes {
         release {
@@ -27,6 +32,8 @@ android {
             isMinifyEnabled = false
         }
     }
+
+
 
     packaging {
         resources {

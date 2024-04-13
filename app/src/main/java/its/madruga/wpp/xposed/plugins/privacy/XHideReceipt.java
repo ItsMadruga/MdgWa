@@ -16,17 +16,13 @@ public class XHideReceipt extends XHookBase {
 
     @Override
     public void doHook() throws Exception {
-        if (!prefs.getBoolean("hidereceipt", false)) return;
         var method = Unobfuscator.loadReceiptMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(method));
-
         XposedBridge.hookMethod(method, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!prefs.getBoolean("hidereceipt", false)) return;
                 var jid = param.args[0] == null ? null : (String) XposedHelpers.callMethod(param.args[0], "getRawString");
-                logDebug("[-] Jid: " + jid);
-                logDebug("[-] Param: " + param.args[4]);
-                logDebug("______________________");
                 if (jid == null || jid.contains("@lid")) {
                     param.args[4] = "inactive";
                 }
