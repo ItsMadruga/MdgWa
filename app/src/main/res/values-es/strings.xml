@@ -118,6 +118,6 @@
     <string name="blueonreply_sum">Envía el tick azul al responder el mensaje</string>
     <string name="hide_archived_chat">Hide archived chat</string>
     <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
-    <string name="hidedndicon">Hide Dnd Icon</string>
-    <string name="hidedndicon_sum">When active, the dnd mode icon will be hidden</string>
+    <string name="hidedndicon">Ocultar icono de No molestar</string>
+    <string name="hidedndicon_sum">Cuando está activo, se ocultará el icono del modo No molestar</string>
 </resources>
