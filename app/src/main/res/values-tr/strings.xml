@@ -1,7 +1,7 @@
 <resources>
     <string name = "get_pid" translatable = "false">pids = ""; /proc/[0-9]* içindeki p için; oku -r -d \'\' modeli &lt;$p/cmdline || [[ $modeli ]]; if [[ $model = com.whatsapp ]]; sonra pids+="${p##*/},"; bitti; setprop mdgwa.pids ${pids%,</string>
     <string name="app_name" translatable="false">MdgWa</string>
-    <string name="app_desc">WhatsApp'ınızı özelleştirmek için bir Xposed modülü.</string>
+    <string name="app_desc">WhatsApp\'ınızı özelleştirmek için bir Xposed modülü.</string>
     <string-array name = "scope">
         <item>com.whatsapp</item>
         <item>com.whatsapp.w4b</item>
@@ -20,14 +20,14 @@
     <string name="hideread">Mesaj Görünümünü Gizle</string>
     <string name="hideread_sum">Etkin olduğunda, karşınızdaki kişi sizin onları okuduğunuzu bilmeden mesajları okumanıza olanak tanır.</string>
     <string name="danger">Bildirim</string>
-    <string name="reboot">Bu ekranda bir şeyi değiştirdiğinizde WhatsApp'ı yeniden başlatın!</string>
+    <string name="reboot">Bu ekranda bir şeyi değiştirdiğinizde WhatsApp\'ı yeniden başlatın!</string>
     <string name="reboot_module">Modülü Yeniden Başlat</string>
     <string name="funcoes">İşlevler</string>
     <string name="perso">Özelleştirme</string>
     <string name="segundosnahora">Zamandaki Saniyeler</string>
     <string name="segundosnahora_sum">Saniyelerin yanına saniyeleri koyun</string>
     <string name="textonahora">Zaman çizelgesinin yanına metin ekleyin</string>
-    <string name="no_active">Bu ekrandaysanız bu, modülün henüz etkin olmadığı, LSPosed'in kurulu olmadığı veya herhangi bir WhatsApp APK'sının yamalanmadığı anlamına gelir LSPatch.\n\nLütfen sorunu düzeltin, modülü yeniden başlatın ve tekrar deneyin</string>
+    <string name="no_active">Bu ekrandaysanız bu, modülün henüz etkin olmadığı, LSPosed\'in kurulu olmadığı veya herhangi bir WhatsApp APK\'sının yamalanmadığı anlamına gelir LSPatch.\n\nLütfen sorunu düzeltin, modülü yeniden başlatın ve tekrar deneyin</string>
     <string name="viewonce">Bir Kez Görüntülemeyi Devre Dışı Bırak</string>
     <string name="viewonce_sum">Etkin olduğunda, bir kez görüntülenen mesajları istediğiniz kadar açmanıza olanak tanır.</string>
     <string name="novotema">Yeni WhatsApp teması</string>
@@ -56,7 +56,7 @@
     <string name="videoquality_sum">Videoları HD kalitesinde gönderin</string>
     <string name="colors_title">Renkler</string>
     <string name="colors_customization">Renklerinizi özelleştirin</string>
-    <string name="colors_customization_sum">WhatsApp'ınızdaki tüm renkleri değiştirin, şimdi deneyin!</string>
+    <string name="colors_customization_sum">WhatsApp\'ınızdaki tüm renkleri değiştirin, şimdi deneyin!</string>
     <string name="current_color_s">Geçerli renk: %s</string>
     <string name="apply_button">Uygula</string>
     <string name="invalid_color">Geçersiz renk</string>
@@ -71,7 +71,7 @@
     <string name="installed_version_s">Yüklü sürüm: %s</string>
     <string name="whatsapp_version_error">Bu WhatsApp sürümü modülümüz tarafından desteklenmiyor, lütfen gerekli WhatsApp sürümüne gidin</string>
     <string name="whatsapp_not_installed">WhatsApp yüklü değil! Yükleyip tekrar deneyin</string>
-    <string name="restart_whatsapp">Whatsapp'ı yeniden başlatın</string>
+    <string name="restart_whatsapp">Whatsapp\'ı yeniden başlatın</string>
     <string name="media_title">Medya</string>
     <string name="general">Genel</string>
     <string name="novahome">Yeni ev stili</string>
@@ -87,7 +87,7 @@
     <string name="menuwicon">Menü simgeleri</string>
     <string name="menuwicon_sum">Uygulama boyunca menü seçeneklerine simgeler ekleyin</string>
     <string name="strokebuttons">Düğme vuruşu</string>
-    <string name="strokebuttons_sum">WhatsApp'ta bazı düğmelerin çevresinde çizgi oluşturun</string>
+    <string name="strokebuttons_sum">WhatsApp\'ta bazı düğmelerin çevresinde çizgi oluşturun</string>
     <string name="outlinedicons">Ana hatlı simgeler</string>
     <string name="outlinedicons_sum">İsterseniz yeni simge stilini etkinleştirin</string>
     <string name="freezelastseen">Son görüleni dondur</string>
@@ -116,7 +116,7 @@
     <string name="lsposed_not_found">LSPosed bulunamadı</string>
     <string name="lspatch_not_found">LSPatch bulunamadı</string>
     <string name="loading">Yükleniyor</string>
-    <string name="module_not_enabled_text">Modül LSPosed'de devre dışı bırakıldı</string>
+    <string name="module_not_enabled_text">Modül LSPosed\'de devre dışı bırakıldı</string>
     <string name="module_not_setted_text">Modül etkin ancak kapsam boş</string>
     <string name="imagequality">Resimleri HD kalitesinde gönder</string>
     <string name="imagequality_sum">Resimleri HD kalitesinde gönder</string>
@@ -127,7 +127,7 @@
     <string name="blueonreply">Cevapta mavi onay işareti gönder</string>
     <string name="blueonreply_sum">Mesajı yanıtlarken mavi onay işaretini gönderir</string>
     <string name="hide_archived_chat">Arşivlenmiş sohbeti gizle</string>
-    <string name="hide_archived_chat_sum">Arşivlenmiş sohbeti gizleyin ve sohbete erişmek için uzun tıklamayla Araç Çubuğu'nu etkinleştirin</string>
+    <string name="hide_archived_chat_sum">Arşivlenmiş sohbeti gizleyin ve sohbete erişmek için uzun tıklamayla Araç Çubuğu\'nu etkinleştirin</string>
     <string name="hidedndicon">Gizleme Simgesini Gizle</string>
     <string name="hidedndicon_sum">Etkin olduğunda, dnd modu simgesi gizlenecektir</string>
 </resources>
