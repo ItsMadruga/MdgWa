@@ -32,7 +32,7 @@ public class XChatsFilter extends XHookBase {
     public final int COMMUNITY = 600;
     public final int GROUPS = 800;
     public final ArrayList<Integer> tabs = new ArrayList<>();
-    public int tabCount = 0;
+//    public int tabCount = 0;
     private int idGroupId = 0;
 
     public XChatsFilter(ClassLoader loader, XSharedPreferences preferences) {
@@ -112,6 +112,15 @@ public class XChatsFilter extends XHookBase {
                     // verifica se esta arquivado ou n
                     int hidden = cursor.getInt(hiddenId);
                     if (hidden == 1) return;
+                  
+                    var archivedId = cursor.getColumnIndex("archived");
+                    if (archivedId == -1) {
+                        XposedBridge.log("archived == -1");
+                        return;
+                    }
+                  
+                    int archived = cursor.getInt(archivedId);
+
                     // aqui eu fiz pra verificar se e grupo ou n, ai ele pega as infos da jid de acordo com a row da jid ali de cima
                     var sql2 = "SELECT * FROM jid WHERE _id == ?";
                     var cursor1 = db.rawQuery(sql2, new String[]{String.valueOf(jid)});
@@ -128,6 +137,15 @@ public class XChatsFilter extends XHookBase {
                             groupCount++;
                         } else {
                             chatCount++;
+                        }
+
+                        if(archived == 0) {
+                            // separacao simples
+                            if (server.equals("g.us")) {
+                                groupCount++;
+                            } else {
+                                chatCount++;
+                            }
                         }
                     }
                     cursor1.close();
@@ -254,7 +272,6 @@ public class XChatsFilter extends XHookBase {
 
                 if (tabId == GROUPS || tabId == CHATS) {
                     var convFragment = XposedHelpers.findConstructorExact(cFrag.getName(), loader).newInstance();
-                    var convFragmentClass = convFragment.getClass();
                     XposedHelpers.setAdditionalInstanceField(convFragment, "isGroup", tabId == GROUPS);
                     XposedBridge.hookMethod(methodTabInstance, new XC_MethodHook() {
                         @Override
@@ -263,18 +280,18 @@ public class XChatsFilter extends XHookBase {
                             var isGroupField = XposedHelpers.getAdditionalInstanceField(param.thisObject, "isGroup");
 
                             // Temp fix for
-                            if (isGroupField == null) {
-                                logDebug("-----------------------------------");
-                                logDebug("isGroupTabCount: " + tabCount);
-                                logDebug("isGroupTabField: " + (isGroupField != null));
-                                logDebug("isGroupTabCount >= 2: " + (tabCount >= 2));
-                                logDebug("-----------------------------------");
-                                isGroup = tabCount >= 2;
-                                tabCount++;
-                                if (tabCount == 4) tabCount = 0;
-                            } else {
+//                            if (isGroupField == null) {
+//                                logDebug("-----------------------------------");
+//                                logDebug("isGroupTabCount: " + tabCount);
+//                                logDebug("isGroupTabField: " + (isGroupField != null));
+//                                logDebug("isGroupTabCount >= 2: " + (tabCount >= 2));
+//                                logDebug("-----------------------------------");
+//                                isGroup = tabCount >= 2;
+//                                tabCount++;
+//                                if (tabCount == 4) tabCount = 0;
+//                            } else {
                                 isGroup = (boolean) isGroupField;
-                            }
+//                            }
                             logDebug("[•] isGroup: " + isGroup);
 
                             var chatsList = (List) param.getResult();

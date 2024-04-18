@@ -67,7 +67,7 @@
     <string name="primary_color">Couleur primaire</string>
     <string name="background_color">Couleur d\'arrière-plan</string>
     <string name="secondary_color">Couleure secondaire</string>
-    <string name="novaconfig">Please fix it, restart the module, and try again</string>
+    <string name="novaconfig">Nouveau style de réglages</string>
     <string name="novaconfig_sum">Activez le nouveau style de réglages, avec la photo de profil dans la barre d\'accueil</string>
     <string name="novahome_sum">Activez le nouveau style d\'accueil, avec la barre de naviguation inférieure</string>
     <string name="novofiltro">Filtres d\'échanges</string>
@@ -118,4 +118,6 @@
     <string name="blueonreply_sum">Envoie la coche bleue lors de la réponse au message</string>
     <string name="hide_archived_chat">Hide archived chat</string>
     <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
+    <string name="hidedndicon">Hide Dnd Icon</string>
+    <string name="hidedndicon_sum">When active, the dnd mode icon will be hidden</string>
 </resources>

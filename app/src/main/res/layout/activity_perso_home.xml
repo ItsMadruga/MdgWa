@@ -64,6 +64,13 @@
                     android:summary="@string/separate_groups_sum"
                     android:tag="separategroups"
                     android:text="@string/separate_groups" />
+                <its.madruga.wpp.views.SwitchButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/hidedndicon"
+                    android:tag="hidedndicon"
+                    android:text="@string/hidedndicon"
+                    android:summary="@string/hidedndicon_sum"/>
 
             </LinearLayout>
 

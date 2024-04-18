@@ -112,23 +112,26 @@ public class XOthers extends XHookBase {
                 }
                 var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
                 var dndmode = shared.getBoolean("dndmode", false);
+                var hidedndicon = prefs.getBoolean("hidedndicon", false);
                 var idIconOn = mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName());
-                var cu = mApp.getDrawable(idIconOn);
+                var iconDND = mApp.getDrawable(idIconOn);
                 if (dndmode) {
                     var idIconOff = mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName());
-                    cu = mApp.getDrawable(idIconOff);
+                    iconDND = mApp.getDrawable(idIconOff);
                 }
-                var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
-                item.setIcon(iconDND);
-                item.setShowAsAction(2);
+                var item = menu.add(0, 0, 1, dndmode ? "Disable DND Mode" : "Enable DND Mode");
+                if(!hidedndicon) {
+                    item.setIcon(iconDND);
+                    item.setShowAsAction(2);
+                }
                 item.setOnMenuItemClickListener(menuItem -> {
                     if (!dndmode) {
                         new AlertDialog.Builder(home)
                                 .setTitle("DND Mode")
                                 .setMessage("When Do Not Disturb mode is on, you won't be able to send or receive messages.")
                                 .setPositiveButton("Activate", (dialog, which) -> {
-                                    shared.edit().putBoolean("dndmode", !dndmode).apply();
-                                    XposedBridge.log(String.valueOf(shared.getBoolean("dndmode", false)));
+                                    shared.edit().putBoolean("dndmode", !dndmode).commit();
+                                    logDebug("DND MODE: " + dndmode);
 
                                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                                     if (mApp != null) {
@@ -142,8 +145,8 @@ public class XOthers extends XHookBase {
                         return true;
                     }
 
-                    shared.edit().putBoolean("dndmode", !dndmode).apply();
-                    logDebug(String.valueOf(shared.getBoolean("dndmode", false)));
+                    shared.edit().putBoolean("dndmode", !dndmode).commit();
+                    logDebug("DND MODE: " + dndmode);
 
                     Intent intent = mApp.getPackageManager().getLaunchIntentForPackage(mApp.getPackageName());
                     if (mApp != null) {

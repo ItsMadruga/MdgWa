@@ -116,6 +116,8 @@
     <string name="ghostmode_sum_r">Когда этот параметр активен, человек не видит, что вы записываете звук.</string>
     <string name="blueonreply">Отправить синюю галочку в ответ</string>
     <string name="blueonreply_sum">Отправляет синюю галочку при ответе на сообщение</string>
-    <string name="hide_archived_chat">Hide archived chat</string>
-    <string name="hide_archived_chat_sum">Hide Archived chat and enable Toolbar on long click to access chat</string>
+    <string name="hide_archived_chat">Скрыть архивированный чат</string>
+    <string name="hide_archived_chat_sum">Скрыть архивированный чат и включить панель инструментов при длительном нажатии, чтобы получить доступ к чату</string>
+    <string name="hidedndicon">Скрыть значок Не беспокоить</string>
+    <string name="hidedndicon_sum">При активации значок режима Не беспокоить будет скрыт</string>
 </resources>
