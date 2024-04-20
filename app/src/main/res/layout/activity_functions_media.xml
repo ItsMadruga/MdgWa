@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:other="http://schemas.its.madruga.wpp/other"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/media_title"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <its.madruga.wpp.views.SwitchButtonTop
+                    android:id="@+id/downloadstatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/statusdowload_sum"
+                    android:tag="downloadstatus"
+                    other:reboot="true"
+                    android:text="@string/statusdowload"
+                    android:title="@string/media_settings" />
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/downloadviewonce"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    other:reboot="true"
+                    android:summary="@string/downloadviewonce_sum"
+                    android:tag="downloadviewonce"
+                    android:text="@string/downloadviewonce" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/videoquality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/videoquality_sum"
+                    android:tag="videoquality"
+                    other:reboot="true"
+                    android:text="@string/videoquality" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/imagequality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/imagequality_sum"
+                    android:tag="imagequality"
+                    other:reboot="true"
+                    android:text="@string/imagequality" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
+</ScrollView>

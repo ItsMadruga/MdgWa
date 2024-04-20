@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:other="http://schemas.its.madruga.wpp/other"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/privacy_title"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <its.madruga.wpp.views.SwitchButtonTop
+                    android:id="@+id/hidetag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hidetag_sum"
+                    android:tag="hidetag"
+                    android:text="@string/hidetag"
+                    android:title="@string/privacy_title" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/removeforwardlimit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/removeforwardlimit_sum"
+                    android:tag="removeforwardlimit"
+                    android:text="@string/removeforwardlimit" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/pinnedlimit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/disable_pinned_limit_sum"
+                    android:tag="pinnedlimit"
+                    android:text="@string/disable_pinned_limit" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/freezelastseen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/freezelastseen_sum"
+                    android:tag="freezelastseen"
+                    android:text="@string/freezelastseen" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hidestatusview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hidestatusview_sum"
+                    android:tag="hidestatusview"
+                    android:text="@string/hidestatusview" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hideread"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hideread_sum"
+                    android:tag="hideread"
+                    android:text="@string/hideread" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hideonceseen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hide_once_view_seen_sum"
+                    android:tag="hideonceseen"
+                    android:text="@string/hide_once_view_seen" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hidereceipt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hidereceipt_sum"
+                    android:tag="hidereceipt"
+                    android:text="@string/hidereceipt" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/ghostmode_t"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/ghostmode_sum"
+                    android:tag="ghostmode_t"
+                    android:text="@string/ghostmode" />
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/ghostmode_r"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/ghostmode_sum_r"
+                    android:tag="ghostmode_r"
+                    android:text="@string/ghostmode_r" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/viewonce"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/viewonce_sum"
+                    android:tag="viewonce"
+                    android:text="@string/viewonce" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/blueonreply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/blueonreply_sum"
+                    android:tag="blueonreply"
+                    android:text="@string/blueonreply" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hidearchive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hide_archived_chat_sum"
+                    android:tag="hidearchive"
+                    other:reboot="true"
+                    android:text="@string/hide_archived_chat" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/revokeallmessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/delete_for_everyone_all_messages_sum"
+                    android:tag="revokeallmessages"
+                    android:text="@string/delete_for_everyone_all_messages" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/antieditmessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/show_edited_message_history_sum"
+                    android:tag="antieditmessages"
+                    android:text="@string/show_edited_message_history" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

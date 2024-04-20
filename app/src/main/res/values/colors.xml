@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="civ_default_background">#22000000</color>
+    <color name="civ_default_color">#ff000000</color>
+    <color name="default_secondary_color">#E8E8E8</color>
+    <color name="default_green">#21c063</color>
+    <color name="default_red">@android:color/holo_red_light</color>
+    <color name="default_icon_color">#90000000</color>
+    <color name="fab_background">#fff1f1f1</color>
+    <color name="default_background_color">#ffffff</color>
+</resources>
