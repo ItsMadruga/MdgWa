@@ -2,7 +2,7 @@
 <resources>
 
     <style name="MdgWa" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#BFBFBF</item>
+        <item name="colorPrimary">@color/mdg_primary</item>
         // fundo switch ativado 0099FF
         <item name="colorAccent">#FFFFFF</item>
         // sombra quando altera switch

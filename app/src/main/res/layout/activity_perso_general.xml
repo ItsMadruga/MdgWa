@@ -42,23 +42,62 @@
                 android:orientation="vertical">
 
                 <its.madruga.wpp.views.SwitchButtonTop
+                    android:id="@+id/ampm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:tag="ampm"
+                    other:reboot="true"
+                    android:title="@string/general"
+                    android:text="@string/ampm" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/segundos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    other:reboot="true"
+                    android:summary="@string/segundosnahora_sum"
+                    android:tag="segundos"
+                    android:text="@string/segundosnahora" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="15dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/MdgWa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/textonahora"
+                        android:padding="0dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/secondstotime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <its.madruga.wpp.views.SwitchButton
                     android:id="@+id/novotema"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:summary="@string/novotema_sum"
                     android:tag="novotema"
                     other:reboot="true"
-                    android:text="@string/novotema"
-                    android:title="@string/general" />
+                    android:text="@string/novotema" />
 
-                <its.madruga.wpp.views.SwitchButton
-                    android:id="@+id/novofiltro"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/novofiltro_sum"
-                    android:tag="novofiltro"
-                    other:reboot="true"
-                    android:text="@string/novofiltro" />
+<!--                <its.madruga.wpp.views.SwitchButton-->
+<!--                    android:id="@+id/novofiltro"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/novofiltro_sum"-->
+<!--                    android:tag="novofiltro"-->
+<!--                    other:reboot="true"-->
+<!--                    android:text="@string/novofiltro" />-->
 
                 <its.madruga.wpp.views.SwitchButton
                     android:id="@+id/strokebuttons"
@@ -96,34 +135,34 @@
                     other:reboot="true"
                     android:text="@string/novaconfig" />
 
-                <its.madruga.wpp.views.SwitchButton
-                    android:id="@+id/showdndbutton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/show_dnd_button_sum"
-                    android:tag="show_dndmode"
-                    other:reboot="true"
-                    android:text="@string/show_dnd_button" />
+<!--                <its.madruga.wpp.views.SwitchButton-->
+<!--                    android:id="@+id/showdndbutton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/show_dnd_button_sum"-->
+<!--                    android:tag="show_dndmode"-->
+<!--                    other:reboot="true"-->
+<!--                    android:text="@string/show_dnd_button" />-->
 
-                <its.madruga.wpp.views.SwitchButton
-                    android:id="@+id/dotonline"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/show_online_dot_in_conversation_list_sum"
-                    android:tag="dotonline"
-                    other:reboot="true"
-                    android:text="@string/show_online_dot_in_conversation_list" />
+<!--                <its.madruga.wpp.views.SwitchButton-->
+<!--                    android:id="@+id/dotonline"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/show_online_dot_in_conversation_list_sum"-->
+<!--                    android:tag="dotonline"-->
+<!--                    other:reboot="true"-->
+<!--                    android:text="@string/show_online_dot_in_conversation_list" />-->
 
-                <its.madruga.wpp.views.MultichoiceButton
-                    android:id="@+id/hidetabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/tabshide_contents"
-                    android:entryValues="@array/tabshide_values"
-                    android:summary="@string/hide_tabs_on_home_sum"
-                    android:tag="hidetabs"
-                    other:reboot="true"
-                    android:text="@string/hide_tabs_on_home" />
+<!--                <its.madruga.wpp.views.MultichoiceButton-->
+<!--                    android:id="@+id/hidetabs"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:entries="@array/tabshide_contents"-->
+<!--                    android:entryValues="@array/tabshide_values"-->
+<!--                    android:summary="@string/hide_tabs_on_home_sum"-->
+<!--                    android:tag="hidetabs"-->
+<!--                    other:reboot="true"-->
+<!--                    android:text="@string/hide_tabs_on_home" />-->
 
             </LinearLayout>
 

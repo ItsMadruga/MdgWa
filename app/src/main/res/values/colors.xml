@@ -8,4 +8,5 @@
     <color name="default_icon_color">#90000000</color>
     <color name="fab_background">#fff1f1f1</color>
     <color name="default_background_color">#ffffff</color>
+    <color name="mdg_primary">#BDBDBD</color>
 </resources>

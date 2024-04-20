@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
@@ -39,6 +40,7 @@ public class TextViewButton extends LinearLayout {
         try {
             var title = a.getText(R.styleable.TextViewButton_android_text);
             var summary = a.getText(R.styleable.TextViewButton_android_summary);
+            var icon = a.getDrawable(R.styleable.TextViewButton_android_icon);
             var loadClass = a.getString(R.styleable.TextViewButton_loadClass);
             setTag(loadClass);
 
@@ -49,6 +51,11 @@ public class TextViewButton extends LinearLayout {
             if (summary != null) {
                 summaryView.setText(summary);
             } else summaryView.setVisibility(GONE);
+
+            var iconView = (AppCompatImageView) findViewById(R.id.icon);
+            if (iconView != null) {
+                iconView.setImageDrawable(icon);
+            } else iconView.setVisibility(GONE);
 
 
         } finally {

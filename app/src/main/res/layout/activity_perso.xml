@@ -23,49 +23,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/perso"
+                android:text="@string/colors_title"
                 android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.Material3.CardView.Elevated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="1dp">
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            style="@style/Widget.Material3.CardView.Elevated"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="15dp"-->
+<!--            app:cardCornerRadius="15dp"-->
+<!--            app:cardElevation="1dp">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="2dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:padding="2dp">-->
 
-                <its.madruga.wpp.views.TextViewButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/home_summary"
-                    android:text="@string/home"
-                    app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationHomeActivity" />
+<!--                <its.madruga.wpp.views.TextViewButton-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/home_summary"-->
+<!--                    android:text="@string/home"-->
+<!--                    app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationHomeActivity" />-->
 
-                <its.madruga.wpp.views.TextViewButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/general_summary"
-                    android:text="@string/general"
-                    app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationGeneralActivity" />
+<!--                <its.madruga.wpp.views.TextViewButton-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/general_summary"-->
+<!--                    android:text="@string/general"-->
+<!--                    app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationGeneralActivity" />-->
 
-                <its.madruga.wpp.views.TextViewButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/conversation_summary"
-                    android:text="@string/conversation"
-                    app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationConvActivity" />
+<!--                <its.madruga.wpp.views.TextViewButton-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/conversation_summary"-->
+<!--                    android:text="@string/conversation"-->
+<!--                    app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationConvActivity" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-        </com.google.android.material.card.MaterialCardView>
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"
@@ -110,6 +110,20 @@
                     android:summary="@string/current_color_s"
                     android:tag="background_color"
                     android:text="@string/background_color" />
+
+                <its.madruga.wpp.views.ColorPickerButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/current_color_s"
+                    android:tag="bubble_left"
+                    android:text="@string/bubble_left" />
+
+                <its.madruga.wpp.views.ColorPickerButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/current_color_s"
+                    android:tag="bubble_right"
+                    android:text="@string/bubble_right" />
 
             </LinearLayout>
 

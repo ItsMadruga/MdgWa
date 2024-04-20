@@ -61,6 +61,15 @@
                     android:text="@string/showbio" />
 
                 <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/showdndbutton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/show_dnd_button_sum"
+                    android:tag="show_dndmode"
+                    other:reboot="true"
+                    android:text="@string/show_dnd_button" />
+
+                <its.madruga.wpp.views.SwitchButton
                     android:id="@+id/separategroups"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,6 +77,35 @@
                     android:tag="separategroups"
                     other:reboot="true"
                     android:text="@string/separate_groups" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/dotonline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/show_online_dot_in_conversation_list_sum"
+                    android:tag="dotonline"
+                    other:reboot="true"
+                    android:text="@string/show_online_dot_in_conversation_list" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/novofiltro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/novofiltro_sum"
+                    android:tag="novofiltro"
+                    other:reboot="true"
+                    android:text="@string/novofiltro" />
+
+                <its.madruga.wpp.views.MultichoiceButton
+                    android:id="@+id/hidetabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/tabshide_contents"
+                    android:entryValues="@array/tabshide_values"
+                    android:summary="@string/hide_tabs_on_home_sum"
+                    android:tag="hidetabs"
+                    other:reboot="true"
+                    android:text="@string/hide_tabs_on_home" />
 
             </LinearLayout>
 

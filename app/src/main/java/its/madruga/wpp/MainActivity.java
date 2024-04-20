@@ -80,28 +80,29 @@ public class MainActivity extends BaseActivity {
         text.setText(String.format(workingText, "LSPosed"));
         img.setImageResource(R.drawable.lsposed_icon);
 
-        findViewById(R.id.reset_preferences).setOnClickListener(v -> new MaterialAlertDialogBuilder(container.getContext()).setTitle(R.string.reset_preferences).setMessage(R.string.reset_preferences_message).setPositiveButton(android.R.string.ok, (dialog, which) -> {
-            mEditor.clear().apply();
-            dialog.dismiss();
-            recreate();
-        }).setNegativeButton(android.R.string.cancel, ((dialog, which) -> dialog.dismiss())).create().show());
-
-        findViewById(R.id.restart_whatsapp).setOnClickListener(v -> {
-            Intent intent = new Intent(BuildConfig.APPLICATION_ID + ".WHATSAPP.RESTART");
-            sendBroadcast(intent);
-        });
+//        findViewById(R.id.reset_preferences).setOnClickListener(v -> new MaterialAlertDialogBuilder(container.getContext()).setTitle(R.string.reset_preferences).setMessage(R.string.reset_preferences_message).setPositiveButton(android.R.string.ok, (dialog, which) -> {
+//            mEditor.clear().apply();
+//            dialog.dismiss();
+//            recreate();
+//        }).setNegativeButton(android.R.string.cancel, ((dialog, which) -> dialog.dismiss())).create().show());
+//
+//        findViewById(R.id.restart_whatsapp).setOnClickListener(v -> {
+//            Intent intent = new Intent(BuildConfig.APPLICATION_ID + ".WHATSAPP.RESTART");
+//            sendBroadcast(intent);
+//        });
 
         configureListeners(container);
         setWhatsappVersionMessage();
 
-        findViewById(R.id.mdgwa_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga/MdgWa"))));
-        findViewById(R.id.mdgwa_telegram_channel).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/mdgwamodule"))));
-        findViewById(R.id.github_darker_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darker935"))));
-        findViewById(R.id.github_dev4mod_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Dev4Mod"))));
-        findViewById(R.id.madruga_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga"))));
+//        findViewById(R.id.mdgwa_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga/MdgWa"))));
+//        findViewById(R.id.mdgwa_telegram_channel).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/mdgwamodule"))));
+//        findViewById(R.id.github_darker_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darker935"))));
+//        findViewById(R.id.github_dev4mod_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Dev4Mod"))));
+//        findViewById(R.id.madruga_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga"))));
 
         var listView = (RecyclerView) findViewById(R.id.installed_app_list);
         var showApps = findViewById(R.id.show_supported_installed_apps);
+        var showAppsIcon = findViewById(R.id.show_supported_installed_apps_icon);
 
         var dataModels = new ArrayList<AppInfoModel>();
         var pm = getPackageManager();
@@ -118,9 +119,11 @@ public class MainActivity extends BaseActivity {
                 Animation animation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
                 listView.startAnimation(animation);
                 listView.setVisibility(View.VISIBLE);
+                showAppsIcon.setRotation(180);
             } else {
                 Log.i(TAG, "setContentViewMain: hidding");
                 listView.setVisibility(View.GONE);
+                showAppsIcon.setRotation(0);
             }
         });
 

@@ -43,78 +43,78 @@
                 android:orientation="vertical">
 
 
-                <its.madruga.wpp.views.SwitchButtonTop
-                    android:id="@+id/ampm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:tag="ampm"
-                    other:reboot="true"
-                    android:text="@string/ampm"
-                    android:title="@string/conversation" />
+<!--                <its.madruga.wpp.views.SwitchButtonTop-->
+<!--                    android:id="@+id/ampm"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:tag="ampm"-->
+<!--                    other:reboot="true"-->
+<!--                    android:text="@string/ampm"-->
+<!--                    android:title="@string/conversation" />-->
 
-                <its.madruga.wpp.views.SwitchButton
-                    android:id="@+id/segundos"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    other:reboot="true"
-                    android:summary="@string/segundosnahora_sum"
-                    android:tag="segundos"
-                    android:text="@string/segundosnahora" />
+<!--                <its.madruga.wpp.views.SwitchButton-->
+<!--                    android:id="@+id/segundos"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    other:reboot="true"-->
+<!--                    android:summary="@string/segundosnahora_sum"-->
+<!--                    android:tag="segundos"-->
+<!--                    android:text="@string/segundosnahora" />-->
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="15dp">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="15dp">-->
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/MdgWa"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/textonahora"
-                        android:padding="0dp">
+<!--                    <com.google.android.material.textfield.TextInputLayout-->
+<!--                        style="@style/MdgWa"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:hint="@string/textonahora"-->
+<!--                        android:padding="0dp">-->
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/secondstotime"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true" />
+<!--                        <com.google.android.material.textfield.TextInputEditText-->
+<!--                            android:id="@+id/secondstotime"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:singleLine="true" />-->
 
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+<!--                    </com.google.android.material.textfield.TextInputLayout>-->
+<!--                </LinearLayout>-->
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.Material3.CardView.Elevated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="1dp">
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            style="@style/Widget.Material3.CardView.Elevated"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="15dp"-->
+<!--            app:cardCornerRadius="15dp"-->
+<!--            app:cardElevation="1dp">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical">-->
 
-                <its.madruga.wpp.views.ColorPickerButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/current_color_s"
-                    android:tag="bubble_left"
-                    android:text="@string/bubble_left" />
+<!--                <its.madruga.wpp.views.ColorPickerButton-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/current_color_s"-->
+<!--                    android:tag="bubble_left"-->
+<!--                    android:text="@string/bubble_left" />-->
 
-                <its.madruga.wpp.views.ColorPickerButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/current_color_s"
-                    android:tag="bubble_right"
-                    android:text="@string/bubble_right" />
-            </LinearLayout>
+<!--                <its.madruga.wpp.views.ColorPickerButton-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/current_color_s"-->
+<!--                    android:tag="bubble_right"-->
+<!--                    android:text="@string/bubble_right" />-->
+<!--            </LinearLayout>-->
 
-        </com.google.android.material.card.MaterialCardView>
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
     </LinearLayout>
 </ScrollView>

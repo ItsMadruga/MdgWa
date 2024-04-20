@@ -9,6 +9,15 @@
     android:paddingStart="13dp"
     android:paddingEnd="13dp">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        android:id="@+id/icon"
+        android:layout_marginEnd="15dp"
+        app:tint="@color/civ_default_color" />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:orientation="vertical"
         android:layout_weight="2"
@@ -40,6 +49,6 @@
         android:layout_weight="1"
         app:tint="#777777"
         app:srcCompat="@drawable/chevron_right"
-        android:layout_width="36dp"
-        android:layout_height="36dp" />
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
 </LinearLayout>
