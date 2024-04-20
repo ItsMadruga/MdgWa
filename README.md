@@ -66,3 +66,4 @@ An Xposed module to customize your WhatsApp.
 ## Channel
 
 - [Telegram](https://t.me/mdgwamodule)
+
