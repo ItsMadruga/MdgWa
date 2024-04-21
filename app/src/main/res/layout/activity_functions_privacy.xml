@@ -40,6 +40,30 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <its.madruga.wpp.views.TextViewButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/antirevoke_title"
+                    android:summary="@string/antirevoke_sum"
+                    app:loadClass="its.madruga.wpp.activities.functions.FunctionsActivity" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <its.madruga.wpp.views.SwitchButtonTop
@@ -138,14 +162,14 @@
                     android:tag="blueonreply"
                     android:text="@string/blueonreply" />
 
-                <its.madruga.wpp.views.SwitchButton
-                    android:id="@+id/hidearchive"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:summary="@string/hide_archived_chat_sum"
-                    android:tag="hidearchive"
-                    other:reboot="true"
-                    android:text="@string/hide_archived_chat" />
+<!--                <its.madruga.wpp.views.SwitchButton-->
+<!--                    android:id="@+id/hidearchive"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:summary="@string/hide_archived_chat_sum"-->
+<!--                    android:tag="hidearchive"-->
+<!--                    other:reboot="true"-->
+<!--                    android:text="@string/hide_archived_chat" />-->
 
                 <its.madruga.wpp.views.SwitchButton
                     android:id="@+id/revokeallmessages"

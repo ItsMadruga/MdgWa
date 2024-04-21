@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/perso"
+                android:text="@string/home"
                 android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -77,6 +77,15 @@
                     android:tag="separategroups"
                     other:reboot="true"
                     android:text="@string/separate_groups" />
+
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/hidearchive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/hide_archived_chat_sum"
+                    android:tag="hidearchive"
+                    other:reboot="true"
+                    android:text="@string/hide_archived_chat" />
 
                 <its.madruga.wpp.views.SwitchButton
                     android:id="@+id/dotonline"

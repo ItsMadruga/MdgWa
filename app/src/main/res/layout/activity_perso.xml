@@ -81,14 +81,23 @@
                 android:orientation="vertical">
 
                 <its.madruga.wpp.views.SwitchButtonTop
+                    android:id="@+id/novotema"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/novotema_sum"
+                    android:tag="novotema"
+                    other:reboot="true"
+                    android:title="@string/colors_title"
+                    android:text="@string/novotema" />
+
+                <its.madruga.wpp.views.SwitchButton
                     android:id="@+id/changecolor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:summary="@string/colors_customization_sum"
                     android:tag="changecolor"
                     other:reboot="true"
-                    android:text="@string/colors_customization"
-                    android:title="@string/colors_title" />
+                    android:text="@string/colors_customization"/>
 
                 <its.madruga.wpp.views.ColorPickerButton
                     android:layout_width="match_parent"

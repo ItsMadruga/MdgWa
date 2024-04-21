@@ -162,7 +162,7 @@
                         android:id="@+id/customization"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Themes"
+                        android:text="@string/colors_title"
                         app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationActivity" />
 
 <!--                    android:summary="@string/general_summary"-->
@@ -201,8 +201,8 @@
                     <its.madruga.wpp.views.TextViewButton
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Creditos"
-                        app:loadClass="its.madruga.wpp.activities.personalization.PresonalizationConvActivity" />
+                        android:text="@string/about"
+                        app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationConvActivity" />
 
                 </LinearLayout>
 

@@ -1,5 +1,7 @@
 package its.madruga.wpp.activities.personalization;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,23 +21,11 @@ public class PersonalizationConvActivity extends BaseActivity {
         var container = findViewById(R.id.container);
         configureListeners(container);
 
-        TextInputEditText secondstotime = findViewById(R.id.secondstotime);
-        secondstotime.setText(mShared.getString("secondstotime", ""));
-        secondstotime.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        findViewById(R.id.mdgwa_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga/MdgWa"))));
+        findViewById(R.id.mdgwa_telegram_channel).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/mdgwamodule"))));
+        findViewById(R.id.github_darker_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darker935"))));
+        findViewById(R.id.github_dev4mod_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Dev4Mod"))));
+        findViewById(R.id.madruga_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga"))));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mEditor.putString("secondstotime", s.toString()).apply();
-            }
-        });
     }
 }

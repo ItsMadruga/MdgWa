@@ -123,7 +123,7 @@
     <string name="show_online_dot_in_conversation_list_sum">Show a green online dot on the home screen (NOTE: you need to activate show online for everyone in the Whatsapp configuration menu)</string>
     <string name="show_dnd_button">Mostrar Botão Não perturbe</string>
     <string name="show_dnd_button_sum">Mostrar botão para o Modo Não Perturbe na barra superior da tela inicial</string>
-    <string name="dev4mod">Dev4Mod (Contributor)</string>
+    <string name="dev4mod">Dev4Mod (Contribuinte)</string>
     <string name="disable_pinned_limit">Desativar Limite de Bate-Papos Fixados</string>
     <string name="disable_pinned_limit_sum">Desativar o limite de 3 conversas fixadas</string>
     <string name="delete_for_everyone_all_messages">Habilita excluir para todos em todas as mensagens</string>
@@ -154,4 +154,5 @@
     <string name="communities">Comunidades</string>
     <string name="calls">"Chamadas"</string>
     <string name="updates">Atualizações</string>
+    <string name="about">Sobre</string>
 </resources>

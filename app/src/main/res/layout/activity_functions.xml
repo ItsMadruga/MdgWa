@@ -23,42 +23,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/funcoes"
+                android:text="@string/antirevoke_title"
                 android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.Material3.CardView.Elevated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="1dp">
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            style="@style/Widget.Material3.CardView.Elevated"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="15dp"-->
+<!--            app:cardCornerRadius="15dp"-->
+<!--            app:cardElevation="1dp">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="2dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:padding="2dp">-->
 
-                <its.madruga.wpp.views.TextViewButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/privacy_title"
-                    app:loadClass="its.madruga.wpp.activities.functions.FunctionsPrivacyActivity"
-                    android:summary="@string/privacy_summary"/>
+<!--                <its.madruga.wpp.views.TextViewButton-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/privacy_title"-->
+<!--                    app:loadClass="its.madruga.wpp.activities.functions.FunctionsPrivacyActivity"-->
+<!--                    android:summary="@string/privacy_summary"/>-->
 
-                <its.madruga.wpp.views.TextViewButton
-                    app:loadClass="its.madruga.wpp.activities.functions.FunctionsMediaActivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/media_title"
-                    android:summary="@string/media_summary"/>
+<!--                <its.madruga.wpp.views.TextViewButton-->
+<!--                    app:loadClass="its.madruga.wpp.activities.functions.FunctionsMediaActivity"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/media_title"-->
+<!--                    android:summary="@string/media_summary"/>-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-        </com.google.android.material.card.MaterialCardView>
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"
