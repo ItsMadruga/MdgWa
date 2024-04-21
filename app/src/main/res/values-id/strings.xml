@@ -154,10 +154,10 @@ Anda perlu mengaktifkan dan mengatur ulang kembali</string>
     <string name="reboot_whatsapp">(Mulai ulang WhatsApp)</string>
     <string name="error_when_saving_try_again">Terjadi kesalahan saat menyimpan, coba lagi</string>
     <string name="saved_to">"Disimpan ke "</string>
-    <string name="hide_tabs_on_home">Hide Tabs on Home</string>
-    <string name="hide_tabs_on_home_sum">Allows hiding tabs on the home page such as updates, communities, calls.</string>
-    <string name="communities">Communities</string>
-    <string name="calls">"Calls "</string>
-    <string name="updates">Updates</string>
-    <string name="about">About</string>
+    <string name="hide_tabs_on_home">Sembunyikan Tab di Beranda</string>
+    <string name="hide_tabs_on_home_sum">Sembunyikan tab di halaman utama seperti pembaruan, komunitas, panggilan.</string>
+    <string name="communities">Komunitas</string>
+    <string name="calls">Panggilan</string>
+    <string name="updates">Pembaruan</string>
+    <string name="about">Tentang</string>
 </resources>
