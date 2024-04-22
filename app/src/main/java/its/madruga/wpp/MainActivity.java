@@ -73,12 +73,12 @@ public class MainActivity extends BaseActivity {
         mEditor.putStringSet("whatsapp_packages", wppPkgNames).apply();
 
         var container = (ViewGroup) findViewById(R.id.container);
-        var img = (ImageView) findViewById(R.id.whatsapp_version_status_img);
-        var text = (TextView) findViewById(R.id.module_status_text);
+//        var img = (ImageView) findViewById(R.id.whatsapp_version_status_img);
+//        var text = (TextView) findViewById(R.id.module_status_text);
 
         var workingText = getResources().getString(R.string.module_working_text);
-        text.setText(String.format(workingText, "LSPosed"));
-        img.setImageResource(R.drawable.lsposed_icon);
+//        text.setText(String.format(workingText, "LSPosed"));
+//        img.setImageResource(R.drawable.lsposed_icon);
 
 //        findViewById(R.id.reset_preferences).setOnClickListener(v -> new MaterialAlertDialogBuilder(container.getContext()).setTitle(R.string.reset_preferences).setMessage(R.string.reset_preferences_message).setPositiveButton(android.R.string.ok, (dialog, which) -> {
 //            mEditor.clear().apply();
@@ -101,8 +101,8 @@ public class MainActivity extends BaseActivity {
 //        findViewById(R.id.madruga_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga"))));
 
         var listView = (RecyclerView) findViewById(R.id.installed_app_list);
-        var showApps = findViewById(R.id.show_supported_installed_apps);
-        var showAppsIcon = findViewById(R.id.show_supported_installed_apps_icon);
+//        var showApps = findViewById(R.id.show_supported_installed_apps);
+//        var showAppsIcon = findViewById(R.id.show_supported_installed_apps_icon);
 
         var dataModels = new ArrayList<AppInfoModel>();
         var pm = getPackageManager();
@@ -113,19 +113,19 @@ public class MainActivity extends BaseActivity {
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);
 
-        showApps.setOnClickListener(v -> {
-            if (listView.getVisibility() == View.GONE) {
-                Log.i(TAG, "setContentViewMain: showing");
-                Animation animation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-                listView.startAnimation(animation);
-                listView.setVisibility(View.VISIBLE);
-                showAppsIcon.setRotation(180);
-            } else {
-                Log.i(TAG, "setContentViewMain: hidding");
-                listView.setVisibility(View.GONE);
-                showAppsIcon.setRotation(0);
-            }
-        });
+//        showApps.setOnClickListener(v -> {
+//            if (listView.getVisibility() == View.GONE) {
+//                Log.i(TAG, "setContentViewMain: showing");
+//                Animation animation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+//                listView.startAnimation(animation);
+//                listView.setVisibility(View.VISIBLE);
+//                showAppsIcon.setRotation(180);
+//            } else {
+//                Log.i(TAG, "setContentViewMain: hidding");
+//                listView.setVisibility(View.GONE);
+//                showAppsIcon.setRotation(0);
+//            }
+//        });
 
         try {
             var pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -150,28 +150,28 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setWhatsappVersionMessage() {
-        var msg = (MaterialTextView) findViewById(R.id.show_supported_installed_apps);
-        var required = (MaterialTextView) findViewById(R.id.module_status_text);
-        var requiredText = required.getText().toString();
-        var installed = (MaterialTextView) findViewById(R.id.module_status_sum);
-        var installedText = installed.getText().toString();
-        var resources = getResources();
-        var moduleInfo = BuildConfig.VERSION_NAME;
-        required.setText(String.format(requiredText, moduleInfo));
-        try {
-            getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e) {
-
-            try {
-                getPackageManager().getPackageInfo("com.whatsapp.w4b", PackageManager.GET_META_DATA);
-            } catch (PackageManager.NameNotFoundException ex) {
-                installed.setText(String.format(installedText, "--------"));
-                installed.setTextColor(resources.getColor(R.color.default_red, getTheme()));
-                if (msg.getVisibility() == View.GONE) {
-                    msg.setVisibility(View.VISIBLE);
-                }
-                msg.setText(R.string.whatsapp_not_installed);
-            }
-        }
+//        var msg = (MaterialTextView) findViewById(R.id.show_supported_installed_apps);
+//        var required = (MaterialTextView) findViewById(R.id.module_status_text);
+//        var requiredText = required.getText().toString();
+//        var installed = (MaterialTextView) findViewById(R.id.module_status_sum);
+//        var installedText = installed.getText().toString();
+//        var resources = getResources();
+//        var moduleInfo = BuildConfig.VERSION_NAME;
+//        required.setText(String.format(requiredText, moduleInfo));
+//        try {
+//            getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+//        } catch (PackageManager.NameNotFoundException e) {
+//
+//            try {
+//                getPackageManager().getPackageInfo("com.whatsapp.w4b", PackageManager.GET_META_DATA);
+//            } catch (PackageManager.NameNotFoundException ex) {
+//                installed.setText(String.format(installedText, "--------"));
+//                installed.setTextColor(resources.getColor(R.color.default_red, getTheme()));
+//                if (msg.getVisibility() == View.GONE) {
+//                    msg.setVisibility(View.VISIBLE);
+//                }
+//                msg.setText(R.string.whatsapp_not_installed);
+//            }
+//        }
     }
 }

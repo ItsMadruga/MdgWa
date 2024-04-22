@@ -5,12 +5,10 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
 
 import its.madruga.wpp.R;
@@ -53,7 +51,7 @@ public class TextViewButton extends LinearLayout {
             } else summaryView.setVisibility(GONE);
 
             var iconView = (AppCompatImageView) findViewById(R.id.icon);
-            if (iconView != null) {
+            if (icon != null) {
                 iconView.setImageDrawable(icon);
             } else iconView.setVisibility(GONE);
 

@@ -9,7 +9,7 @@ android {
     buildFeatures { buildConfig = true }
     defaultConfig {
         applicationId = "its.madruga.wpp"
-        minSdk = 29
+        minSdk = 28
         targetSdk = 34
         versionCode = 2
         versionName = "2.24.7.79"
@@ -46,6 +46,7 @@ android {
 }
 
 dependencies {
+    implementation("org.jetbrains:annotations:15.0")
     compileOnly(libs.api)
     implementation(libs.circleimageview)
     implementation(libs.appcompat)

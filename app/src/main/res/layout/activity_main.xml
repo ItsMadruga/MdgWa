@@ -155,14 +155,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/privacy_title"
-                        app:loadClass="its.madruga.wpp.activities.functions.FunctionsPrivacyActivity"
-                        />
+                        android:icon="@drawable/privacy_icon"
+                        app:loadClass="its.madruga.wpp.activities.functions.FunctionsPrivacyActivity" />
 
                     <its.madruga.wpp.views.TextViewButton
-                        android:id="@+id/customization"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/colors_title"
+                        android:icon="@drawable/theme_icon"
                         app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationActivity" />
 
 <!--                    android:summary="@string/general_summary"-->
@@ -171,6 +171,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/general"
+                        android:icon="@drawable/general_icon"
                         app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationGeneralActivity" />
 
 <!--                    android:summary="@string/home_summary"-->
@@ -179,6 +180,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/home"
+                        android:icon="@drawable/home_icon"
                         app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationHomeActivity" />
 
 <!--                    android:summary="@string/conversation_summary"-->
@@ -196,12 +198,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/media_title"
-                        />
+                        android:icon="@drawable/media_icon"/>
 
                     <its.madruga.wpp.views.TextViewButton
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/about"
+                        android:icon="@drawable/about_icon"
                         app:loadClass="its.madruga.wpp.activities.personalization.PersonalizationConvActivity" />
 
                 </LinearLayout>
@@ -222,94 +225,93 @@
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="15dp"
-                        android:paddingVertical="20dp">
+<!--                    <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:paddingHorizontal="15dp"-->
+<!--                        android:paddingVertical="20dp">-->
 
-                        <ImageView
-                            android:id="@+id/whatsapp_version_status_img"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="15dp"
-                            android:src="@drawable/check_mark_icon" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/whatsapp_version_status_img"-->
+<!--                            android:layout_width="40dp"-->
+<!--                            android:layout_height="40dp"-->
+<!--                            android:layout_gravity="center_vertical"-->
+<!--                            android:layout_marginEnd="15dp"-->
+<!--                            android:src="@drawable/check_mark_icon" />-->
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:orientation="vertical">
+<!--                        <LinearLayout-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center_vertical"-->
+<!--                            android:orientation="vertical">-->
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/module_status_text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:text="@string/module_working_text"
-                                android:textColor="@color/default_icon_color"
-                                android:textStyle="bold" />
+<!--                            <com.google.android.material.textview.MaterialTextView-->
+<!--                                android:id="@+id/module_status_text"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:layout_gravity="center_vertical"-->
+<!--                                android:text="@string/module_working_text"-->
+<!--                                android:textColor="@color/default_icon_color"-->
+<!--                                android:textStyle="bold" />-->
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/module_status_sum"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:text="@string/module_not_enabled_text"
-                                android:textSize="12sp"
-                                android:textStyle="normal"
-                                android:visibility="gone" />
+<!--                            <com.google.android.material.textview.MaterialTextView-->
+<!--                                android:id="@+id/module_status_sum"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:layout_gravity="center_vertical"-->
+<!--                                android:text="@string/module_not_enabled_text"-->
+<!--                                android:textSize="12sp"-->
+<!--                                android:textStyle="normal"-->
+<!--                                android:visibility="gone" />-->
 
-                        </LinearLayout>
+<!--                        </LinearLayout>-->
 
-                    </androidx.appcompat.widget.LinearLayoutCompat>
+<!--                    </androidx.appcompat.widget.LinearLayoutCompat>-->
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/civ_default_background" />
+<!--                    <View-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="1dp"-->
+<!--                        android:background="@color/civ_default_background" />-->
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/installed_app_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
                         tools:listitem="@layout/apps_list_item" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center">
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:gravity="center">-->
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="12dp"
-                            android:id="@+id/show_supported_installed_apps_icon"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerHorizontal="true"
-                            android:paddingBottom="4dp"
-                            app:srcCompat="@drawable/chevron_double_down"
-                            app:tint="@color/default_icon_color" />
+<!--                        <androidx.appcompat.widget.AppCompatImageView-->
+<!--                            android:layout_width="12dp"-->
+<!--                            android:id="@+id/show_supported_installed_apps_icon"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_alignParentTop="true"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerHorizontal="true"-->
+<!--                            android:paddingBottom="4dp"-->
+<!--                            app:srcCompat="@drawable/chevron_double_down"-->
+<!--                            app:tint="@color/default_icon_color" />-->
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/show_supported_installed_apps"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:background="@drawable/bottom_button_background"
-                            android:gravity="center"
-                            android:paddingTop="12dp"
-                            android:paddingBottom="20dp"
-                            android:text="Supported apps"
-                            android:textColor="@color/default_icon_color"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+<!--                        <com.google.android.material.textview.MaterialTextView-->
+<!--                            android:id="@+id/show_supported_installed_apps"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:background="@drawable/bottom_button_background"-->
+<!--                            android:gravity="center"-->
+<!--                            android:paddingTop="12dp"-->
+<!--                            android:paddingBottom="20dp"-->
+<!--                            android:text="@string/supported_apps"-->
+<!--                            android:textColor="@color/default_icon_color"-->
+<!--                            android:textSize="13sp"-->
+<!--                            android:textStyle="bold" />-->
 
-                    </RelativeLayout>
+<!--                    </RelativeLayout>-->
 
                 </LinearLayout>
 

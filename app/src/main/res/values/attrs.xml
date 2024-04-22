@@ -29,6 +29,6 @@
         <attr name="loadClass" format="string" />
         <attr name="android:text" />
         <attr name="android:summary" />
-        <attr name="android:icon" />
+        <attr name="android:icon"/>
     </declare-styleable>
 </resources>
