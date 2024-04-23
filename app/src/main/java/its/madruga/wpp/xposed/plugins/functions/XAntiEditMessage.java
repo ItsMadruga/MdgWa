@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.BlendMode;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -188,7 +187,7 @@ public class XAntiEditMessage extends XHookBase {
             layoutParams4.gravity = 17;
             layoutParams4.setMargins(0, Utils.dipToPixels(5), 0, Utils.dipToPixels(5));
             var bg2 = DesignUtils.createDrawable("rc_dotline_dialog");
-            imageView0.setBackground(DesignUtils.alphaDrawable(bg2, DesignUtils.getPrimaryTextColor(ctx), BlendMode.SRC_ATOP, 33));
+            imageView0.setBackground(DesignUtils.alphaDrawable(bg2, DesignUtils.getPrimaryTextColor(ctx), 33));
             imageView0.setLayoutParams(layoutParams4);
             // Button View
             Button okButton = new Button(ctx);
@@ -198,7 +197,7 @@ public class XAntiEditMessage extends XHookBase {
             okButton.setLayoutParams(layoutParams3);
             okButton.setGravity(17);
             var drawable = DesignUtils.createDrawable("selector_bg");
-            okButton.setBackground(DesignUtils.alphaDrawable(drawable, DesignUtils.getPrimaryTextColor(ctx), BlendMode.SRC_ATOP, 25));
+            okButton.setBackground(DesignUtils.alphaDrawable(drawable, DesignUtils.getPrimaryTextColor(ctx), 25));
             okButton.setText("OK");
             okButton.setOnClickListener((View view) -> dialog.dismiss());
             linearLayout.addView(imageView0);

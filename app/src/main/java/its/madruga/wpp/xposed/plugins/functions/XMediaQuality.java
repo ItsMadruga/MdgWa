@@ -2,6 +2,7 @@ package its.madruga.wpp.xposed.plugins.functions;
 
 import android.graphics.Bitmap;
 import android.graphics.RecordingCanvas;
+import android.os.Build;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -79,7 +80,9 @@ public class XMediaQuality extends XHookBase {
                 }
             });
             // Prevent crashes in Media preview
-            XposedHelpers.findAndHookMethod(RecordingCanvas.class, "throwIfCannotDraw", Bitmap.class, XC_MethodReplacement.DO_NOTHING);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                XposedHelpers.findAndHookMethod(RecordingCanvas.class, "throwIfCannotDraw", Bitmap.class, XC_MethodReplacement.DO_NOTHING);
+            }
         }
     }
 

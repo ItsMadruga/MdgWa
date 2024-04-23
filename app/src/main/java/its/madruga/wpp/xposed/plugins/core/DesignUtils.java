@@ -31,9 +31,9 @@ public class DesignUtils {
     }
 
     @NonNull
-    public static Drawable coloredDrawable(Drawable drawable, int color, BlendMode mode) {
+    public static Drawable coloredDrawable(Drawable drawable, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            drawable.setColorFilter(new BlendModeColorFilter(color, mode));
+            drawable.setColorFilter(new BlendModeColorFilter(color, BlendMode.SRC_ATOP));
         } else {
             drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
         }
@@ -42,8 +42,8 @@ public class DesignUtils {
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public static Drawable alphaDrawable(Drawable drawable, int primaryTextColor, BlendMode mode, int i) {
-        Drawable coloredDrawable = DesignUtils.coloredDrawable(drawable, primaryTextColor, mode);
+    public static Drawable alphaDrawable(Drawable drawable, int primaryTextColor, int i) {
+        Drawable coloredDrawable = DesignUtils.coloredDrawable(drawable, primaryTextColor);
         coloredDrawable.setAlpha(i);
         return coloredDrawable;
     }

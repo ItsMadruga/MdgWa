@@ -25,10 +25,11 @@ public class DrawableColors {
 
     public static void replaceColor(Drawable drawable) {
         if (drawable instanceof StateListDrawable stateListDrawable) {
-            var count = stateListDrawable.getStateCount();
+            var count = StateListDrawableCompact.getStateCount(stateListDrawable);
             for (int i = 0; i < count; i++) {
-                var stateDrawable = stateListDrawable.getStateDrawable(i);
-                replaceColor(stateDrawable);
+                var stateDrawable = StateListDrawableCompact.getStateDrawable(stateListDrawable, i);
+                if (stateDrawable != null)
+                    replaceColor(stateDrawable);
             }
         } else if (drawable instanceof DrawableContainer drawableContainer) {
             var containerState = drawableContainer.getConstantState();
@@ -128,10 +129,8 @@ public class DrawableColors {
         var width = bitmap.getWidth();
         var height = bitmap.getHeight();
 
-        var color = bitmap.getColor(width / 2, height / 2);
-
-//        XposedBridge.log("--> Bitmap color: " + IColors.toString(color.toArgb()));
-        return color.toArgb();
+        //        XposedBridge.log("--> Bitmap color: " + IColors.toString(color.toArgb()));
+        return bitmap.getPixel(width / 2, height / 2);
     }
 
     private static int getRippleDrawableColor(RippleDrawable rippleDrawable) {
