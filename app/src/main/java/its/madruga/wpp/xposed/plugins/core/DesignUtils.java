@@ -6,12 +6,13 @@ import android.content.res.TypedArray;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.view.ContextThemeWrapper;
+import android.os.Build;
 
-import java.lang.reflect.Method;
+import androidx.annotation.NonNull;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -29,8 +30,13 @@ public class DesignUtils {
         return DesignUtils.getDrawable(id);
     }
 
+    @NonNull
     public static Drawable coloredDrawable(Drawable drawable, int color, BlendMode mode) {
-        drawable.setColorFilter(new BlendModeColorFilter(color, mode));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            drawable.setColorFilter(new BlendModeColorFilter(color, mode));
+        } else {
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        }
         return drawable;
     }
 
