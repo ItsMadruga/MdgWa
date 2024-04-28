@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -151,20 +152,26 @@ public class XBlueTick extends XHookBase {
                 if (!prefs.getBoolean("hidestatusview", false)) return;
                 var view = (View) param.getResult();
                 var contentView = (LinearLayout) view.findViewById(Utils.getID("bottom_sheet", "id"));
+                var infoBar = contentView.findViewById(Utils.getID("info", "id"));
                 var buttonImage = new ImageView(XMain.mApp);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) Utils.dipToPixels(32), (int) Utils.dipToPixels(32));
-                params.gravity = Gravity.END;
-                params.setMargins(0, 0, (int) Utils.dipToPixels(8), 0);
+                params.gravity = Gravity.CENTER_VERTICAL;
+                params.setMargins(Utils.dipToPixels(5), Utils.dipToPixels(5), 0, 0);
                 buttonImage.setLayoutParams(params);
                 buttonImage.setImageResource(Utils.getID("ic_notif_mark_read", "drawable"));
                 GradientDrawable border = new GradientDrawable();
                 border.setShape(GradientDrawable.RECTANGLE);
-                border.setStroke(2, Color.WHITE);
+                border.setStroke(1, Color.WHITE);
                 border.setCornerRadius(20);
                 border.setColor(Color.parseColor("#80000000"));
                 buttonImage.setBackground(border);
-                contentView.addView(buttonImage, 0);
-                contentView.setPadding(0, contentView.getPaddingTop() - (int) Utils.dipToPixels(32), 0, 0);
+                view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+                    if (infoBar.getVisibility() != View.VISIBLE) {
+                        if (contentView.getChildAt(0) == buttonImage) return;
+                        contentView.setOrientation(LinearLayout.HORIZONTAL);
+                        contentView.addView(buttonImage, 0);
+                    }
+                });
                 buttonImage.setOnClickListener(v -> {
                     new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(XMain.mApp, "Sending read blue tick..", Toast.LENGTH_SHORT).show());
                     sendBlueTickStatus(currentJid);
@@ -188,7 +195,7 @@ public class XBlueTick extends XHookBase {
                     MenuItem item = menu.add(0, 0, 0, "View Once").setIcon(Utils.getID("ic_notif_mark_read", "drawable"));
                     item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                     item.setOnMenuItemClickListener(item1 -> {
-                        var messageField = Unobfuscator.getFieldByExtendType(menuMethod.getDeclaringClass(),classThreadMessage);
+                        var messageField = Unobfuscator.getFieldByExtendType(menuMethod.getDeclaringClass(), classThreadMessage);
                         var messageObject = XposedHelpers.getObjectField(param.thisObject, messageField.getName());
                         sendBlueTickMedia(messageObject);
                         Toast.makeText(XMain.mApp, "Sending read blue tick..", Toast.LENGTH_SHORT).show();

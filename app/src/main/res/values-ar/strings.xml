@@ -109,8 +109,8 @@
     <string name="imagequality_sum">إرسال الصور بجودة HD</string>
     <string name="downloadviewonce">تحميل عرض مرة واحدة</string>
     <string name="downloadviewonce_sum">قم بإنشاء عرض بمجرد زر التنزيل</string>
-    <string name="separate_groups_sum">قم بفصل دردشاتك حسب: المجموعات، الدردشات الخاصة، الحالة، المكالمات، المجتمعات</string>
     <string name="separate_groups">مجموعات منفصلة</string>
+    <string name="separate_groups_sum">قم بفصل دردشاتك حسب: المجموعات، الدردشات الخاصة، الحالة، المكالمات، المجتمعات</string>
     <string name="blueonreply">أرسل علامة زرقاء عند الرد</string>
     <string name="blueonreply_sum">أرسل العلامة الزرقاء عند الرد على الرسالة</string>
     <string name="hide_archived_chat">Hide archived chat</string>
@@ -160,4 +160,9 @@
     <string name="chatfilter_no_search">No search</string>
     <string name="chatfilter_search_icon">Search icon</string>
     <string name="chatfilter_search_bar">Search bar</string>
+    <string name="remove_channel_recomendations">Remove Channel Recomendations</string>
+    <string name="remove_channel_recomendations_sum">Remove Channel Recomendations from tab Status</string>
+    <string name="remove_see_more_button">Remove \'See More\' Button</string>
+    <string name="remove_see_more_button_">Disable \'See More\' button and show all long message</string>
+    <string name="tools">Tools</string>
 </resources>

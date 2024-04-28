@@ -20,7 +20,6 @@ import its.madruga.wpp.xposed.Unobfuscator;
 public class WppCore {
 
     private static Object mainActivity;
-    private static Field contactManagerField;
     private static Method getContactMethod;
     private static Class<?> mGenJidClass;
     private static Method mGenJidMethod;
@@ -30,6 +29,7 @@ public class WppCore {
     private static Field chatJidField;
 
     private static HashSet<ObjectOnChangeListener> listenerChat = new HashSet<>();
+    private static Object mContactManager;
 
     public interface ObjectOnChangeListener {
         void onChange(Object object, String type);
@@ -56,8 +56,13 @@ public class WppCore {
             });
 
             // init ContactManager
-            contactManagerField = Unobfuscator.loadContactManagerField(loader);
             getContactMethod = Unobfuscator.loadGetContactInfoMethod(loader);
+            XposedBridge.hookAllConstructors(getContactMethod.getDeclaringClass(), new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    mContactManager = param.thisObject;
+                }
+            });
 
             // init UserJID
             var mSendReadClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendReadReceiptJob", loader);
@@ -97,19 +102,12 @@ public class WppCore {
     }
 
     public static Object getContactManager() {
-        if (mainActivity == null) return null;
-        try {
-            contactManagerField.setAccessible(true);
-            return contactManagerField.get(mainActivity);
-        } catch (Exception e) {
-            XposedBridge.log(e);
-        }
-        return null;
+        return mContactManager;
     }
 
     public static String getContactName(Object userJid) {
         try {
-            var contact = getContactMethod.invoke(getContactManager(), userJid);
+            var contact = getContactMethod.invoke(mContactManager, userJid);
             var stringField = Arrays.stream(contact.getClass().getDeclaredFields()).filter(f -> f.getType().equals(String.class)).toArray(Field[]::new);
             return (String) stringField[3].get(contact);
         } catch (Exception e) {

@@ -1,6 +1,6 @@
 package its.madruga.wpp.xposed;
 
-import android.annotation.SuppressLint;
+import android.graphics.drawable.NinePatchDrawable;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +17,7 @@ import org.luckypray.dexkit.query.enums.StringMatchType;
 import org.luckypray.dexkit.query.matchers.ClassMatcher;
 import org.luckypray.dexkit.query.matchers.FieldMatcher;
 import org.luckypray.dexkit.query.matchers.MethodMatcher;
+import org.luckypray.dexkit.query.matchers.base.OpCodesMatcher;
 import org.luckypray.dexkit.result.ClassData;
 import org.luckypray.dexkit.result.ClassDataList;
 import org.luckypray.dexkit.result.MethodData;
@@ -32,6 +33,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +45,6 @@ import java.util.stream.Collectors;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class Unobfuscator {
 
@@ -258,30 +259,6 @@ public class Unobfuscator {
     }
 
     // TODO: Classes and Methods for BubbleColors
-    @SuppressLint("DiscouragedApi")
-    private static ClassDataList loadBubbleColorsClass() {
-        if (cache.containsKey("balloon")) return (ClassDataList) cache.get("balloon");
-        var balloonIncomingNormal = XMain.mApp.getResources().getIdentifier(BUBBLE_COLORS_BALLOON_INCOMING_NORMAL, "drawable", XMain.mApp.getPackageName());
-        var balloonIncomingNormalExt = XMain.mApp.getResources().getIdentifier(BUBBLE_COLORS_BALLOON_INCOMING_NORMAL_EXT, "drawable", XMain.mApp.getPackageName());
-        var balloonOutgoingNormal = XMain.mApp.getResources().getIdentifier(BUBBLE_COLORS_BALLOON_OUTGOING_NORMAL, "drawable", XMain.mApp.getPackageName());
-        var balloonOutgoingNormalExt = XMain.mApp.getResources().getIdentifier(BUBBLE_COLORS_BALLOON_OUTGOING_NORMAL_EXT, "drawable", XMain.mApp.getPackageName());
-        var clsBubbleColors = dexkit.findClass(new FindClass().matcher(new ClassMatcher()
-                .addMethod(new MethodMatcher().addUsingNumber(balloonIncomingNormal))
-                .addMethod(new MethodMatcher().addUsingNumber(balloonOutgoingNormal))
-                .addMethod(new MethodMatcher().addUsingNumber(balloonIncomingNormalExt))
-                .addMethod(new MethodMatcher().addUsingNumber(balloonOutgoingNormalExt))
-        ));
-        cache.put("balloon", clsBubbleColors);
-        return clsBubbleColors;
-    }
-
-    @SuppressLint("DiscouragedApi")
-    public static Method loadBubbleColorsMethod(ClassLoader classLoader, String name) throws Exception {
-        var clsBubbleColors = loadBubbleColorsClass();
-        var id = XMain.mApp.getResources().getIdentifier(name, "drawable", XMain.mApp.getPackageName());
-        var result = dexkit.findMethod(new FindMethod().searchInClass(clsBubbleColors).matcher(new MethodMatcher().addUsingNumber(id)));
-        return result.get(0).getMethodInstance(classLoader);
-    }
 
 
     // TODO: Classes and Methods for XChatFilter
@@ -916,14 +893,6 @@ public class Unobfuscator {
         });
     }
 
-    public static Field loadContactManagerField(ClassLoader loader) throws Exception {
-        return UnobfuscatorCache.getInstance().getField(loader, () -> {
-            Class<?> class1 = findFirstClassUsingStrings(loader, StringMatchType.Contains, "contactmanager/permission problem:");
-            if (class1 == null) throw new Exception("ContactManager field not found");
-            Class HomeActivity = XposedHelpers.findClass("com.whatsapp.HomeActivity", loader);
-            return getFieldByType(HomeActivity, class1);
-        });
-    }
 
     public static Method loadGetContactInfoMethod(ClassLoader loader) throws Exception {
         return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
@@ -984,15 +953,15 @@ public class Unobfuscator {
         });
     }
 
-    public static Method loadPinnedLimit2Method(ClassLoader loader) throws Exception {
-        return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
-            var id = UnobfuscatorCache.getInstance().getOfuscateIdString("Unpin All");
-            MethodDataList result = dexkit.findMethod(new FindMethod().matcher(new MethodMatcher().addUsingNumber(id)));
-            if (result.isEmpty()) throw new Exception("PinnedLimit2 method not found");
-            var clazz = result.get(0).getDeclaredClass().getInstance(loader);
-            return Arrays.stream(clazz.getDeclaredMethods()).filter(m -> m.getReturnType().equals(boolean.class)).findFirst().orElse(null);
-        });
-    }
+//    public static Method loadPinnedLimit2Method(ClassLoader loader) throws Exception {
+//        return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
+//            var id = UnobfuscatorCache.getInstance().getOfuscateIdString("Unpin All");
+//            MethodDataList result = dexkit.findMethod(new FindMethod().matcher(new MethodMatcher().addUsingNumber(id)));
+//            if (result.isEmpty()) throw new Exception("PinnedLimit2 method not found");
+//            var clazz = result.get(0).getDeclaredClass().getInstance(loader);
+//            return Arrays.stream(clazz.getDeclaredMethods()).filter(m -> m.getReturnType().equals(boolean.class)).findFirst().orElse(null);
+//        });
+//    }
 
     public static Method loadPinnedHashSetMethod(ClassLoader loader) throws Exception {
         return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
@@ -1038,7 +1007,18 @@ public class Unobfuscator {
             var clazz = findFirstClassUsingStrings(loader, StringMatchType.Contains, "app/time server update processed");
             if (clazz == null) throw new RuntimeException("ChatLimitDelete class not found");
             var method = Arrays.stream(clazz.getDeclaredMethods()).filter(m -> m.getReturnType().equals(long.class) && Modifier.isStatic(m.getModifiers())).findFirst().orElse(null);
-            if (method == null) throw new RuntimeException("ChatLimitDelete method not found");
+            if (method == null) {
+                var methodList = Objects.requireNonNull(dexkit.getClassData(clazz)).findMethod(new FindMethod().matcher(new MethodMatcher().opCodes(new OpCodesMatcher().opNames(
+                        List.of("invoke-static",
+                                "move-result-wide", "iget-wide", "const-wide/16", "cmp-long",
+                                "if-eqz", "iget-wide", "add-long/2addr", "return-wide",
+                                "iget-wide", "cmp-long", "if-eqz", "iget-wide",
+                                "goto", "invoke-static", "move-result-wide", "iget-wide",
+                                "sub-long/2addr", "return-wide")))));
+                if (methodList.isEmpty())
+                    throw new RuntimeException("ChatLimitDelete method not found");
+                method = methodList.get(0).getMethodInstance(loader);
+            }
             return method;
         });
     }
@@ -1051,13 +1031,13 @@ public class Unobfuscator {
         });
     }
 
-    public static Method loadOriginalMessageMethod(ClassLoader loader) throws Exception {
-        return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
-            var method = findFirstMethodUsingStrings(loader, StringMatchType.Contains, "fmessage-clone-comparison-failed");
-            if (method == null) throw new RuntimeException("OriginalMessage method not found");
-            return method;
-        });
-    }
+//    public static Method loadOriginalMessageMethod(ClassLoader loader) throws Exception {
+//        return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
+//            var method = findFirstMethodUsingStrings(loader, StringMatchType.Contains, "fmessage-clone-comparison-failed");
+//            if (method == null) throw new RuntimeException("OriginalMessage method not found");
+//            return method;
+//        });
+//    }
 
     public static Method loadNewMessageMethod(ClassLoader loader) throws Exception {
         return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
@@ -1254,4 +1234,54 @@ public class Unobfuscator {
     }
 
 
+    public static List<Method> loadNineDrawableMethods(ClassLoader loader) throws Exception {
+        var result = dexkit.findMethod(new FindMethod().matcher(new MethodMatcher().returnType(NinePatchDrawable.class).paramCount(4)));
+        if (result.isEmpty()) return Collections.emptyList();
+        var arr = new ArrayList<Method>();
+        for (var m : result) {
+            if (m.isMethod()) arr.add(m.getMethodInstance(loader));
+        }
+        return arr;
+    }
+
+    public static Class loadOnMenuItemClickClass(ClassLoader loader) throws Exception {
+        return UnobfuscatorCache.getInstance().getClass(loader, () -> {
+            var clazz = findFirstClassUsingStrings(loader, StringMatchType.Contains, "android:menu:expandedactionview");
+            if (clazz == null) throw new RuntimeException("OnMenuItemClick class not found");
+            return clazz;
+        });
+    }
+
+    public static Class loadRemoveChannelRecClass(ClassLoader loader) throws Exception {
+        return UnobfuscatorCache.getInstance().getClass(loader, () -> {
+            var clazz = findFirstClassUsingStrings(loader, StringMatchType.Contains, "RecommendedNewslettersListDataItem(recommendedNewsletters=");
+            if (clazz == null) throw new RuntimeException("RemoveChannelRec class not found");
+            return clazz;
+        });
+    }
+
+    public static Class loadFilterAdaperClass(ClassLoader loader) throws Exception {
+        return UnobfuscatorCache.getInstance().getClass(loader, () -> {
+            var clazzList = dexkit.findClass(new FindClass().matcher(new ClassMatcher().addMethod(new MethodMatcher().addUsingString("CONTACTS_FILTER").paramCount(1).addParamType(int.class))));
+            if (clazzList.isEmpty()) throw new RuntimeException("FilterAdapter class not found");
+            return clazzList.get(0).getInstance(loader);
+        });
+    }
+
+    public static Method loadSeeMoreMethod(ClassLoader loader) throws Exception {
+        return UnobfuscatorCache.getInstance().getMethod(loader, () -> {
+            var classList = dexkit.findClass(new FindClass().matcher(new ClassMatcher().
+                    addMethod(new MethodMatcher().addUsingNumber(16384).addUsingNumber(512).addUsingNumber(64).addUsingNumber(16))
+                    .addMethod(new MethodMatcher().paramCount(2).addParamType(int.class).addParamType(boolean.class))));
+            if (classList.isEmpty()) throw new RuntimeException("SeeMore method 1 not found");
+            var clazzData = classList.get(0);
+            XposedBridge.log(clazzData.toString());
+            for (var method : clazzData.getMethods()) {
+                if (method.getParamCount() == 2 && method.getParamTypes().get(0).getName().equals(int.class.getName()) && method.getParamTypes().get(1).getName().equals(boolean.class.getName())) {
+                    return method.getMethodInstance(loader);
+                }
+            }
+            throw new RuntimeException("SeeMore method 2 not found");
+        });
+    }
 }

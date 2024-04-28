@@ -109,8 +109,8 @@
     <string name="imagequality_sum">Abilita la possibilità di inviare immagini in qualità HD</string>
     <string name="downloadviewonce">Download Visualizza Una Volta</string>
     <string name="downloadviewonce_sum">Mostra un pulsante di download per Visualizza una volta</string>
-    <string name="separate_groups_sum">Separa le tue chat per: Gruppi, Chat Private, Stato, Chiamate, Comunità</string>
     <string name="separate_groups">Gruppi Separati</string>
+    <string name="separate_groups_sum">Separa le tue chat per: Gruppi, Chat Private, Stato, Chiamate, Comunità</string>
     <string name="blueonreply">Invia spunta blu dopo la risposta</string>
     <string name="blueonreply_sum">Invia spunte blu dopo aver risposto a un messaggio</string>
     <string name="hide_archived_chat">Nascondi Chat Archiviate</string>
@@ -154,10 +154,15 @@
     <string name="communities">Comunità</string>
     <string name="calls">"Chiamate "</string>
     <string name="updates">Aggiornamenti</string>
-    <string name="about">About</string>
-    <string name="igstatus_on_home_screen">Enable IGStatus on Home Screen</string>
-    <string name="igstatus_on_home_screen_sum">Show status style Instagram in Home Screen</string>
-    <string name="chatfilter_no_search">No search</string>
-    <string name="chatfilter_search_icon">Search icon</string>
-    <string name="chatfilter_search_bar">Search bar</string>
+    <string name="about">Info</string>
+    <string name="igstatus_on_home_screen">Abilita IGStatus nella Schermata Principale</string>
+    <string name="igstatus_on_home_screen_sum">Mostra lo stile di stato Instagram nella Schermata Principale</string>
+    <string name="chatfilter_no_search">Nessuna ricerca</string>
+    <string name="chatfilter_search_icon">Icona di Ricerca</string>
+    <string name="chatfilter_search_bar">Barra di Ricerca</string>
+    <string name="remove_channel_recomendations">Rimuovi i Suggerimenti dei Canali</string>
+    <string name="remove_channel_recomendations_sum">Rimuovi i Suggerimenti dei Canali dalla scheda Aggiornamenti</string>
+    <string name="remove_see_more_button">Rimuovi il pulsante \'Continua a leggere\'</string>
+    <string name="remove_see_more_button_">Disabilita il pulsante \'Continua a leggere\' e mostra tutto il messaggio lungo</string>
+    <string name="tools">Tools</string>
 </resources>

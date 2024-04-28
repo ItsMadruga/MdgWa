@@ -8,14 +8,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -26,7 +27,6 @@ import its.madruga.wpp.xposed.models.XHookBase;
 import its.madruga.wpp.xposed.plugins.core.DesignUtils;
 import its.madruga.wpp.xposed.plugins.core.ResId;
 import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.WppCore;
 
 public class XOthers extends XHookBase {
 
@@ -59,9 +59,10 @@ public class XOthers extends XHookBase {
         var strokeButtons = prefs.getBoolean("strokebuttons", false);
         var outlinedIcons = prefs.getBoolean("outlinedicons", false);
         var showDnd = prefs.getBoolean("show_dndmode", false);
+        var removechannelRec = prefs.getBoolean("removechannel_rec", false);
         var separateGroups = prefs.getBoolean("separategroups", false);
 
-        props.put(5171, !separateGroups); // filtros de chat e grupos
+        props.put(5171, true); // filtros de chat e grupos
         props.put(4524, novoTema);
         props.put(4497, menuWIcons);
         props.put(4023, newSettings);
@@ -69,7 +70,6 @@ public class XOthers extends XHookBase {
         props.put(5834, strokeButtons);
         props.put(5509, outlinedIcons);
         props.put(2358, false);
-
 
         var methodProps = Unobfuscator.loadPropsMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(methodProps));
@@ -115,6 +115,7 @@ public class XOthers extends XHookBase {
             }
         });
 
+
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loader, "onPrepareOptionsMenu", Menu.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -126,6 +127,47 @@ public class XOthers extends XHookBase {
             }
         });
 
+        if (removechannelRec) {
+            var removeChannelRecClass = Unobfuscator.loadRemoveChannelRecClass(loader);
+            XposedBridge.hookAllConstructors(removeChannelRecClass, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    if (param.args.length > 0 && param.args[0] instanceof List list) {
+                        if (list.isEmpty()) return;
+                        list.clear();
+                    }
+                }
+            });
+        }
+
+        if (separateGroups) {
+            var filterAdaperClass = Unobfuscator.loadFilterAdaperClass(loader);
+            XposedBridge.hookAllConstructors(filterAdaperClass, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    if (param.args.length == 3 && param.args[2] instanceof List list) {
+                        var newList = new ArrayList<Object>(list);
+                        newList.removeIf(item -> {
+                            var name = XposedHelpers.getObjectField(item, "A01");
+                            return name == null || name == "CONTACTS_FILTER" || name == "GROUP_FILTER";
+                        });
+                        param.args[2] = newList;
+                    }
+                }
+            });
+            var methodSetFilter = Arrays.stream(filterAdaperClass.getDeclaredMethods()).filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0].equals(int.class)).findFirst().orElse(null);
+
+            XposedBridge.hookMethod(methodSetFilter, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    var index = (int) param.args[0];
+                    var list = (List) XposedHelpers.getObjectField(param.thisObject, "A01");
+                    if (list == null || index >= list.size()) {
+                        param.setResult(null);
+                    }
+                }
+            });
+        }
     }
 
     private static void restartApp(Activity home) {

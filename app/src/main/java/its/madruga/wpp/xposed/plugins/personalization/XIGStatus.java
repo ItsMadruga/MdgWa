@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -26,6 +27,7 @@ import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 import its.madruga.wpp.xposed.plugins.core.Utils;
 import its.madruga.wpp.xposed.plugins.core.WppCore;
+import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XIGStatus extends XHookBase {
     public static ArrayList<Object> itens = new ArrayList<>();
@@ -39,7 +41,7 @@ public class XIGStatus extends XHookBase {
     @Override
     public void doHook() throws Throwable {
 
-        if (!prefs.getBoolean("igstatus", false)) return;
+        if (!prefs.getBoolean("igstatus", false) || Utils.getApplication().getPackageName().equals("com.whatsapp.w4b")) return;
 
         var clazz = XposedHelpers.findClass("com.whatsapp.HomeActivity", loader);
 
@@ -88,7 +90,7 @@ public class XIGStatus extends XHookBase {
                 mainView.setNestedScrollingEnabled(true);
                 var paddingView = new View(WppCore.getMainActivity());
                 paddingView.setClickable(true);
-                var layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, Utils.dipToPixels(105));
+                var layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, Utils.dipToPixels(105));
                 paddingView.setLayoutParams(layoutParams);
                 mainView.addHeaderView(paddingView);
             }
@@ -98,12 +100,12 @@ public class XIGStatus extends XHookBase {
 
         var onMenuItemSelected = Unobfuscator.loadOnMenuItemSelected(loader);
         var separateGroups = prefs.getBoolean("separategroups", false);
+        var onMenuItemClick = Unobfuscator.loadOnMenuItemClickClass(loader);
 
         XposedBridge.hookMethod(onMenuItemSelected, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (Unobfuscator.isCalledFromClass(XposedHelpers.findClass("com.whatsapp.status.playback.StatusPlaybackActivity", loader))) return;
-                if (Unobfuscator.isCalledFromClass(XposedHelpers.findClass("com.whatsapp.gallery.GalleryTabHostFragment", loader))) return;
+                if (!Unobfuscator.isCalledFromClass(clazz) && !Unobfuscator.isCalledFromClass(onMenuItemClick)) return;
                 var index = (int) param.args[0];
                 WppCore.getMainActivity().runOnUiThread(() -> {
                     XposedHelpers.setObjectField(WppCore.getMainActivity(), "A02", 0);

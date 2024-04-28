@@ -69,4 +69,14 @@ public class Utils {
     }
 
 
+    public static void debugFields(Object thisObject) {
+        for (var field : thisObject.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true);
+                XposedBridge.log(field.getName() + " : " + field.get(thisObject));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

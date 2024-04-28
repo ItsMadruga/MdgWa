@@ -187,6 +187,14 @@
                     android:tag="antieditmessages"
                     android:text="@string/show_edited_message_history" />
 
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/removeseemore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/remove_see_more_button_"
+                    android:tag="removeseemore"
+                    android:text="@string/remove_see_more_button" />
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>

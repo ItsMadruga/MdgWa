@@ -159,4 +159,9 @@
     <string name="chatfilter_no_search">No search</string>
     <string name="chatfilter_search_icon">Search icon</string>
     <string name="chatfilter_search_bar">Search bar</string>
+    <string name="remove_channel_recomendations">Remove Channel Recomendations</string>
+    <string name="remove_channel_recomendations_sum">Remove Channel Recomendations from tab Status</string>
+    <string name="remove_see_more_button">Remove \'See More\' Button</string>
+    <string name="remove_see_more_button_">Disable \'See More\' button and show all long message</string>
+    <string name="tools">Tools</string>
 </resources>

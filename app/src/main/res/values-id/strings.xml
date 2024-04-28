@@ -113,8 +113,8 @@ Anda perlu mengaktifkan dan mengatur ulang kembali</string>
     <string name="imagequality_sum">Kirim gambar dalam kualitas HD</string>
     <string name="downloadviewonce">Unduh Sekali Lihat</string>
     <string name="downloadviewonce_sum">Tampilkan tombol untuk mengunduh pesan \"lihat sekali\"</string>
-    <string name="separate_groups_sum">Pisahkan obrolan anda berdasarkan: Chat, Grup, Status, Komunitas, Panggilan</string>
     <string name="separate_groups">Grup terpisah</string>
+    <string name="separate_groups_sum">Pisahkan obrolan anda berdasarkan: Chat, Grup, Status, Komunitas, Panggilan</string>
     <string name="blueonreply">Centang biru setelah membalas</string>
     <string name="blueonreply_sum">Kontak hanya akan melihat tanda centang biru setelah Anda membalas pesan
 (CATATAN: Harus mengaktifkan \"Sembunyikan centang biru\")</string>
@@ -160,10 +160,15 @@ Anda perlu mengaktifkan dan mengatur ulang kembali</string>
     <string name="communities">Komunitas</string>
     <string name="calls">"Panggilan "</string>
     <string name="updates">Pembaruan</string>
-    <string name="about">About</string>
-    <string name="igstatus_on_home_screen">Enable IGStatus on Home Screen</string>
-    <string name="igstatus_on_home_screen_sum">Show status style Instagram in Home Screen</string>
-    <string name="chatfilter_no_search">No search</string>
-    <string name="chatfilter_search_icon">Search icon</string>
-    <string name="chatfilter_search_bar">Search bar</string>
+    <string name="about">Tentang</string>
+    <string name="igstatus_on_home_screen">Aktifkan IGStatus di layar beranda</string>
+    <string name="igstatus_on_home_screen_sum">Tampilkan gaya status Instagram di layar beranda</string>
+    <string name="chatfilter_no_search">Tidak ada pencarian</string>
+    <string name="chatfilter_search_icon">Ikon pencarian</string>
+    <string name="chatfilter_search_bar">Bilah pencarian</string>
+    <string name="remove_channel_recomendations">Sembunyikan rekomendasi saluran</string>
+    <string name="remove_channel_recomendations_sum">Sembunyikan rekomendasi saluran dari tab Status</string>
+    <string name="remove_see_more_button">Hapus \"Baca selengkapnya\"</string>
+    <string name="remove_see_more_button_">Hapus \"Baca selengkapnya\" dan tampilkan semua pesan panjang</string>
+    <string name="tools">Tools</string>
 </resources>

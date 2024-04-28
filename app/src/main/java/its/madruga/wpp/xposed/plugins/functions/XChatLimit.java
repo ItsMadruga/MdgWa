@@ -24,6 +24,7 @@ public class XChatLimit extends XHookBase {
 
         var chatLimitDeleteMethod = Unobfuscator.loadChatLimitDeleteMethod(loader);
         var chatLimitDelete2Method = Unobfuscator.loadChatLimitDelete2Method(loader);
+
         XposedBridge.hookMethod(chatLimitDeleteMethod, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -33,6 +34,16 @@ public class XChatLimit extends XHookBase {
                 }
             }
         });
+
+        var seeMoreMethod = Unobfuscator.loadSeeMoreMethod(loader);
+        XposedBridge.hookMethod(seeMoreMethod, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!prefs.getBoolean("removeseemore", false))return;
+                param.args[0] = 0;
+            }
+        });
+
     }
 
     @NonNull

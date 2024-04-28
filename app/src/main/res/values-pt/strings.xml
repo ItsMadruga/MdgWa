@@ -109,8 +109,8 @@
     <string name="imagequality_sum">Envie imagens em qualidade original</string>
     <string name="downloadviewonce">Baixar Visualizao Única</string>
     <string name="downloadviewonce_sum">Criar um botão de download de visualização unica</string>
-    <string name="separate_groups_sum">Separe seus chats por: grupos, chats privados, status, chamadas, comunidades</string>
     <string name="separate_groups">Grupos separados</string>
+    <string name="separate_groups_sum">Separe seus chats por: grupos, chats privados, status, chamadas, comunidades</string>
     <string name="blueonreply">Enviar marca azul na resposta</string>
     <string name="blueonreply_sum">Envia a marca azul ao responder à mensagem</string>
     <string name="hide_archived_chat">Ocultar Chats Arquivados</string>
@@ -160,4 +160,9 @@
     <string name="chatfilter_no_search">Desativado</string>
     <string name="chatfilter_search_icon">Ícone de pesquisa</string>
     <string name="chatfilter_search_bar">Barra de pesquisa</string>
+    <string name="remove_channel_recomendations">Remover Recomendações de Canal</string>
+    <string name="remove_channel_recomendations_sum">Remover Recomendações do Canal da aba de Status</string>
+    <string name="remove_see_more_button">Remover botão \'Ver Mais\'</string>
+    <string name="remove_see_more_button_">Desativar o botão \'Ver Mais\' e mostrar toda a mensagem</string>
+    <string name="tools">Tools</string>
 </resources>

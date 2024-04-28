@@ -31,6 +31,7 @@ public class XCallPrivacy extends XHookBase {
         var onCallReceivedMethod = Unobfuscator.loadAntiRevokeOnCallReceivedMethod(loader);
         var callEndMethod = Unobfuscator.loadAntiRevokeCallEndMethod(loader);
         var callState = Enum.valueOf((Class<Enum>) XposedHelpers.findClass("com.whatsapp.voipcalling.CallState", loader), "ACTIVE");
+
         XposedBridge.hookMethod(onCallReceivedMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

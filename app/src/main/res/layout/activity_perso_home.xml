@@ -96,6 +96,15 @@
                     other:reboot="true"
                     android:text="@string/show_online_dot_in_conversation_list" />
 
+                <its.madruga.wpp.views.SwitchButton
+                    android:id="@+id/removechannel_rec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:summary="@string/remove_channel_recomendations_sum"
+                    android:tag="removechannel_rec"
+                    other:reboot="true"
+                    android:text="@string/remove_channel_recomendations" />
+
                 <its.madruga.wpp.views.MultichoiceButton
                     android:id="@+id/hidetabs"
                     android:layout_width="match_parent"
