@@ -162,6 +162,6 @@
     <string name="remove_channel_recomendations">Kanal Tavsiyelerini Kaldır</string>
     <string name="remove_channel_recomendations_sum">Durum sekmesinden Kanal Tavsiyelerini kaldır</string>
     <string name="remove_see_more_button">\'Daha Fazla Gör\' Düğmesini Kaldır</string>
-    <string name="remove_see_more_button_sum">\'Daha Fazla Gör\' düğmesini devre dışı bırak ve tüm uzun mesajları göster</string>
+    <string name="remove_see_more_button_">\'Daha Fazla Gör\' düğmesini devre dışı bırak ve tüm uzun mesajları göster</string>
     <string name="tools">Araçlar</string>
 </resources>
