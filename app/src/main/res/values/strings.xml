@@ -128,6 +128,7 @@
     <string name="show_dnd_button">Show DND Button</string>
     <string name="show_dnd_button_sum">Show button for DND Mode on home screen toolbar</string>
     <string name="dev4mod">Dev4Mod (Contributor)</string>
+    <string name="cvnertnc">cvnertnc (Contributor)</string>
     <string name="disable_pinned_limit">Disable Pinned Chats Limit</string>
     <string name="disable_pinned_limit_sum">Disable limit of 3 pinned chats</string>
     <string name="delete_for_everyone_all_messages">\"Delete for everyone\" on all messages</string>
@@ -159,14 +160,8 @@
     <string name="calls">"Calls "</string>
     <string name="updates">Updates</string>
     <string name="about">About</string>
-    <string name="igstatus_on_home_screen">Enable IGStatus on Home Screen</string>
-    <string name="igstatus_on_home_screen_sum">Show status style Instagram in Home Screen</string>
-    <string name="chatfilter_no_search">No search</string>
-    <string name="chatfilter_search_icon">Search icon</string>
-    <string name="chatfilter_search_bar">Search bar</string>
     <string name="remove_channel_recomendations">Remove Channel Recomendations</string>
     <string name="remove_channel_recomendations_sum">Remove Channel Recomendations from tab Status</string>
     <string name="remove_see_more_button">Remove \'See More\' Button</string>
     <string name="remove_see_more_button_">Disable \'See More\' button and show all long message</string>
-    <string name="tools">Tools</string>
 </resources>

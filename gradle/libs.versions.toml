@@ -1,5 +1,4 @@
 [versions]
-annotations = "15.0"
 api = "82"
 appcompat = "1.6.1"
 bcpkix-jdk18on = "1.77"
@@ -10,7 +9,6 @@ material = "1.11.0"
 dexkit = "2.0.1"
 
 [libraries]
-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 dexkit = { module = "org.luckypray:dexkit", version.ref = "dexkit" }
 api = { module = "de.robv.android.xposed:api", version.ref = "api" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }

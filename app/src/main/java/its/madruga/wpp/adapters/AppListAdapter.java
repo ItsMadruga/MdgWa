@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import its.madruga.wpp.BuildConfig;
 import its.madruga.wpp.R;
@@ -43,11 +41,9 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppViewH
         var required_s = mContext.getString(R.string.required_version_s);
         var installed_s = mContext.getString(R.string.installed_version_s);
 
-        var listSupported = Arrays.asList(mContext.getResources().getStringArray(R.array.supported_versions));
-
-        if (!listSupported.contains(dataModel.getVersion())) {
+        if (!dataModel.getVersion().equals(BuildConfig.VERSION_NAME)) {
             holder.txtRequiredVersion.setVisibility(View.VISIBLE);
-            holder.txtRequiredVersion.setText(String.format(required_s, Arrays.toString(listSupported.toArray())));
+            holder.txtRequiredVersion.setText(String.format(required_s, BuildConfig.VERSION_NAME));
             holder.txtInstalledVersion.setTextColor((mContext.getResources().getColor(android.R.color.holo_orange_light, mContext.getTheme())));
         }
         holder.txtInstalledVersion.setText(String.format(installed_s, dataModel.getVersion()));

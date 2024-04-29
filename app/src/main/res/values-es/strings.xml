@@ -35,7 +35,7 @@
     <string name="privacy_title">Privacidad</string>
     <string name="settings_title">"Ajustes"</string>
     <string name="autoreboot">Reinicio automático</string>
-    <string name="autoreboot_sum">Cuando esté habilitado, WhatsApp se reiniciará automáticamente para guardar todos los cambios realizados aquí.</string>
+    <string name="autoreboot_sum">¡Esta opción necesita acceso de root! Cuando esté habilitado, WhatsApp se reiniciará automáticamente para guardar todos los cambios realizados aquí.</string>
     <string name="xposedinit_error">Error al iniciar Xposed</string>
     <string name="ampm">Hora en formato de 12 horas</string>
     <string name="media_settings">Ajustes de Medios</string>
@@ -66,7 +66,7 @@
     <string name="primary_color">Color primario</string>
     <string name="background_color">Color de fondo</string>
     <string name="secondary_color">Color secundario</string>
-    <string name="novaconfig">Nuevo estilo de configuración</string>
+    <string name="novaconfig">Please fix it, restart the module, and try again</string>
     <string name="novaconfig_sum">Habilite el nuevo estilo de Ajustes, con una foto de perfil en la barra de herramientas de inicio</string>
     <string name="novahome_sum">Habilite el nuevo estilo de inicio, con navegación inferior</string>
     <string name="novofiltro">Filtrar chats</string>
@@ -109,8 +109,8 @@
     <string name="imagequality_sum">Enviar imágenes en calidad HD</string>
     <string name="downloadviewonce">Descargar Ver una vez</string>
     <string name="downloadviewonce_sum">Crear una vista una vez botón de descarga</string>
-    <string name="separate_groups">Grupos separados</string>
     <string name="separate_groups_sum">Separa tus chats por: grupos, chats privados, estados, llamadas, comunidades</string>
+    <string name="separate_groups">Grupos separados</string>
     <string name="blueonreply">Enviar marca azul al responder</string>
     <string name="blueonreply_sum">Envía el tick azul al responder el mensaje</string>
     <string name="hide_archived_chat">Hide archived chat</string>
@@ -124,6 +124,7 @@
     <string name="show_dnd_button">Show DND Button</string>
     <string name="show_dnd_button_sum">Enable button to DND Mode in Toolbar</string>
     <string name="dev4mod">Dev4Mod (Contributor)</string>
+    <string name="cvnertnc">cvnertnc (Contributor)</string>
     <string name="disable_pinned_limit">Disable Pinned Limit</string>
     <string name="disable_pinned_limit_sum">Disable pinned limit of 3 chats</string>
     <string name="delete_for_everyone_all_messages">Delete for everyone all messages</string>
@@ -155,14 +156,8 @@
     <string name="calls">"Calls "</string>
     <string name="updates">Updates</string>
     <string name="about">About</string>
-    <string name="igstatus_on_home_screen">Enable IGStatus on Home Screen</string>
-    <string name="igstatus_on_home_screen_sum">Show status style Instagram in Home Screen</string>
-    <string name="chatfilter_no_search">No search</string>
-    <string name="chatfilter_search_icon">Search icon</string>
-    <string name="chatfilter_search_bar">Search bar</string>
     <string name="remove_channel_recomendations">Remove Channel Recomendations</string>
     <string name="remove_channel_recomendations_sum">Remove Channel Recomendations from tab Status</string>
     <string name="remove_see_more_button">Remove \'See More\' Button</string>
     <string name="remove_see_more_button_">Disable \'See More\' button and show all long message</string>
-    <string name="tools">Tools</string>
 </resources>

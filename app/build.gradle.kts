@@ -46,7 +46,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.annotations)
+    implementation("org.jetbrains:annotations:15.0")
     compileOnly(libs.api)
     implementation(libs.circleimageview)
     implementation(libs.appcompat)

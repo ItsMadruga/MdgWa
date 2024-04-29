@@ -20,8 +20,6 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.xposed.models.XHookBase;
 import its.madruga.wpp.xposed.plugins.core.DesignUtils;
-import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.WppCore;
 import its.madruga.wpp.xposed.plugins.privacy.XHideArchive;
 
 public class XBioAndName extends XHookBase {
@@ -56,26 +54,25 @@ public class XBioAndName extends XHookBase {
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
             var homeActivity = (Activity) param.thisObject;
             var actionbar = XposedHelpers.callMethod(homeActivity, "getSupportActionBar");
-            var toolbar = homeActivity.findViewById(Utils.getID("toolbar", "id"));
-            var logo = toolbar.findViewById(Utils.getID("toolbar_logo", "id"));
-            var name = WppCore.getMyName();
-            var bio = WppCore.getMyBio();
-
+            var toolbar = homeActivity.findViewById(homeActivity.getResources().getIdentifier("toolbar", "id", homeActivity.getPackageName()));
+            var logo = toolbar.findViewById(toolbar.getResources().getIdentifier("toolbar_logo", "id", homeActivity.getPackageName()));
+            var startup_prefs = homeActivity.getSharedPreferences("startup_prefs", Context.MODE_PRIVATE);
+            var mainPrefs = homeActivity.getSharedPreferences(homeActivity.getPackageName() + "_preferences_light", Context.MODE_PRIVATE);
+            var name = startup_prefs.getString("push_name", "WhatsApp");
+            var bio = mainPrefs.getString("my_current_status", "");
             toolbar.setOnLongClickListener((v) -> {
                 for (var onClick : XHideArchive.mClickListenerList) {
                     onClick.onClick(v);
-                    return true;
+                    break;
                 }
-                return false;
+                return true;
             });
 
-            if (!(logo.getParent() instanceof LinearLayout parent)) {
+            if (!(logo.getParent() instanceof LinearLayout)) {
                 var methods = Arrays.stream(actionbar.getClass().getDeclaredMethods()).filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0] == CharSequence.class).toArray(Method[]::new);
-
                 if (showName) {
                     methods[1].invoke(actionbar, name);
                 }
-
                 if (showBio) {
                     methods[0].invoke(actionbar, bio);
                 }
@@ -89,8 +86,9 @@ public class XBioAndName extends XHookBase {
                 });
                 return;
             }
+            var parent = (LinearLayout) logo.getParent();
             var mTitle = new TextView(homeActivity);
-            mTitle.setText(showName ? name : "WhatsApp");
+            mTitle.setText(showName ? startup_prefs.getString("push_name", "WhatsApp") : "WhatsApp");
             mTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
             mTitle.setTextSize(20f);
             mTitle.setTextColor(DesignUtils.getPrimaryTextColor(homeActivity));
@@ -98,7 +96,7 @@ public class XBioAndName extends XHookBase {
             if (showBio) {
                 var mSubtitle = new TextView(homeActivity);
                 mSubtitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                mSubtitle.setText(bio);
+                mSubtitle.setText(mainPrefs.getString("my_current_status", ""));
                 mSubtitle.setTextSize(12f);
                 mSubtitle.setTextColor(DesignUtils.getPrimaryTextColor(homeActivity));
                 mSubtitle.setMarqueeRepeatLimit(-1);

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,9 +41,6 @@ public class XOthers extends XHookBase {
     @Override
     public void doHook() throws Exception {
 
-
-        // Removido pois as não há necessidade de ficar em uma versão obsoleta.
-
 //        var deprecatedMethod = Unobfuscator.loadDeprecatedMethod(loader);
 //        logDebug(Unobfuscator.getMethodDescriptor(deprecatedMethod));
 //
@@ -52,29 +51,26 @@ public class XOthers extends XHookBase {
 //                param.setResult(date);
 //            }
 //        });
-        var novoTema = prefs.getBoolean("novotema", false);
-        var menuWIcons = prefs.getBoolean("menuwicon", false);
-        var newSettings = prefs.getBoolean("novaconfig", false);
-        var filterChats = prefs.getInt("chatfilter", 0);
-        var strokeButtons = prefs.getBoolean("strokebuttons", false);
-        var outlinedIcons = prefs.getBoolean("outlinedicons", false);
-        var showDnd = prefs.getBoolean("show_dndmode", false);
-        var removechannelRec = prefs.getBoolean("removechannel_rec", false);
-        var separateGroups = prefs.getBoolean("separategroups", false);
+        var novoTema = prefs != null && prefs.getBoolean("novotema", false);
+        var menuWIcons = prefs != null && prefs.getBoolean("menuwicon", false);
+        var newSettings = prefs != null && prefs.getBoolean("novaconfig", false);
+        var filterChats = prefs != null && prefs.getBoolean("novofiltro", false);
+        var strokeButtons = prefs != null && prefs.getBoolean("strokebuttons", false);
+        var outlinedIcons = prefs != null && prefs.getBoolean("outlinedicons", false);
+        var showDnd = prefs != null && prefs.getBoolean("show_dndmode", false);
+        var removechannelRec = prefs != null && prefs.getBoolean("removechannel_rec", false);
 
-        props.put(5171, true); // filtros de chat e grupos
         props.put(4524, novoTema);
         props.put(4497, menuWIcons);
         props.put(4023, newSettings);
-        props.put(8013, filterChats == 2); // lupa sera removida e sera adicionado uma barra no lugar.
+        props.put(5171, filterChats);
         props.put(5834, strokeButtons);
         props.put(5509, outlinedIcons);
         props.put(2358, false);
 
+
         var methodProps = Unobfuscator.loadPropsMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(methodProps));
-
-        var dataUsageActivityClass = XposedHelpers.findClass("com.whatsapp.settings.SettingsDataUsageActivity", loader);
 
         XposedBridge.hookMethod(methodProps, new XC_MethodHook() {
             @Override
@@ -82,11 +78,20 @@ public class XOthers extends XHookBase {
                 int i = (int) (param.args.length > 2 ? param.args[2] : param.args[1]);
 
                 var propValue = props.get(i);
-                if (propValue == null) return;
-                param.setResult(propValue);
-                // Fix Bug in Settings Data Usage
-                if (i == 4023 && propValue && Unobfuscator.isCalledFromClass(dataUsageActivityClass)) {
-                    param.setResult(false);
+                if (propValue != null) {
+                    var stacktrace = Thread.currentThread().getStackTrace();
+                    var stackTraceElement = stacktrace[6];
+                    if (stackTraceElement != null) {
+                        if (stackTraceElement.getClassName().equals("com.whatsapp.HomeActivity$TabsPager")) {
+                            if (i == 3289) {
+                                param.setResult(false);
+                            }
+                        } else {
+                            param.setResult(propValue);
+                        }
+                    } else {
+                        param.setResult(propValue);
+                    }
                 }
             }
         });
@@ -97,32 +102,16 @@ public class XOthers extends XHookBase {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Menu menu = (Menu) param.args[0];
                 Activity home = (Activity) param.thisObject;
-                @SuppressLint({"UseCompatLoadingForDrawables", "DiscouragedApi"})
-                var iconDraw = DesignUtils.getDrawableByName("vec_account_switcher");
+                var iconDraw = home.getDrawable(home.getResources().getIdentifier("vec_account_switcher", "drawable", home.getPackageName()));
                 iconDraw.setTint(0xff8696a0);
-                var itemMenu = menu.add(0, 0, 0, ResId.string.restart_whatsapp).setIcon(iconDraw).setOnMenuItemClickListener(item -> {
+                menu.add(0, 0, 0, ResId.string.restart_whatsapp).setIcon(iconDraw).setOnMenuItemClickListener(item -> {
                     restartApp(home);
                     return true;
                 });
-                if (newSettings) {
-                    itemMenu.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-                }
                 if (showDnd) {
                     InsertDNDOption(menu, home);
                 } else {
                     mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE).edit().putBoolean("dndmode", false).commit();
-                }
-            }
-        });
-
-
-        XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loader, "onPrepareOptionsMenu", Menu.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                var menu = (Menu) param.args[0];
-                var item = menu.findItem(Utils.getID("menuitem_search", "id"));
-                if (item != null) {
-                    item.setVisible(filterChats == 1);
                 }
             }
         });
@@ -135,35 +124,6 @@ public class XOthers extends XHookBase {
                     if (param.args.length > 0 && param.args[0] instanceof List list) {
                         if (list.isEmpty()) return;
                         list.clear();
-                    }
-                }
-            });
-        }
-
-        if (separateGroups) {
-            var filterAdaperClass = Unobfuscator.loadFilterAdaperClass(loader);
-            XposedBridge.hookAllConstructors(filterAdaperClass, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    if (param.args.length == 3 && param.args[2] instanceof List list) {
-                        var newList = new ArrayList<Object>(list);
-                        newList.removeIf(item -> {
-                            var name = XposedHelpers.getObjectField(item, "A01");
-                            return name == null || name == "CONTACTS_FILTER" || name == "GROUP_FILTER";
-                        });
-                        param.args[2] = newList;
-                    }
-                }
-            });
-            var methodSetFilter = Arrays.stream(filterAdaperClass.getDeclaredMethods()).filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0].equals(int.class)).findFirst().orElse(null);
-
-            XposedBridge.hookMethod(methodSetFilter, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    var index = (int) param.args[0];
-                    var list = (List) XposedHelpers.getObjectField(param.thisObject, "A01");
-                    if (list == null || index >= list.size()) {
-                        param.setResult(null);
                     }
                 }
             });
@@ -183,11 +143,15 @@ public class XOthers extends XHookBase {
     private static void InsertDNDOption(Menu menu, Activity home) {
         var shared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
         var dndmode = shared.getBoolean("dndmode", false);
-        int iconDraw;
-        iconDraw = Utils.getID(dndmode ? "ic_location_nearby_disabled" : "ic_location_nearby", "drawable");
-        var item = menu.add(0, 0, 0, "Dnd Mode " + dndmode);
+        Drawable iconDraw;
+        if (dndmode) {
+            iconDraw = mApp.getDrawable(mApp.getResources().getIdentifier("ic_location_nearby_disabled", "drawable", mApp.getPackageName()));
+        } else {
+            iconDraw = mApp.getDrawable(mApp.getResources().getIdentifier("ic_location_nearby", "drawable", mApp.getPackageName()));
+        }
+        var item = menu.add(0, 0, 1, "Dnd Mode " + dndmode);
         item.setIcon(iconDraw);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        item.setShowAsAction(2);
         item.setOnMenuItemClickListener(menuItem -> {
             if (!dndmode) {
                 new AlertDialog.Builder(home)

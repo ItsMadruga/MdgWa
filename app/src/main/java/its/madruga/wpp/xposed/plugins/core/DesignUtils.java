@@ -2,9 +2,7 @@ package its.madruga.wpp.xposed.plugins.core;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.content.res.XResources;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
 import android.graphics.Color;
@@ -18,13 +16,8 @@ import androidx.annotation.NonNull;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import its.madruga.wpp.utils.colors.IColors;
-import its.madruga.wpp.xposed.XposedMain;
 
 public class DesignUtils {
-
-    public static SharedPreferences mPrefs;
-
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public static Drawable getDrawable(int id) {
@@ -91,26 +84,6 @@ public class DesignUtils {
         return 0;
     }
 
-    public static int getPrimaryColor(Context context) {
-        try {
-            var resourceId = (int) XposedHelpers.callMethod(context, "getThemeResId");
-            @SuppressLint("ResourceType")
-            TypedArray values = context.getTheme().obtainStyledAttributes(resourceId, new int[]{android.R.attr.colorPrimary});
-            return values.getColor(0, 0);
-        } catch (Exception e) {
-            XposedBridge.log("Error while getting colors: " + e);
-        }
-        return 0;
-    }
-
-    public static int getUnSeenColor() {
-        var primaryColor = mPrefs.getString("primary_color", "0");
-        if (primaryColor.equals("0")) {
-            return 0xFF25d366;
-        }
-        return IColors.parseColor(primaryColor);
-    }
-
     public static int getPrimarySurfaceColor(Context context) {
         try {
             var resourceId = (int) XposedHelpers.callMethod(context, "getThemeResId");
@@ -121,16 +94,6 @@ public class DesignUtils {
             XposedBridge.log("Error while getting colors: " + e);
         }
         return 0;
-    }
-
-    public static void setReplacementDrawable(String name, Drawable replacement) {
-        if (XposedMain.ResParam == null) return;
-        XposedMain.ResParam.res.setReplacement(Utils.getApplication().getPackageName(), "drawable", name, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return replacement;
-            }
-        });
     }
 
 }
