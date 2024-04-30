@@ -37,11 +37,11 @@
 <string name="antirevoke_sum">"Lorsce qu'activé, les messages ne seront pas effacé pour vous."</string>
 <string name="antirevoke_title">Anti-révocation</string>
 <string name="antirevokestatus">Anti-suppression des status</string>
-<string name="antirevokestatus_sum">"Lors ce qu'activé, les status ne seront pas effacés pour vous."</string>
+<string name="antirevokestatus_sum">"Lorsque activé, les status ne seront pas effacés pour vous."</string>
 <string name="app_desc">Un module Xposed pour customiser votre WhatsApp.</string>
 <string name="apply_button">Appliquer</string>
 <string name="autoreboot">Redémarrage automatique</string>
-<string name="autoreboot_sum">"Cette option nécessite l'accès à la racine! Lors ce qu'activé, WhatsApp redémarrera automatiquement pour enregistrer tous les changements éffectués ici"</string>
+<string name="autoreboot_sum">"Cette option nécessite l'accès à la racine! Lorsque activé, WhatsApp redémarrera automatiquement pour enregistrer tous les changements éffectués ici"</string>
 <string name="background_color">"Couleur d'arrière-plan"</string>
 <string name="blueonreply">Envoyer une coche bleue lors de la réponse</string>
 <string name="blueonreply_sum">Envoie la coche bleue lors de la réponse au message</string>
@@ -248,7 +248,7 @@
 <string name="videoquality">Envoyer les vidéos en qualité HD</string>
 <string name="videoquality_sum">Envoyer les vidéos en qualité HD</string>
 <string name="viewonce">Désactiver la vue unique</string>
-<string name="viewonce_sum">"Lors ce qu'activé, celà vous permet d'ouvrir des messages éphémères autant de fois que vous le voulez."</string>
+<string name="viewonce_sum">"Lorsque activé, celà vous permet d'ouvrir des messages éphémères autant de fois que vous le voulez."</string>
 <string name="whatsapp_not_installed">"WhatsApp n'est pas installé! Installez la et réessayez"</string>
 <string name="whatsapp_version_error">"Cette version de WhatsApp n'est pas supportée par notre module, merci de passer à la version requise de WhatsApp"</string>
-<string name="xposedinit_error">Erreur de dé
+<string name="xposedinit_error">Erreur de démarrage X
