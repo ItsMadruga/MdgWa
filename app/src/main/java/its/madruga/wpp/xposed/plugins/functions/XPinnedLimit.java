@@ -5,7 +5,11 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -15,7 +19,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
-import its.madruga.wpp.xposed.plugins.core.Utils;
+import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XPinnedLimit extends XHookBase {
 
@@ -28,35 +32,14 @@ public class XPinnedLimit extends XHookBase {
     public void doHook() throws Throwable {
         var pinnedLimitMethod = Unobfuscator.loadPinnedLimitMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(pinnedLimitMethod));
-//        var pinnedLimit2Method = Unobfuscator.loadPinnedLimit2Method(loader);
-//        logDebug(Unobfuscator.getMethodDescriptor(pinnedLimit2Method));
+        var pinnedLimit2Method = Unobfuscator.loadPinnedLimit2Method(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(pinnedLimit2Method));
         var pinnedSetMethod = Unobfuscator.loadPinnedHashSetMethod(loader);
 
-
-        // isso cria um LinkedHashSet modificado para retorna 0 caso a lista de fixados seja inferior a 60.
-        XposedBridge.hookMethod(pinnedSetMethod, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                var pinnedset = (Set) param.getResult();
-                PinnedLinkedHashSet<Object> pinnedMod;
-
-                if (!(pinnedset instanceof PinnedLinkedHashSet)) {
-                    pinnedMod = new PinnedLinkedHashSet<>();
-                    pinnedMod.addAll(pinnedset);
-                    var setField = Unobfuscator.getFieldByType(pinnedSetMethod.getDeclaringClass(), Set.class);
-                    XposedHelpers.setObjectField(param.thisObject, setField.getName(), pinnedMod);
-                    param.setResult(pinnedMod);
-                } else {
-                    pinnedMod = (PinnedLinkedHashSet<Object>) pinnedset;
-                }
-                pinnedMod.setLimit(prefs.getBoolean("pinnedlimit", false) ? 60 : 3);
-            }
-        });
+        var idPin = XMain.mApp.getResources().getIdentifier("menuitem_conversations_pin", "id", XMain.mApp.getPackageName());
+        var idSelectAll = XMain.mApp.getResources().getIdentifier("menuitem_conversations_select_all", "id", XMain.mApp.getPackageName());
 
 
-        // Sempre que vai fixar varias conversas de uma vez, é verificado antes se a quantidade de conversas é maior que 3, somando a lista de fixados atual com o HashSet das novas que serão fixadas.
-        // Esse gancho verifica se o botao de fixar foi clicado e limita o tamanho da Hashset para 1
-        var idPin = Utils.getID("menuitem_conversations_pin", "id");
         XposedBridge.hookMethod(pinnedLimitMethod, new XC_MethodHook() {
             private Unhook hooked;
 
@@ -64,8 +47,10 @@ public class XPinnedLimit extends XHookBase {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (!prefs.getBoolean("pinnedlimit", false)) return;
                 if (param.args.length > 0 && param.args[0] instanceof MenuItem menuItem) {
-                    if (menuItem.getItemId() != idPin) return;
-                    hooked = XposedHelpers.findAndHookMethod(HashSet.class, "size", XC_MethodReplacement.returnConstant(1));
+                    logDebug("menuItem.getItemId() = " + menuItem.getItemId());
+                    if (menuItem.getItemId() != idPin && menuItem.getItemId() != idSelectAll)
+                        return;
+                    hooked = XposedHelpers.findAndHookMethod(HashSet.class, "size", XC_MethodReplacement.returnConstant(-57));
                 }
             }
 
@@ -74,6 +59,32 @@ public class XPinnedLimit extends XHookBase {
                 if (hooked != null) hooked.unhook();
             }
         });
+
+        XposedBridge.hookMethod(pinnedLimit2Method, new XC_MethodHook() {
+            private LinkedHashSet fakeHash;
+            private Set realHash;
+            private Unhook hooked;
+
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!prefs.getBoolean("pinnedlimit", false)) return;
+                var field = Unobfuscator.getFieldByType(param.thisObject.getClass(), pinnedSetMethod.getDeclaringClass());
+                realHash = (Set) pinnedSetMethod.invoke(field.get(param.thisObject));
+                fakeHash = new LinkedHashSet<>();
+                logDebug(pinnedSetMethod.getReturnType());
+                hooked = XposedBridge.hookMethod(pinnedSetMethod, XC_MethodReplacement.returnConstant(fakeHash));
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (hooked != null) hooked.unhook();
+                if (fakeHash != null && !fakeHash.isEmpty()) realHash.addAll(fakeHash);
+                fakeHash.clear();
+                fakeHash = null;
+                realHash = null;
+            }
+        });
+
     }
 
     @NonNull
@@ -81,24 +92,4 @@ public class XPinnedLimit extends XHookBase {
     public String getPluginName() {
         return "Pinned Limit";
     }
-
-
-    private static class PinnedLinkedHashSet<T> extends java.util.LinkedHashSet<T> {
-
-        private int limit;
-
-
-        @Override
-        public int size() {
-            if (super.size() >= limit) {
-                return 3;
-            }
-            return 0;
-        }
-
-        public void setLimit(int i) {
-            this.limit = i;
-        }
-    }
-
 }

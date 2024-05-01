@@ -3,6 +3,7 @@ package its.madruga.wpp.xposed.plugins.functions;
 import static its.madruga.wpp.xposed.plugins.core.XMain.mApp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -32,14 +33,14 @@ import its.madruga.wpp.core.databases.MessageStore;
 import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.UnobfuscatorCache;
 import its.madruga.wpp.xposed.models.XHookBase;
-import its.madruga.wpp.xposed.plugins.core.DesignUtils;
 import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.WppCore;
 import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XAntiRevoke extends XHookBase {
 
     private static final HashMap<String, HashSet<String>> messageRevokedMap = new HashMap<>();
+    @SuppressLint("StaticFieldLeak")
+    private static Activity mConversation;
     private static SharedPreferences mShared;
     private static Field fieldMessageKey;
     private static Field getFieldIdMessage;
@@ -53,13 +54,25 @@ public class XAntiRevoke extends XHookBase {
         mShared = mApp.getSharedPreferences(mApp.getPackageName() + "_mdgwa_preferences", Context.MODE_PRIVATE);
         migrateMessages();
 
+        var onStartMethod = Unobfuscator.loadAntiRevokeOnStartMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(onStartMethod));
+
+        var onResumeMethod = Unobfuscator.loadAntiRevokeOnResumeMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(onResumeMethod));
+
+        var convChatField = Unobfuscator.loadAntiRevokeConvChatField(loader);
+        logDebug(Unobfuscator.getFieldDescriptor(convChatField));
+
+        var chatJidField = Unobfuscator.loadAntiRevokeChatJidField(loader);
+        logDebug(Unobfuscator.getFieldDescriptor(chatJidField));
+
         var antiRevokeMessageMethod = Unobfuscator.loadAntiRevokeMessageMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(antiRevokeMessageMethod));
 
         var classThreadMessage = Unobfuscator.loadThreadMessageClass(loader);
         logDebug("Class: " + classThreadMessage);
 
-        fieldMessageKey = Unobfuscator.loadMessageKeyField(loader);
+        fieldMessageKey = Unobfuscator.loadAntiRevokeMessageKeyField(loader);
         logDebug(Unobfuscator.getFieldDescriptor(fieldMessageKey));
 
         getFieldIdMessage = Unobfuscator.loadSetEditMessageField(loader);
@@ -74,6 +87,26 @@ public class XAntiRevoke extends XHookBase {
 
         var statusPlaybackField = Unobfuscator.loadStatusPlaybackViewField(loader);
         logDebug(Unobfuscator.getFieldDescriptor(statusPlaybackField));
+
+        XposedBridge.hookMethod(onStartMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                mConversation = (Activity) param.thisObject;
+                var chatField = XposedHelpers.getObjectField(mConversation, convChatField.getName());
+                var chatJidObj = XposedHelpers.getObjectField(chatField, chatJidField.getName());
+                setCurrentJid(stripJID(getRawString(chatJidObj)));
+            }
+        });
+
+        XposedBridge.hookMethod(onResumeMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                mConversation = (Activity) param.thisObject;
+                var chatField = XposedHelpers.getObjectField(mConversation, convChatField.getName());
+                var chatJidObj = XposedHelpers.getObjectField(chatField, chatJidField.getName());
+                setCurrentJid(stripJID(getRawString(chatJidObj)));
+            }
+        });
 
         XposedBridge.hookMethod(antiRevokeMessageMethod, new XC_MethodHook() {
             @Override
@@ -170,18 +203,32 @@ public class XAntiRevoke extends XHookBase {
         Object fieldMessageDetails = XposedHelpers.getObjectField(objMessage, fieldMessageKey.getName());
         Object fieldMessageAuthorJid = XposedHelpers.getObjectField(fieldMessageDetails, "A00");
         if (fieldMessageAuthorJid == null) return "";
-        else return WppCore.getRawString(fieldMessageAuthorJid);
+        else return getRawString(fieldMessageAuthorJid);
     }
 
+    public static String getRawString(Object objJid) {
+        if (objJid == null) return "";
+        else return (String) XposedHelpers.callMethod(objJid, "getRawString");
+    }
 
+    private static String getCurrentJid() {
+        if (mShared == null) return "";
+        else return mShared.getString("jid", "");
+    }
+
+    private static void setCurrentJid(String jid) {
+        if (jid == null || mShared == null) return;
+        mShared.edit().putString("jid", jid).apply();
+    }
+
+    @SuppressLint({"DiscouragedApi","UseCompatLoadingForDrawables"})
     private void isMRevoked(Object objMessage, TextView dateTextView, String antirevokeType) {
         if (dateTextView == null) return;
         var fieldMessageDetails = XposedHelpers.getObjectField(objMessage, fieldMessageKey.getName());
         var messageKey = (String) XposedHelpers.getObjectField(fieldMessageDetails, "A01");
         var messageRevokedList = getRevokedMessages(objMessage);
         var id = XposedHelpers.getLongField(objMessage, getFieldIdMessage.getName());
-        String keyOrig;
-        if (messageRevokedList.contains(messageKey) || ((keyOrig = MessageStore.getOriginalMessageKey(id)) != null && messageRevokedList.contains(keyOrig))) {
+        if (messageRevokedList.contains(messageKey) || messageRevokedList.contains(MessageStore.getOriginalMessageKey(id))) {
             var antirevokeValue = prefs.getInt(antirevokeType, 0);
             if (antirevokeValue == 1) {
                 // Text
@@ -189,8 +236,9 @@ public class XAntiRevoke extends XHookBase {
                 dateTextView.setText(newTextData);
             } else if (antirevokeValue == 2) {
                 // Icon
-                var icon = DesignUtils.getDrawableByName("msg_status_client_revoked");
-                var drawable = scaleImage(mApp.getResources(), icon, 0.7f);
+                var iconId = mApp.getResources().getIdentifier("msg_status_client_revoked", "drawable", mApp.getPackageName());
+                var drawable = mApp.getDrawable(iconId);
+                drawable = scaleImage(mApp.getResources(), drawable, 0.7f);
                 drawable.setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP));
                 dateTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
                 dateTextView.setCompoundDrawablePadding(5);
@@ -211,7 +259,7 @@ public class XAntiRevoke extends XHookBase {
             String key = entry.getKey();
             if (key == null || !key.contains("revoked")) continue;
             var jid = key.replace("_revoked", "");
-            var msg = (String) entry.getValue();
+            var msg = (String)entry.getValue();
             var messages = Utils.StringToStringArray(msg);
             if (messages != null) {
                 for (var message : messages) {
@@ -234,8 +282,8 @@ public class XAntiRevoke extends XHookBase {
                 AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
                     saveRevokedMessage(stripJID, messageKey, objMessage);
                     try {
-                        var mConversation = WppCore.getCurrenConversation();
-                        if (mConversation != null && WppCore.stripJID(WppCore.getCurrentRawJID()).equals(stripJID)) {
+                        if (mConversation != null && getCurrentJid().equals(stripJID)) {
+
                             mConversation.runOnUiThread(() -> {
                                 if (mConversation.hasWindowFocus()) {
                                     mConversation.startActivity(mConversation.getIntent());

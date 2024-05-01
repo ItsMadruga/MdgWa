@@ -123,6 +123,7 @@
     <string name="show_dnd_button">DND Düğmesini Göster</string>
     <string name="show_dnd_button_sum">Araç çubuğunda DND Modu düğmesini etkinleştir</string>
     <string name="dev4mod">Dev4Mod (Katkıda Bulunan)</string>
+    <string name="cvnertnc">cvnertnc (Katkıda Bulunan)</string>
     <string name="disable_pinned_limit">Sabitleme Sınırını Devre Dışı Bırak</string>
     <string name="disable_pinned_limit_sum">Sadece 3 sohbet sabitleme sınırını devre dışı bırak</string>
     <string name="delete_for_everyone_all_messages">Herkese için tüm mesajları sil</string>
@@ -154,14 +155,8 @@
     <string name="calls">"Aramalar "</string>
     <string name="updates">Güncellemeler</string>
     <string name="about">Hakkında</string>
-    <string name="igstatus_on_home_screen">\Ana Ekran\'da IG Durumu Etkinleştir</string>
-    <string name="igstatus_on_home_screen_sum">Ana Ekranda Instagram durum stilini göster</string>
-    <string name="chatfilter_no_search">Arama Yok</string>
-    <string name="chatfilter_search_icon">Arama Sembolü</string>
-    <string name="chatfilter_search_bar">Arama Çubuğu</string>
     <string name="remove_channel_recomendations">Kanal Tavsiyelerini Kaldır</string>
     <string name="remove_channel_recomendations_sum">Durum sekmesinden Kanal Tavsiyelerini kaldır</string>
     <string name="remove_see_more_button">\'Daha Fazla Gör\' Düğmesini Kaldır</string>
     <string name="remove_see_more_button_">\'Daha Fazla Gör\' düğmesini devre dışı bırak ve tüm uzun mesajları göster</string>
-    <string name="tools">Araçlar</string>
 </resources>

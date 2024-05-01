@@ -25,11 +25,16 @@ public class XHideTag extends XHookBase {
         XposedBridge.hookMethod(method, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (!prefs.getBoolean("hidetag", false)) return;
+                if(!prefs.getBoolean("hidetag", false))return;
                 var arg = (int) param.args[0];
                 if (arg == 1) {
-                    if (Unobfuscator.isCalledFromClass(forwardClass)) {
-                        param.args[0] = 0;
+                    var stacktrace = Thread.currentThread().getStackTrace();
+                    var stackTraceElement = stacktrace[6];
+                    if (stackTraceElement != null) {
+                        var callerName = stackTraceElement.getClassName();
+                        if (callerName.equals(forwardClass.getName())) {
+                            param.args[0] = 0;
+                        }
                     }
                 }
             }

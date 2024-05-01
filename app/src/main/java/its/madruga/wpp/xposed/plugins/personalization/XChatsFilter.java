@@ -5,11 +5,10 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
 
 import android.annotation.SuppressLint;
-import android.view.Menu;
+import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
@@ -28,8 +27,7 @@ import its.madruga.wpp.core.databases.MessageStore;
 import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.UnobfuscatorCache;
 import its.madruga.wpp.xposed.models.XHookBase;
-import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.WppCore;
+import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XChatsFilter extends XHookBase {
 
@@ -52,13 +50,14 @@ public class XChatsFilter extends XHookBase {
 
         // Modifying tab list order
         hookTabList(home);
+
         if (!prefs.getBoolean("separategroups", false)) return;
-        // Setting group icon
-        hookTabIcon();
         // Setting up fragments
         hookTabInstance(cFrag);
         // Setting group tab name
         hookTabName(home);
+        // Setting group icon
+        hookTabIcon();
         // Setting tab count
         hookTabCount();
     }
@@ -81,7 +80,7 @@ public class XChatsFilter extends XHookBase {
             @SuppressLint({"Recycle", "Range"})
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 var id = (int) getObjectField(param.thisObject, idField.getName());
-                if (id != 32 && id != 35 && id != 37) return;
+                if (id != 32 && id != 35) return;
 
                 var homeActivity = XposedHelpers.getObjectField(param.thisObject, "A00");
                 var a1 = XposedHelpers.getObjectField(homeActivity, pagerField.getName());
@@ -115,12 +114,13 @@ public class XChatsFilter extends XHookBase {
                         chatCount++;
                     }
                 }
-                if (tabs.contains(CHATS)) {
-                    var q = XposedHelpers.callMethod(a1, "A00", a1, tabs.indexOf(CHATS));
-                    setObjectField(q, "A01", chatCount);
-                }
-                if (tabs.contains(GROUPS)) {
-                    setObjectField(tabInstances.get(GROUPS), "A01", groupCount);
+                for (int i = 0; i < tabs.size(); i++) {
+                    var q = XposedHelpers.callMethod(a1, "A00", a1, i);
+                    if (tabs.get(i) == GROUPS) {
+                        setObjectField(tabInstances.get(GROUPS), "A01", groupCount);
+                    } else if (tabs.get(i) == CHATS) {
+                        setObjectField(q, "A01", chatCount);
+                    }
                 }
             }
         });
@@ -161,12 +161,13 @@ public class XChatsFilter extends XHookBase {
                 if (superClass != null && superClass == iconTabMethod.getDeclaringClass()) {
                     var field1 = superClass.getDeclaredField(iconField.getName()).get(param.thisObject);
                     var field2 = getObjectField(field1, iconFrameField.getName());
-                    var menu = (Menu) getObjectField(field2, iconMenuField.getName());
-                    if (menu == null) return;
-                    // add Icon to menu
-                    var menuItem = (MenuItem) menu.findItem(GROUPS);
-                    if (menuItem != null) {
-                        menuItem.setIcon(Utils.getID("home_tab_communities_selector", "drawable"));
+                    var menu = getObjectField(field2, iconMenuField.getName());
+                    if (menu != null) {
+                        var menuItem = (MenuItem) callMethod(menu, "findItem", GROUPS);
+                        if (menuItem != null) {
+                            var id = XMain.mApp.getResources().getIdentifier("home_tab_communities_selector", "drawable", XMain.mApp.getPackageName());
+                            menuItem.setIcon(id);
+                        }
                     }
                 }
             }
@@ -176,14 +177,22 @@ public class XChatsFilter extends XHookBase {
     @SuppressLint("ResourceType")
     private void hookTabName(Class<?> home) throws Exception {
         var tabNameMethod = Unobfuscator.loadTabNameMethod(loader);
+        var idGroupId = UnobfuscatorCache.getInstance().getOfuscateIdString("Groups");
         logDebug(Unobfuscator.getMethodDescriptor(tabNameMethod));
+        var activityField = Unobfuscator.getFieldByType(tabNameMethod.getDeclaringClass(), home);
+        activityField.setAccessible(true);
         XposedBridge.hookMethod(tabNameMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 var tab = (int) param.args[0];
+                var activity = (Activity) activityField.get(param.thisObject);
                 if (tab == GROUPS) {
-                    param.setResult(UnobfuscatorCache.getInstance().getString("groups"));
+                    if (idGroupId != 0) {
+                        param.setResult(activity.getString(idGroupId));
+                    } else {
+                        param.setResult("Groups");
+                    }
                 }
             }
         });
@@ -241,6 +250,7 @@ public class XChatsFilter extends XHookBase {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 var chatsList = (List) param.getResult();
+                logDebug("GetChatsList: " + chatsList.size());
                 var resultList = filterChat(param.thisObject, chatsList);
                 param.setResult(resultList);
             }
@@ -279,8 +289,11 @@ public class XChatsFilter extends XHookBase {
     }
 
     private List filterChat(Object thiz, List chatsList) {
+        logDebug("GetChatsListObject: " + thiz);
         var tabChat = tabInstances.get(CHATS);
         var tabGroup = tabInstances.get(GROUPS);
+        logDebug("Chats: " + tabChat);
+        logDebug("Groups: " + tabGroup);
         if (!Objects.equals(tabChat, thiz) && !Objects.equals(tabGroup, thiz)) {
             return chatsList;
         }
@@ -315,19 +328,7 @@ public class XChatsFilter extends XHookBase {
         });
     }
 
-    public int getNewTabIndex(List hidetabs, int index) {
-        var tabIsHidden = hidetabs.contains(String.valueOf(tabs.get(index)));
-        if (!tabIsHidden) return index;
-        var idAtual = XposedHelpers.getIntField(WppCore.getMainActivity(), "A03");
-        var indexAtual = tabs.indexOf(idAtual);
-        var newIndex = index > indexAtual ? index + 1 : index - 1;
-        if (newIndex < 0) return 0;
-        if (newIndex >= tabs.size()) return indexAtual;
-        return getNewTabIndex(hidetabs, newIndex);
-    }
-
-
-    public static class ArrayListFilter extends ArrayList {
+    public class ArrayListFilter extends ArrayList {
 
         private final boolean isGroup;
 

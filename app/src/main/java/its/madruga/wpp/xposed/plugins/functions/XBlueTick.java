@@ -1,16 +1,21 @@
 package its.madruga.wpp.xposed.plugins.functions;
 
+import static its.madruga.wpp.xposed.plugins.functions.XAntiRevoke.getRawString;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -20,6 +25,7 @@ import androidx.collection.ArraySet;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +37,6 @@ import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.WppCore;
 import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XBlueTick extends XHookBase {
@@ -39,6 +44,8 @@ public class XBlueTick extends XHookBase {
     private static final ArraySet<String> messages = new ArraySet<>();
     private static Object mWaJobManager;
     private static Field fieldMessageKey;
+    private static Class<?> mGenJidClass;
+    private static Method mGenJidMethod;
     private static Class<?> mSendReadClass;
     private static Method WaJobManagerMethod;
     private static String currentJid;
@@ -50,11 +57,22 @@ public class XBlueTick extends XHookBase {
     @Override
     public void doHook() throws Throwable {
 
+        var onStartMethod = Unobfuscator.loadAntiRevokeOnStartMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(onStartMethod));
+
+        var onResumeMethod = Unobfuscator.loadAntiRevokeOnResumeMethod(loader);
+        logDebug(Unobfuscator.getMethodDescriptor(onResumeMethod));
+
+        var convChatField = Unobfuscator.loadAntiRevokeConvChatField(loader);
+        logDebug(Unobfuscator.getFieldDescriptor(convChatField));
+
+        var chatJidField = Unobfuscator.loadAntiRevokeChatJidField(loader);
+        logDebug(Unobfuscator.getFieldDescriptor(chatJidField));
 
         var bubbleMethod = Unobfuscator.loadAntiRevokeBubbleMethod(loader);
         logDebug(Unobfuscator.getMethodDescriptor(bubbleMethod));
 
-        fieldMessageKey = Unobfuscator.loadMessageKeyField(loader);
+        fieldMessageKey = Unobfuscator.loadAntiRevokeMessageKeyField(loader);
         logDebug(Unobfuscator.getFieldDescriptor(fieldMessageKey));
 
         var messageSendClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendE2EMessageJob", loader);
@@ -65,14 +83,34 @@ public class XBlueTick extends XHookBase {
         var messageJobMethod = Unobfuscator.loadBlueOnReplayMessageJobMethod(loader);
 
         mSendReadClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendReadReceiptJob", loader);
+        var subClass = Arrays.stream(mSendReadClass.getConstructors()).filter(c -> c.getParameterTypes().length == 8).findFirst().orElse(null).getParameterTypes()[0];
+        mGenJidClass = Arrays.stream(subClass.getFields()).filter(field -> Modifier.isStatic(field.getModifiers())).findFirst().orElse(null).getType();
+        mGenJidMethod = Arrays.stream(mGenJidClass.getMethods()).filter(m -> m.getParameterCount() == 1 && !Modifier.isStatic(m.getModifiers())).findFirst().orElse(null);
 
+        XposedBridge.hookMethod(onStartMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                var chatField = XposedHelpers.getObjectField(param.thisObject, convChatField.getName());
+                var chatJidObj = XposedHelpers.getObjectField(chatField, chatJidField.getName());
+                var jid = getRawString(chatJidObj);
+                if (!Objects.equals(jid, currentJid)) {
+                    currentJid = jid;
+                    XposedBridge.log("Changed Start");
+                    messages.clear();
+                }
+            }
+        });
 
-        WppCore.addListenerChat((conv, type) -> {
-            var jid = WppCore.getCurrentRawJID();
-            if (!Objects.equals(jid, currentJid)) {
-                currentJid = jid;
-                XposedBridge.log("Changed Start");
-                messages.clear();
+        XposedBridge.hookMethod(onResumeMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                var chatField = XposedHelpers.getObjectField(param.thisObject, convChatField.getName());
+                var chatJidObj = XposedHelpers.getObjectField(chatField, chatJidField.getName());
+                var jid = getRawString(chatJidObj);
+                if (!Objects.equals(jid, currentJid)) {
+                    currentJid = jid;
+                    messages.clear();
+                }
             }
         });
 
@@ -114,7 +152,9 @@ public class XBlueTick extends XHookBase {
                 var menu = (Menu) param.args[0];
                 var menuItem = menu.add(0, 0, 0, "Read Tick");
                 menuItem.setShowAsAction(2);
-                menuItem.setIcon(Utils.getID("ic_notif_mark_read", "drawable"));
+                @SuppressLint({"UseCompatLoadingForDrawables", "DiscouragedApi"})
+                var drawable = XMain.mApp.getDrawable(XMain.mApp.getResources().getIdentifier("ic_notif_mark_read", "drawable", XMain.mApp.getPackageName()));
+                menuItem.setIcon(drawable);
                 menuItem.setOnMenuItemClickListener(item -> {
                     new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(XMain.mApp, "Sending read blue tick..", Toast.LENGTH_SHORT).show());
                     sendBlueTickMsg(currentJid);
@@ -136,8 +176,8 @@ public class XBlueTick extends XHookBase {
                 var messageKey = (String) XposedHelpers.getObjectField(messageKeyObject, "A01");
                 var userJidClass = XposedHelpers.findClass("com.whatsapp.jid.UserJid", loader);
                 var userJidMethod = Arrays.stream(fieldMessageKey.getDeclaringClass().getDeclaredMethods()).filter(m -> m.getReturnType().equals(userJidClass)).findFirst().orElse(null);
-                var userJid = XposedHelpers.callMethod(message, userJidMethod.getName());
-                var jid = WppCore.getRawString(userJid);
+                var userJid =  XposedHelpers.callMethod(message, userJidMethod.getName());
+                var jid = getRawString(userJid);
                 messages.clear();
                 messages.add(messageKey);
                 currentJid = jid;
@@ -148,74 +188,45 @@ public class XBlueTick extends XHookBase {
         logDebug(Unobfuscator.getMethodDescriptor(viewButtonMethod));
         XposedBridge.hookMethod(viewButtonMethod, new XC_MethodHook() {
             @Override
+            @SuppressLint("DiscouragedApi")
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 if (!prefs.getBoolean("hidestatusview", false)) return;
                 var view = (View) param.getResult();
-                var contentView = (LinearLayout) view.findViewById(Utils.getID("bottom_sheet", "id"));
-                var infoBar = contentView.findViewById(Utils.getID("info", "id"));
+                var id1 = XMain.mApp.getResources().getIdentifier("bottom_sheet", "id", XMain.mApp.getPackageName());
+                var contentView = (LinearLayout) view.findViewById(id1);
+                @SuppressLint("UseCompatLoadingForDrawables")
+                var drawable = XMain.mApp.getDrawable(XMain.mApp.getResources().getIdentifier("ic_notif_mark_read", "drawable", XMain.mApp.getPackageName()));
                 var buttonImage = new ImageView(XMain.mApp);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) Utils.dipToPixels(32), (int) Utils.dipToPixels(32));
-                params.gravity = Gravity.CENTER_VERTICAL;
-                params.setMargins(Utils.dipToPixels(5), Utils.dipToPixels(5), 0, 0);
+                params.gravity = Gravity.END;
+                params.setMargins(0, 0, (int) Utils.dipToPixels(8), 0);
                 buttonImage.setLayoutParams(params);
-                buttonImage.setImageResource(Utils.getID("ic_notif_mark_read", "drawable"));
+                buttonImage.setImageDrawable(drawable);
                 GradientDrawable border = new GradientDrawable();
                 border.setShape(GradientDrawable.RECTANGLE);
-                border.setStroke(1, Color.WHITE);
+                border.setStroke(2, Color.WHITE);
                 border.setCornerRadius(20);
                 border.setColor(Color.parseColor("#80000000"));
                 buttonImage.setBackground(border);
-                view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-                    if (infoBar.getVisibility() != View.VISIBLE) {
-                        if (contentView.getChildAt(0) == buttonImage) return;
-                        contentView.setOrientation(LinearLayout.HORIZONTAL);
-                        contentView.addView(buttonImage, 0);
-                    }
-                });
+                contentView.addView(buttonImage,0);
+                contentView.setPadding(0, contentView.getPaddingTop()- (int) Utils.dipToPixels(32),0, 0);
                 buttonImage.setOnClickListener(v -> {
                     new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(XMain.mApp, "Sending read blue tick..", Toast.LENGTH_SHORT).show());
                     sendBlueTickStatus(currentJid);
                 });
             }
         });
-
-        /// Add button to send View Once to Target
-        var menuMethod = Unobfuscator.loadViewOnceDownloadMenuMethod(loader);
-        logDebug(Unobfuscator.getMethodDescriptor(menuMethod));
-        var menuIntField = Unobfuscator.loadViewOnceDownloadMenuField(loader);
-        logDebug(Unobfuscator.getFieldDescriptor(menuIntField));
-        var classThreadMessage = Unobfuscator.loadThreadMessageClass(loader);
-
-        XposedBridge.hookMethod(menuMethod, new XC_MethodHook() {
-            @Override
-            @SuppressLint("DiscouragedApi")
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                if (XposedHelpers.getIntField(param.thisObject, menuIntField.getName()) == 3) {
-                    Menu menu = (Menu) param.args[0];
-                    MenuItem item = menu.add(0, 0, 0, "View Once").setIcon(Utils.getID("ic_notif_mark_read", "drawable"));
-                    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-                    item.setOnMenuItemClickListener(item1 -> {
-                        var messageField = Unobfuscator.getFieldByExtendType(menuMethod.getDeclaringClass(), classThreadMessage);
-                        var messageObject = XposedHelpers.getObjectField(param.thisObject, messageField.getName());
-                        sendBlueTickMedia(messageObject);
-                        Toast.makeText(XMain.mApp, "Sending read blue tick..", Toast.LENGTH_SHORT).show();
-                        return true;
-                    });
-                }
-
-            }
-        });
     }
 
     private void sendBlueTickMsg(String currentJid) {
         logDebug("messages: " + Arrays.toString(messages.toArray(new String[0])));
-        if (messages.isEmpty() || currentJid == null || currentJid.contains(Utils.getMyNumber()))
-            return;
+        if (messages.isEmpty() || currentJid == null || currentJid.contains(Utils.getMyNumber())) return;
         try {
             logDebug("Blue on Reply: " + currentJid);
             var arr_s = messages.toArray(new String[0]);
-            var userJid = WppCore.createUserJid(currentJid);
-            var sendJob = XposedHelpers.newInstance(mSendReadClass, userJid, null, null, null, arr_s, -1, 0L, false);
+            var genInstance = XposedHelpers.newInstance(mGenJidClass);
+            var gen = XposedHelpers.callMethod(genInstance, mGenJidMethod.getName(), currentJid);
+            var sendJob = XposedHelpers.newInstance(mSendReadClass, gen, null, null, null, arr_s, -1, 0L, false);
             WaJobManagerMethod.invoke(mWaJobManager, sendJob);
             messages.clear();
         } catch (Throwable e) {
@@ -229,21 +240,10 @@ public class XBlueTick extends XHookBase {
         try {
             logDebug("sendBlue: " + currentJid);
             var arr_s = messages.toArray(new String[0]);
-            var userJidSender = WppCore.createUserJid("status@broadcast");
-            var userJid = WppCore.createUserJid(currentJid);
-            var sendJob = XposedHelpers.newInstance(mSendReadClass, userJidSender, userJid, null, null, arr_s, -1, 0L, false);
-            WaJobManagerMethod.invoke(mWaJobManager, sendJob);
-            messages.clear();
-        } catch (Throwable e) {
-            XposedBridge.log("Error: " + e.getMessage());
-        }
-    }
-
-    private void sendBlueTickMedia(Object messageObject) {
-        try {
-            logDebug("sendBlue: " + WppCore.getCurrentRawJID());
-            var sendPlayerClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendPlayedReceiptJob", loader);
-            var sendJob = XposedHelpers.newInstance(sendPlayerClass, messageObject);
+            var genInstance = XposedHelpers.newInstance(mGenJidClass);
+            var gen = XposedHelpers.callMethod(genInstance, mGenJidMethod.getName(), "status@broadcast");
+            var gen2 = XposedHelpers.callMethod(genInstance, mGenJidMethod.getName(), currentJid);
+            var sendJob = XposedHelpers.newInstance(mSendReadClass, gen, gen2, null, null, arr_s, -1, 0L, false);
             WaJobManagerMethod.invoke(mWaJobManager, sendJob);
             messages.clear();
         } catch (Throwable e) {

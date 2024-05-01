@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -22,10 +20,7 @@ import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.xposed.Unobfuscator;
-import its.madruga.wpp.xposed.UnobfuscatorCache;
 import its.madruga.wpp.xposed.models.XHookBase;
-import its.madruga.wpp.xposed.plugins.core.Utils;
-import its.madruga.wpp.xposed.plugins.core.WppCore;
 import its.madruga.wpp.xposed.plugins.core.XMain;
 
 public class XShowOnline extends XHookBase {
@@ -42,6 +37,7 @@ public class XShowOnline extends XHookBase {
     public void doHook() throws Throwable {
         if (!prefs.getBoolean("dotonline", false)) return;
 
+
         var classViewHolder = XposedHelpers.findClass("com.whatsapp.conversationslist.ViewHolder", loader);
         XposedBridge.hookAllConstructors(classViewHolder, new XC_MethodHook() {
             @SuppressLint("ResourceType")
@@ -51,7 +47,7 @@ public class XShowOnline extends XHookBase {
                 var context = (Context) param.args[0];
                 views.remove(param.thisObject);
                 views.put(param.thisObject, view);
-                var bottomLayout = (LinearLayout) view.findViewById(Utils.getID("bottom_row", "id"));
+                var bottomLayout = (LinearLayout) view.findViewById(XMain.mApp.getResources().getIdentifier("bottom_row", "id", XMain.mApp.getPackageName()));
                 var imageView = new ImageView(context);
                 imageView.setId(0x7FFF0001);
                 imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -62,7 +58,6 @@ public class XShowOnline extends XHookBase {
                 shapeDrawable.setIntrinsicHeight(20);
                 shapeDrawable.setIntrinsicWidth(20);
                 imageView.setImageDrawable(shapeDrawable);
-                imageView.setVisibility(View.GONE);
                 bottomLayout.addView(imageView);
             }
         });
@@ -99,24 +94,19 @@ public class XShowOnline extends XHookBase {
                 var object = param.args[0];
                 var view = (View) views.get(viewHolder);
                 var csDot = (ImageView) view.findViewById(0x7FFF0001);
-                csDot.setVisibility(View.GONE);
-                var jidFiled = Unobfuscator.getFieldByExtendType(object.getClass(), XposedHelpers.findClass("com.whatsapp.jid.Jid", loader));
+                csDot.setVisibility(View.INVISIBLE);
+                var jidClass = XposedHelpers.findClass("com.whatsapp.jid.Jid", loader);
+                var jidFiled = Unobfuscator.getFieldByExtendType(object.getClass(), jidClass);
                 var jidObject = jidFiled.get(object);
-                var jid = WppCore.getRawString(jidObject);
+                var jid = (String) XposedHelpers.callMethod(jidObject, "getRawString");
                 if (jid.contains("@g.us")) return;
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    try {
-                        var clazz = sendPresenceMethod.getParameterTypes()[1];
-                        var instance = XposedHelpers.newInstance(clazz, new Object[]{null, null});
-                        sendPresenceMethod.invoke(null, jidObject, instance, mInstancePresence);
-                        var status = (String) getStatusUser.invoke(mStatusUser, object);
-                        if (!TextUtils.isEmpty(status) && status.trim().equals(UnobfuscatorCache.getInstance().getString("online"))) {
-                            csDot.setVisibility(View.VISIBLE);
-                        }
-                    } catch (Exception e) {
-                        logDebug(e);
-                    }
-                });
+                var clazz = sendPresenceMethod.getParameterTypes()[1];
+                var instance = XposedHelpers.newInstance(clazz, new Object[]{null, null});
+                sendPresenceMethod.invoke(null, jidObject, instance, mInstancePresence);
+                var status = (String) getStatusUser.invoke(mStatusUser, object);
+                if (!TextUtils.isEmpty(status) && !status.matches(".*\\d.*")) {
+                    csDot.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

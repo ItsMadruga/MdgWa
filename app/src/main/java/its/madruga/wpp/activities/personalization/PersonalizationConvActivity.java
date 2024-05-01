@@ -25,6 +25,7 @@ public class PersonalizationConvActivity extends BaseActivity {
         findViewById(R.id.mdgwa_telegram_channel).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/mdgwamodule"))));
         findViewById(R.id.github_darker_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darker935"))));
         findViewById(R.id.github_dev4mod_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Dev4Mod"))));
+        findViewById(R.id.github_cvnertnc_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/cvnertnc"))));
         findViewById(R.id.madruga_github_onclick).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ItsMadruga"))));
 
     }

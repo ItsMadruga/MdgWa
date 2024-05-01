@@ -109,8 +109,8 @@
     <string name="imagequality_sum">Envie imagens em qualidade original</string>
     <string name="downloadviewonce">Baixar Visualizao Única</string>
     <string name="downloadviewonce_sum">Criar um botão de download de visualização unica</string>
-    <string name="separate_groups">Grupos separados</string>
     <string name="separate_groups_sum">Separe seus chats por: grupos, chats privados, status, chamadas, comunidades</string>
+    <string name="separate_groups">Grupos separados</string>
     <string name="blueonreply">Enviar marca azul na resposta</string>
     <string name="blueonreply_sum">Envia a marca azul ao responder à mensagem</string>
     <string name="hide_archived_chat">Ocultar Chats Arquivados</string>
@@ -124,6 +124,7 @@
     <string name="show_dnd_button">Mostrar Botão Não perturbe</string>
     <string name="show_dnd_button_sum">Mostrar botão para o Modo Não Perturbe na barra superior da tela inicial</string>
     <string name="dev4mod">Dev4Mod (Contributor)</string>
+    <string name="cvnertnc">cvnertnc (Contributor)</string>
     <string name="disable_pinned_limit">Desativar Limite de Bate-Papos Fixados</string>
     <string name="disable_pinned_limit_sum">Desativar o limite de 3 conversas fixadas</string>
     <string name="delete_for_everyone_all_messages">Habilita excluir para todos em todas as mensagens</string>
@@ -155,14 +156,8 @@
     <string name="calls">"Chamadas"</string>
     <string name="updates">Atualizações</string>
     <string name="about">Sobre</string>
-    <string name="igstatus_on_home_screen">Mostrar o IGStatus na Tela Inicial</string>
-    <string name="igstatus_on_home_screen_sum">Exibe na tela inicial um barra com os status estilo Instagram</string>
-    <string name="chatfilter_no_search">Desativado</string>
-    <string name="chatfilter_search_icon">Ícone de pesquisa</string>
-    <string name="chatfilter_search_bar">Barra de pesquisa</string>
-    <string name="remove_channel_recomendations">Remover Recomendações de Canal</string>
-    <string name="remove_channel_recomendations_sum">Remover Recomendações do Canal da aba de Status</string>
-    <string name="remove_see_more_button">Remover botão \'Ver Mais\'</string>
-    <string name="remove_see_more_button_">Desativar o botão \'Ver Mais\' e mostrar toda a mensagem</string>
-    <string name="tools">Tools</string>
+    <string name="remove_channel_recomendations">Remove Channel Recomendations</string>
+    <string name="remove_channel_recomendations_sum">Remove Channel Recomendations from tab Status</string>
+    <string name="remove_see_more_button">Remove \'See More\' Button</string>
+    <string name="remove_see_more_button_">Disable \'See More\' button and show all long message</string>
 </resources>

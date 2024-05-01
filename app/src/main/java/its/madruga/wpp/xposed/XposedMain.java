@@ -25,8 +25,6 @@ import its.madruga.wpp.xposed.plugins.core.XMain;
 public class XposedMain implements IXposedHookLoadPackage, IXposedHookInitPackageResources, IXposedHookZygoteInit {
     private static String MODULE_PATH = null;
     private static XSharedPreferences pref;
-    public static XModuleResources modRes;
-    public static XC_InitPackageResources.InitPackageResourcesParam ResParam;
 
     @NonNull
     public static XSharedPreferences getPref() {
@@ -78,16 +76,12 @@ public class XposedMain implements IXposedHookLoadPackage, IXposedHookInitPackag
 
     @Override
     public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resparam) throws Throwable {
-        modRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
+        var modRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
         for (var field : ResId.string.class.getFields()) {
             var field1 = R.string.class.getField(field.getName());
             field.set(null, resparam.res.addResource(modRes, field1.getInt(null)));
         }
-        ResParam = resparam;
     }
-
-
-
 
     @Override
     public void initZygote(StartupParam startupParam) {

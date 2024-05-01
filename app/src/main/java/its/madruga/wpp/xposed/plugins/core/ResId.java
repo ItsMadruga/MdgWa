@@ -1,7 +1,6 @@
 package its.madruga.wpp.xposed.plugins.core;
 
 public class ResId {
-
     public static class string {
         public static int edited_history;
         public static int dnd_message;

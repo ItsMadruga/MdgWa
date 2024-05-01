@@ -16,20 +16,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import its.madruga.wpp.xposed.Unobfuscator;
 import its.madruga.wpp.xposed.models.XHookBase;
 import its.madruga.wpp.xposed.plugins.core.ResId;
-import its.madruga.wpp.xposed.plugins.core.Utils;
 
 public class XViewOnce extends XHookBase {
-    private boolean isFromMe;
-
     public XViewOnce(ClassLoader loader, XSharedPreferences preferences) {
         super(loader, preferences);
     }
@@ -39,19 +36,8 @@ public class XViewOnce extends XHookBase {
         var methods = Unobfuscator.loadViewOnceMethod(loader);
         var classViewOnce = Unobfuscator.loadViewOnceClass(loader);
         logDebug(classViewOnce);
-        var viewOnceStoreMethod = Unobfuscator.loadViewOnceStoreMethod(loader);
-        logDebug(Unobfuscator.getMethodDescriptor(viewOnceStoreMethod));
-        var messageKeyField = Unobfuscator.loadMessageKeyField(loader);
-        XposedBridge.hookMethod(viewOnceStoreMethod, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (!prefs.getBoolean("viewonce", false)) return;
-                var messageObject = param.args[0];
-                if (messageObject == null) return;
-                var messageKey = messageKeyField.get(messageObject);
-                isFromMe = XposedHelpers.getBooleanField(messageKey, "A02");
-            }
-        });
+        var classViewOnce2 = Unobfuscator.loadViewOnceClass2(loader);
+        logDebug(classViewOnce2);
 
         for (var method : methods) {
             logDebug(Unobfuscator.getMethodDescriptor(method));
@@ -59,9 +45,7 @@ public class XViewOnce extends XHookBase {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
                     if (!prefs.getBoolean("viewonce", false)) return;
-                    if ((int) param.getResult() != 2 && (Unobfuscator.isCalledFromClass(classViewOnce))) {
-                        param.setResult(0);
-                    } else if ((int) param.getResult() != 2 && !isFromMe && (Unobfuscator.isCalledFromClass(viewOnceStoreMethod.getDeclaringClass()))) {
+                    if ((int) param.getResult() != 2 && (Unobfuscator.isCalledFromClass(classViewOnce) || Unobfuscator.isCalledFromClass(classViewOnce2))) {
                         param.setResult(0);
                     }
                 }
@@ -89,8 +73,9 @@ public class XViewOnce extends XHookBase {
 
                     if (XposedHelpers.getIntField(param.thisObject, menuIntField.getName()) == 3) {
                         Menu menu = (Menu) param.args[0];
-                        MenuItem item = menu.add(0, 0, 0, ResId.string.download).setIcon(Utils.getID("btn_download", "drawable"));
-                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                        var idIconDownload = mApp.getResources().getIdentifier("btn_download", "drawable", mApp.getPackageName());
+                        MenuItem item = menu.add(0, 0, 0, ResId.string.download).setIcon(idIconDownload);
+                        item.setShowAsAction(2);
                         item.setOnMenuItemClickListener(item1 -> {
                             var i = XposedHelpers.getIntField(param.thisObject, initIntField.getName());
                             var message = callMethod.getParameterCount() == 2 ? XposedHelpers.callMethod(param.thisObject, callMethod.getName(), param.thisObject, i) : XposedHelpers.callMethod(param.thisObject, callMethod.getName(), i);
