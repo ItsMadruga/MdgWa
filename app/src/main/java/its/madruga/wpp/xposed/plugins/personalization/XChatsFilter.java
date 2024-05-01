@@ -294,64 +294,23 @@ public class XChatsFilter extends XHookBase {
         logDebug(Unobfuscator.getMethodDescriptor(onCreateTabList));
         var fieldTabsList = Arrays.stream(home.getDeclaredFields()).filter(f -> f.getType().equals(List.class)).findFirst().orElse(null);
         fieldTabsList.setAccessible(true);
-
         XposedBridge.hookMethod(onCreateTabList, new XC_MethodHook() {
             @Override
             @SuppressWarnings("unchecked")
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 tabs = (ArrayList<Integer>) fieldTabsList.get(null);
-                if (tabs == null) return;
-                if (!prefs.getBoolean("separategroups", false)) return;
-                if (!tabs.contains(GROUPS)) {
+                var hidetabs = prefs.getString("hidetabs", null);
+                logDebug("hidetabs: " + hidetabs);
+                if (!tabs.contains(GROUPS) && prefs.getBoolean("separategroups", false)) {
                     tabs.add(tabs.isEmpty() ? 0 : 1, GROUPS);
                 }
-            }
-        });
-
-        var hidetabs = prefs.getString("hidetabs", null);
-        if (hidetabs == null || hidetabs.isEmpty())
-            return;
-        var hideTabsList = Arrays.asList(hidetabs.split(","));
-
-        var OnTabItemAddMethod = Unobfuscator.loadOnTabItemAddMethod(loader);
-
-        XposedBridge.hookMethod(OnTabItemAddMethod, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                var menu = (MenuItem) param.getResult();
-                var menuItemId = menu.getItemId();
-                if (hideTabsList.contains(String.valueOf(menuItemId))) {
-                    menu.setVisible(false);
-                }
-            }
-        });
-
-        var loadTabFrameClass = Unobfuscator.loadTabFrameClass(loader);
-        logDebug(loadTabFrameClass);
-
-        XposedBridge.hookAllMethods(FrameLayout.class, "onMeasure", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                if (!loadTabFrameClass.isInstance(param.thisObject)) return;
-                for (var item : hideTabsList) {
-                    View view;
-                    if ((view = ((View) param.thisObject).findViewById(Integer.parseInt(item))) != null) {
-                        view.setVisibility(View.GONE);
+                if (hidetabs != null) {
+                    for (var tab : hidetabs.split(",")) {
+                        if(tab.equals("")) return;
+                        tabs.remove(Integer.valueOf(tab));
                     }
                 }
-            }
-        });
 
-        var onMenuItemSelected = Unobfuscator.loadOnMenuItemSelected(loader);
-        var onMenuItemClick = Unobfuscator.loadOnMenuItemClickClass(loader);
-
-        XposedBridge.hookMethod(onMenuItemSelected, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (!Unobfuscator.isCalledFromClass(home) && !Unobfuscator.isCalledFromClass(onMenuItemClick))
-                    return;
-                var index = (int) param.args[0];
-                param.args[0] = getNewTabIndex(hideTabsList, index);
             }
         });
     }
