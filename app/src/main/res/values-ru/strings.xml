@@ -37,7 +37,7 @@
     <string name="root_needed">Требуются root-права</string>
     <string name="root_needed_message">Для этой опции требуется root-доступ, предоставьте root-права в вашем приложени Magisk-KSU.</string>
     <string name="xposedinit_error">Ошибка запуска Xposed</string>
-    <string name="no_root">Ошибка получания root-прав</string>
+    <string name="no_root">Ошибка получения root-прав</string>
     <string name="ampm">Время в 12-часовом формате</string>
     <string name="media_settings">Настройки мультимедиа</string>
     <string name="statusdowload">Загрузка статуса</string>
